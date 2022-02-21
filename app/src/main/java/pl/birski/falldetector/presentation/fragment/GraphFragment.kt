@@ -10,9 +10,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material.Text
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.fragment.app.viewModels
+import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
 
 @AndroidEntryPoint
 class GraphFragment : Fragment() {
+
+    private val viewModel: GraphViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
