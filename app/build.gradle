@@ -24,9 +24,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildFeatures {
+        compose true
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.1.0"
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -50,4 +56,11 @@ dependencies {
     // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
+
+    // Jetpack Compose
+    debugImplementation "androidx.compose.ui:ui-tooling:1.1.0"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.1.0"
+
+    //  Compose Material
+    implementation "androidx.compose.material:material:1.1.0"
 }
