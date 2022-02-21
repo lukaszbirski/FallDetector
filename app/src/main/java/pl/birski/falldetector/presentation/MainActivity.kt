@@ -1,8 +1,9 @@
-package pl.birski.falldetector
+package pl.birski.falldetector.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
+import pl.birski.falldetector.R
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package pl.birski.falldetector
+package pl.birski.falldetector.presentation
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
