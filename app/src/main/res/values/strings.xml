@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Fall Detector</string>
+    <string name="notification_title">Fall Detector is running</string>
 </resources>
