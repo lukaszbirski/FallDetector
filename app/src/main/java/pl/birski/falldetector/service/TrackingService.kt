@@ -21,7 +21,7 @@ class TrackingService : LifecycleService() {
         intent?.let {
             when(it.action) {
                 ServiceActions.START_OR_RESUME.name -> {
-                    Timber.d("Started od resumed service")
+                    Timber.d("Started or resumed service")
                     startForegroundService()
                 }
                 ServiceActions.STOP.name -> {
