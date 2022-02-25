@@ -1,6 +1,7 @@
 package pl.birski.falldetector.presentation.viewmodel
 
 import android.app.Application
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import pl.birski.falldetector.service.TrackingService
@@ -14,8 +15,13 @@ constructor(
     private val application: Application
 ) : ViewModel(){
 
-    fun startService() = TrackingService.initiate(application, ServiceActions.START_OR_RESUME)
+    fun startService() = sendCommandToService(ServiceActions.START_OR_RESUME)
 
-    fun stopService() = TrackingService.stop(application, ServiceActions.STOP)
+    fun stopService() = sendCommandToService(ServiceActions.STOP)
 
+    private fun sendCommandToService(action: ServiceActions) =
+        Intent(application, TrackingService::class.java).also {
+            it.action = action.name
+            application.startService(it)
+        }
 }
