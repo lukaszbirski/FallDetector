@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.mikephil.charting.charts.LineChart
+import com.jjoe64.graphview.GraphView
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
 
@@ -84,10 +84,12 @@ fun createView(
 fun createViewFromLayout() {
     AndroidView(
         factory = {
-            LineChart(it)
+            GraphView(it)
         }
-    ) { lineChart ->
-        lineChart.apply {
+    ) { graphView ->
+        graphView.apply {
+            layoutParams.height = 500
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
         }
     }
 }

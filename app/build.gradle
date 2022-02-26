@@ -72,6 +72,6 @@ dependencies {
     // Architecture Components ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0-alpha02"
 
-    // MPAndroidChart
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    //GraphView
+    implementation 'com.jjoe64:graphview:4.2.2'
 }
