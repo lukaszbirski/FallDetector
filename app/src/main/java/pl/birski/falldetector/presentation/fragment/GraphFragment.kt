@@ -46,6 +46,8 @@ fun createView(
     viewModel: GraphViewModel = viewModel()
 ) {
 
+    viewModel.startMeasurements()
+
     Column() {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

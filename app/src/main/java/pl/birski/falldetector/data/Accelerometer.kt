@@ -5,15 +5,26 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import timber.log.Timber
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import javax.inject.Inject
+import pl.birski.falldetector.model.Acceleration
+import timber.log.Timber
 
-class FallDetector @Inject constructor() : SensorEventListener {
+class Accelerometer @Inject constructor() : SensorEventListener {
 
     private lateinit var manager: SensorManager
 
+    val acceleration: MutableState<Acceleration?> = mutableStateOf(null)
+
     override fun onSensorChanged(event: SensorEvent?) {
-        Timber.d("Current acceleration is equal to x: ${event?.values?.get(0)}, y: ${event?.values?.get(1)}, z: ${event?.values?.get(2)}")
+        Timber.d(
+            "Current acceleration is equal to x: " +
+                "${event?.values?.get(0)}, " +
+                "y: ${event?.values?.get(1)}, " +
+                "z: ${event?.values?.get(2)}"
+        )
+        acceleration.value = getAcceleration(event)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -32,4 +43,9 @@ class FallDetector @Inject constructor() : SensorEventListener {
         manager.unregisterListener(this)
     }
 
+    private fun getAcceleration(event: SensorEvent?) = Acceleration(
+        event?.values?.get(0),
+        event?.values?.get(1),
+        event?.values?.get(2)
+    )
 }
