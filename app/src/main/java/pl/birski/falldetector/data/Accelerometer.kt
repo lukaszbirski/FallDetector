@@ -44,8 +44,8 @@ class Accelerometer @Inject constructor() : SensorEventListener {
     }
 
     private fun getAcceleration(event: SensorEvent?) = Acceleration(
-        event?.values?.get(0),
-        event?.values?.get(1),
-        event?.values?.get(2)
+        event?.values?.get(0)?.toDouble(),
+        event?.values?.get(1)?.toDouble(),
+        event?.values?.get(2)?.toDouble()
     )
 }

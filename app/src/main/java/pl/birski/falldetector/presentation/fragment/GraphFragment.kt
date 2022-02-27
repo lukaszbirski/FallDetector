@@ -25,6 +25,8 @@ import com.jjoe64.graphview.GraphView
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
 
+const val POINTS_NUMBER_TO_DISPLAY = 200
+
 @AndroidEntryPoint
 class GraphFragment : Fragment() {
 
@@ -75,21 +77,28 @@ fun createView(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            createViewFromLayout()
+            createViewFromLayout(viewModel = viewModel)
         }
     }
 }
 
 @Composable
-fun createViewFromLayout() {
+fun createViewFromLayout(viewModel: GraphViewModel) {
     AndroidView(
         factory = {
             GraphView(it)
         }
     ) { graphView ->
         graphView.apply {
-            layoutParams.height = 500
+            layoutParams.height = 750
             layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+            var viewport = graphView.viewport
+            viewport.isScrollable = true
+            viewport.isXAxisBoundsManual = true
+            viewport.setMaxX(viewModel.pointsPlotted.value)
+            viewport.setMinX(viewModel.pointsPlotted.value - POINTS_NUMBER_TO_DISPLAY)
+
+            addSeries(viewModel.getValuesForGraph())
         }
     }
 }

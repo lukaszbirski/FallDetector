@@ -1,3 +1,3 @@
 package pl.birski.falldetector.model
 
-data class Acceleration(val x: Float?, val y: Float?, val z: Float?)
+data class Acceleration(val x: Double?, val y: Double?, val z: Double?)
