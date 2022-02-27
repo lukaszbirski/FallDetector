@@ -13,6 +13,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import pl.birski.falldetector.model.Acceleration
@@ -130,51 +131,28 @@ constructor(
         DataSet.Z_AXIS -> Color.RED
     }
 
+    private fun createEntry(event: SensorEvent, measurement: ILineDataSet, number: Int) = Entry(
+        measurement.entryCount.toFloat(),
+        event.values[number]
+    )
+
     fun addEntry(event: SensorEvent) {
-        val data = mChart!!.data
-        if (data != null) {
-            var setOne = data.getDataSetByIndex(0)
-            var setTwo = data.getDataSetByIndex(1)
-            var setThree = data.getDataSetByIndex(2)
+        val data = mChart?.data
 
-            if (setOne == null) {
-                setOne = createSet(DataSet.X_AXIS)
-                data.addDataSet(setOne)
-            }
+        data?.let {
 
-            if (setTwo == null) {
-                setTwo = createSet(DataSet.Y_AXIS)
-                data.addDataSet(setTwo)
-            }
+            val xMeasurement =
+                data.getDataSetByIndex(0) ?: createSet(DataSet.X_AXIS).also { data.addDataSet(it) }
 
-            if (setThree == null) {
-                setThree = createSet(DataSet.Z_AXIS)
-                data.addDataSet(setThree)
-            }
+            val yMeasurement =
+                data.getDataSetByIndex(1) ?: createSet(DataSet.Y_AXIS).also { data.addDataSet(it) }
 
-            data.addEntry(
-                Entry(
-                    setOne.entryCount.toFloat(),
-                    event.values[0]
-                ),
-                0
-            )
+            val zMeasurement =
+                data.getDataSetByIndex(2) ?: createSet(DataSet.Z_AXIS).also { data.addDataSet(it) }
 
-            data.addEntry(
-                Entry(
-                    setTwo.entryCount.toFloat(),
-                    event.values[1]
-                ),
-                1
-            )
-
-            data.addEntry(
-                Entry(
-                    setThree.entryCount.toFloat(),
-                    event.values[2]
-                ),
-                2
-            )
+            data.addEntry(createEntry(event, xMeasurement, 0), 0)
+            data.addEntry(createEntry(event, yMeasurement, 1), 1)
+            data.addEntry(createEntry(event, zMeasurement, 2), 2)
 
             data.notifyDataChanged()
 

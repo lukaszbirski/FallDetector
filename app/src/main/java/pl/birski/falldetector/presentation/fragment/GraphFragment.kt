@@ -12,11 +12,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.github.mikephil.charting.data.Entry
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.databinding.FragmentGraphBinding
 import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
-import pl.birski.falldetector.service.enum.DataSet
 
 @AndroidEntryPoint
 class GraphFragment : Fragment(), SensorEventListener {
@@ -58,14 +56,8 @@ class GraphFragment : Fragment(), SensorEventListener {
             feedMultiple()
         }
 
-        viewModel.initChart()
-
-        viewModel.feedMultiple()
-
         return binding.root
     }
-
-
 
     override fun onPause() {
         super.onPause()
