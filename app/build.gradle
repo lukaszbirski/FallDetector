@@ -27,6 +27,7 @@ android {
     buildFeatures {
         compose true
         viewBinding true
+        dataBinding true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -72,6 +73,6 @@ dependencies {
     // Architecture Components ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0-alpha02"
 
-    //GraphView
-    implementation 'com.jjoe64:graphview:4.2.2'
+    // MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
