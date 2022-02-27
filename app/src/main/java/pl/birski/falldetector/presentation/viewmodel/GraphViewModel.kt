@@ -3,10 +3,15 @@ package pl.birski.falldetector.presentation.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.graphics.Color
+import android.hardware.SensorEvent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -26,14 +31,56 @@ constructor(
 //    lateinit var accelerometer: Accelerometer
 
     private var thread: Thread? = null
+    var mChart: LineChart? = null
     var plotData = true
 
     private val _data: MutableLiveData<Acceleration> = MutableLiveData()
     val data: LiveData<Acceleration> get() = _data
 
-//    init {
-//        _data.postValue(getValues())
-//    }
+    fun initChart() {
+        // disable description text
+        mChart!!.description.isEnabled = false
+
+        // enable touch gestures
+        mChart!!.setTouchEnabled(false)
+
+        // enable scaling and dragging
+        mChart!!.isDragEnabled = false
+        mChart!!.setScaleEnabled(true)
+        mChart!!.setDrawGridBackground(true)
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        mChart!!.setPinchZoom(true)
+
+        // set an alternative background color
+        mChart!!.setBackgroundColor(Color.WHITE)
+        val data = LineData()
+        data.setValueTextColor(Color.WHITE)
+
+        // add empty data
+        mChart!!.data = data
+
+        // get the legend (only possible after setting data)
+        val l = mChart!!.legend
+
+        // modify the legend ...
+        l.form = Legend.LegendForm.LINE
+        l.textColor = Color.BLACK
+        val xl = mChart!!.xAxis
+        xl.textColor = Color.WHITE
+        xl.setDrawGridLines(true)
+        xl.setAvoidFirstLastClipping(true)
+        xl.isEnabled = true
+        val leftAxis = mChart!!.axisLeft
+        leftAxis.textColor = Color.BLACK
+        leftAxis.setDrawGridLines(true)
+        leftAxis.axisMaximum = 18f
+        leftAxis.axisMinimum = -18f
+        leftAxis.setDrawGridLines(true)
+        val rightAxis = mChart!!.axisRight
+        rightAxis.isEnabled = false
+        mChart!!.setDrawBorders(true)
+    }
 
     fun startService() = sendCommandToService(ServiceActions.START_OR_RESUME)
 //        .also { accelerometer.initiateSensor(application) }
@@ -81,6 +128,65 @@ constructor(
         DataSet.X_AXIS -> Color.BLUE
         DataSet.Y_AXIS -> Color.GREEN
         DataSet.Z_AXIS -> Color.RED
+    }
+
+    fun addEntry(event: SensorEvent) {
+        val data = mChart!!.data
+        if (data != null) {
+            var setOne = data.getDataSetByIndex(0)
+            var setTwo = data.getDataSetByIndex(1)
+            var setThree = data.getDataSetByIndex(2)
+
+            if (setOne == null) {
+                setOne = createSet(DataSet.X_AXIS)
+                data.addDataSet(setOne)
+            }
+
+            if (setTwo == null) {
+                setTwo = createSet(DataSet.Y_AXIS)
+                data.addDataSet(setTwo)
+            }
+
+            if (setThree == null) {
+                setThree = createSet(DataSet.Z_AXIS)
+                data.addDataSet(setThree)
+            }
+
+            data.addEntry(
+                Entry(
+                    setOne.entryCount.toFloat(),
+                    event.values[0]
+                ),
+                0
+            )
+
+            data.addEntry(
+                Entry(
+                    setTwo.entryCount.toFloat(),
+                    event.values[1]
+                ),
+                1
+            )
+
+            data.addEntry(
+                Entry(
+                    setThree.entryCount.toFloat(),
+                    event.values[2]
+                ),
+                2
+            )
+
+            data.notifyDataChanged()
+
+            // let the chart know it's data has changed
+            mChart!!.notifyDataSetChanged()
+
+            // limit the number of visible entries
+            mChart!!.setVisibleXRangeMaximum(150f)
+
+            // move to the latest entry
+            mChart!!.moveViewToX(data.entryCount.toFloat())
+        }
     }
 
     fun feedMultiple() {
