@@ -33,8 +33,6 @@ class GraphFragment : Fragment(), SensorEventListener {
     private var mSensorManager: SensorManager? = null
     private var mAccelerometer: Sensor? = null
     private var mChart: LineChart? = null
-    private var thread: Thread? = null
-    private var plotData = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -102,7 +100,7 @@ class GraphFragment : Fragment(), SensorEventListener {
         val rightAxis = mChart!!.axisRight
         rightAxis.isEnabled = false
         mChart!!.setDrawBorders(true)
-        feedMultiple()
+        viewModel.feedMultiple()
 
         return binding.root
     }
@@ -167,42 +165,21 @@ class GraphFragment : Fragment(), SensorEventListener {
         }
     }
 
-    private fun feedMultiple() {
-        if (thread != null) {
-            thread!!.interrupt()
-        }
-        thread = Thread {
-            while (true) {
-                plotData = true
-                try {
-                    Thread.sleep(10)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
-            }
-        }
-        thread!!.start()
-    }
-
     override fun onPause() {
         super.onPause()
-        if (thread != null) {
-            thread!!.interrupt()
-        }
         mSensorManager!!.unregisterListener(this)
     }
 
     override fun onDestroy() {
         mSensorManager!!.unregisterListener(this@GraphFragment)
-        thread!!.interrupt()
         super.onDestroy()
     }
 
     override fun onSensorChanged(p0: SensorEvent) {
-        if (plotData) {
+        if (viewModel.plotData) {
             addEntry(p0)
             Log.d("testuje", "onSensorChanged: ${p0.values[0]}, ${p0.values[1]}, ${p0.values[2]}")
-            plotData = false
+            viewModel.plotData = false
         }
     }
 

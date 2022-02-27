@@ -25,6 +25,9 @@ constructor(
 //    @Inject
 //    lateinit var accelerometer: Accelerometer
 
+    private var thread: Thread? = null
+    var plotData = true
+
     private val _data: MutableLiveData<Acceleration> = MutableLiveData()
     val data: LiveData<Acceleration> get() = _data
 
@@ -78,5 +81,22 @@ constructor(
         DataSet.X_AXIS -> Color.BLUE
         DataSet.Y_AXIS -> Color.GREEN
         DataSet.Z_AXIS -> Color.RED
+    }
+
+    fun feedMultiple() {
+        if (thread != null) {
+            thread!!.interrupt()
+        }
+        thread = Thread {
+            while (true) {
+                plotData = true
+                try {
+                    Thread.sleep(10)
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        thread!!.start()
     }
 }
