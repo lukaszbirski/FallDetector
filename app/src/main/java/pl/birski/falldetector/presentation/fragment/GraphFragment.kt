@@ -15,13 +15,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.databinding.FragmentGraphBinding
 import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
+import pl.birski.falldetector.service.enum.DataSet
 
 @AndroidEntryPoint
 class GraphFragment : Fragment(), SensorEventListener {
@@ -97,8 +96,8 @@ class GraphFragment : Fragment(), SensorEventListener {
         val leftAxis = mChart!!.axisLeft
         leftAxis.textColor = Color.BLACK
         leftAxis.setDrawGridLines(true)
-        leftAxis.axisMaximum = 12f
-        leftAxis.axisMinimum = -12f
+        leftAxis.axisMaximum = 18f
+        leftAxis.axisMinimum = -18f
         leftAxis.setDrawGridLines(true)
         val rightAxis = mChart!!.axisRight
         rightAxis.isEnabled = false
@@ -116,17 +115,17 @@ class GraphFragment : Fragment(), SensorEventListener {
             var setThree = data.getDataSetByIndex(2)
 
             if (setOne == null) {
-                setOne = createSet()
+                setOne = viewModel.createSet(DataSet.X_AXIS)
                 data.addDataSet(setOne)
             }
 
             if (setTwo == null) {
-                setTwo = createSetTwo()
+                setTwo = viewModel.createSet(DataSet.Y_AXIS)
                 data.addDataSet(setTwo)
             }
 
             if (setThree == null) {
-                setThree = createSetThree()
+                setThree = viewModel.createSet(DataSet.Z_AXIS)
                 data.addDataSet(setThree)
             }
 
@@ -166,45 +165,6 @@ class GraphFragment : Fragment(), SensorEventListener {
             // move to the latest entry
             mChart!!.moveViewToX(data.entryCount.toFloat())
         }
-    }
-
-    private fun createSet(): LineDataSet {
-        val set = LineDataSet(null, "X-axis acceleration")
-        set.axisDependency = YAxis.AxisDependency.LEFT
-        set.lineWidth = 1f
-        set.color = Color.BLUE
-        set.isHighlightEnabled = false
-        set.setDrawValues(false)
-        set.setDrawCircles(false)
-        set.mode = LineDataSet.Mode.CUBIC_BEZIER
-        set.cubicIntensity = 0.2f
-        return set
-    }
-
-    private fun createSetTwo(): LineDataSet {
-        val set = LineDataSet(null, "Y-axis acceleration")
-        set.axisDependency = YAxis.AxisDependency.LEFT
-        set.lineWidth = 1f
-        set.color = Color.GREEN
-        set.isHighlightEnabled = false
-        set.setDrawValues(false)
-        set.setDrawCircles(false)
-        set.mode = LineDataSet.Mode.CUBIC_BEZIER
-        set.cubicIntensity = 0.2f
-        return set
-    }
-
-    private fun createSetThree(): LineDataSet {
-        val set = LineDataSet(null, "Z-axis acceleration")
-        set.axisDependency = YAxis.AxisDependency.LEFT
-        set.lineWidth = 1f
-        set.color = Color.RED
-        set.isHighlightEnabled = false
-        set.setDrawValues(false)
-        set.setDrawCircles(false)
-        set.mode = LineDataSet.Mode.CUBIC_BEZIER
-        set.cubicIntensity = 0.2f
-        return set
     }
 
     private fun feedMultiple() {
