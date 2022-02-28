@@ -1,12 +1,6 @@
 package pl.birski.falldetector.presentation.fragment
 
-import android.content.Context.SENSOR_SERVICE
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,15 +11,12 @@ import pl.birski.falldetector.databinding.FragmentGraphBinding
 import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
 
 @AndroidEntryPoint
-class GraphFragment : Fragment(), SensorEventListener {
+class GraphFragment : Fragment() {
 
     private var _binding: FragmentGraphBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: GraphViewModel by viewModels()
-
-    private var mSensorManager: SensorManager? = null
-    private var mAccelerometer: Sensor? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,12 +25,7 @@ class GraphFragment : Fragment(), SensorEventListener {
     ): View? {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
-        mSensorManager = requireActivity().getSystemService(SENSOR_SERVICE) as SensorManager
-        mAccelerometer = mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-
-        if (mAccelerometer != null) {
-            mSensorManager!!.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME)
-        }
+        viewModel.mChart = binding.chart
 
         binding.start.setOnClickListener {
             viewModel.startService()
@@ -49,40 +35,11 @@ class GraphFragment : Fragment(), SensorEventListener {
             viewModel.stopService()
         }
 
-        viewModel.mChart = binding.chart
-
         viewModel.apply {
             initChart()
             feedMultiple()
         }
 
         return binding.root
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mSensorManager!!.unregisterListener(this)
-    }
-
-    override fun onDestroy() {
-        mSensorManager!!.unregisterListener(this@GraphFragment)
-        super.onDestroy()
-    }
-
-    override fun onSensorChanged(p0: SensorEvent) {
-        if (viewModel.plotData) {
-            viewModel.addEntry(p0)
-            Log.d("testuje", "onSensorChanged: ${p0.values[0]}, ${p0.values[1]}, ${p0.values[2]}")
-            viewModel.plotData = false
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mSensorManager!!.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME)
-    }
-
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        // Do something here if sensor accuracy changes.
     }
 }

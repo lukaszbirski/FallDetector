@@ -3,9 +3,6 @@ package pl.birski.falldetector.presentation.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.graphics.Color
-import android.hardware.SensorEvent
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
@@ -16,10 +13,16 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import pl.birski.falldetector.data.Accelerometer
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.DataSet
 import pl.birski.falldetector.service.enum.ServiceActions
+import timber.log.Timber
 
 @HiltViewModel
 class GraphViewModel
@@ -28,15 +31,37 @@ constructor(
     private val application: Application
 ) : ViewModel() {
 
-//    @Inject
-//    lateinit var accelerometer: Accelerometer
+    @Inject
+    lateinit var accelerometer: Accelerometer
 
     private var thread: Thread? = null
     var mChart: LineChart? = null
-    var plotData = true
 
-    private val _data: MutableLiveData<Acceleration> = MutableLiveData()
-    val data: LiveData<Acceleration> get() = _data
+    private var plotData = true
+    private var job: Job? = null
+    private val GRAPH_UPDATE_SLEEP_TIME = 50L
+    private val THREAD_SLEEP_TIME = 10L
+
+    private suspend fun updateGraph() {
+        stopGraphUpdates()
+        job = MainScope().launch {
+            while (true) {
+                measureAcceleration()
+                delay(GRAPH_UPDATE_SLEEP_TIME)
+            }
+        }
+    }
+
+    private fun runGraphUpdate() {
+        MainScope().launch {
+            updateGraph()
+        }
+    }
+
+    private fun stopGraphUpdates() {
+        job?.cancel()
+        job = null
+    }
 
     fun initChart() {
         // disable description text
@@ -84,12 +109,15 @@ constructor(
     }
 
     fun startService() = sendCommandToService(ServiceActions.START_OR_RESUME)
-//        .also { accelerometer.initiateSensor(application) }
+        .also {
+            accelerometer.initiateSensor(application)
+            runGraphUpdate()
+        }
 
     fun stopService() = sendCommandToService(ServiceActions.STOP)
         .also {
-//            accelerometer.stopMeasurement()
-            // startMeasurements()
+            accelerometer.stopMeasurement()
+            stopGraphUpdates()
         }
 
     private fun sendCommandToService(action: ServiceActions) =
@@ -98,14 +126,15 @@ constructor(
             application.startService(it)
         }
 
-//    private fun startMeasurements() {
-//        accelerometer.acceleration.value?.let {
-//            Timber.d("Measured value: ${accelerometer.acceleration.value}")
-//            _data.postValue(it)
-//        }
-//    }
-
-//    fun getValues() = accelerometer.acceleration.value
+    private fun measureAcceleration() {
+        accelerometer.acceleration.value?.let {
+            Timber.d("Measured value: $it")
+            if (plotData) {
+                addEntry(it)
+            }
+            plotData = false
+        }
+    }
 
     fun createSet(axis: DataSet) = LineDataSet(null, selectDescription(axis = axis))
         .also {
@@ -131,12 +160,22 @@ constructor(
         DataSet.Z_AXIS -> Color.RED
     }
 
-    private fun createEntry(event: SensorEvent, measurement: ILineDataSet, number: Int) = Entry(
+    private fun createEntry(
+        acceleration: Acceleration,
+        measurement: ILineDataSet,
+        dataSet: DataSet
+    ) = Entry(
         measurement.entryCount.toFloat(),
-        event.values[number]
+        selectValue(acceleration, dataSet).toFloat()
     )
 
-    fun addEntry(event: SensorEvent) {
+    private fun selectValue(acceleration: Acceleration, dataSet: DataSet) = when (dataSet) {
+        DataSet.X_AXIS -> acceleration.x ?: 0.0
+        DataSet.Y_AXIS -> acceleration.y ?: 0.0
+        DataSet.Z_AXIS -> acceleration.z ?: 0.0
+    }
+
+    private fun addEntry(acceleration: Acceleration) {
         val data = mChart?.data
 
         data?.let {
@@ -150,9 +189,9 @@ constructor(
             val zMeasurement =
                 data.getDataSetByIndex(2) ?: createSet(DataSet.Z_AXIS).also { data.addDataSet(it) }
 
-            data.addEntry(createEntry(event, xMeasurement, 0), 0)
-            data.addEntry(createEntry(event, yMeasurement, 1), 1)
-            data.addEntry(createEntry(event, zMeasurement, 2), 2)
+            data.addEntry(createEntry(acceleration, xMeasurement, DataSet.X_AXIS), 0)
+            data.addEntry(createEntry(acceleration, yMeasurement, DataSet.Y_AXIS), 1)
+            data.addEntry(createEntry(acceleration, zMeasurement, DataSet.Z_AXIS), 2)
 
             data.notifyDataChanged()
 
@@ -175,7 +214,7 @@ constructor(
             while (true) {
                 plotData = true
                 try {
-                    Thread.sleep(10)
+                    Thread.sleep(THREAD_SLEEP_TIME)
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
