@@ -63,51 +63,6 @@ constructor(
         job = null
     }
 
-    fun initChart() {
-        // disable description text
-        mChart!!.description.isEnabled = false
-
-        // enable touch gestures
-        mChart!!.setTouchEnabled(false)
-
-        // enable scaling and dragging
-        mChart!!.isDragEnabled = false
-        mChart!!.setScaleEnabled(true)
-        mChart!!.setDrawGridBackground(true)
-
-        // if disabled, scaling can be done on x- and y-axis separately
-        mChart!!.setPinchZoom(true)
-
-        // set an alternative background color
-        mChart!!.setBackgroundColor(Color.WHITE)
-        val data = LineData()
-        data.setValueTextColor(Color.WHITE)
-
-        // add empty data
-        mChart!!.data = data
-
-        // get the legend (only possible after setting data)
-        val l = mChart!!.legend
-
-        // modify the legend ...
-        l.form = Legend.LegendForm.LINE
-        l.textColor = Color.BLACK
-        val xl = mChart!!.xAxis
-        xl.textColor = Color.WHITE
-        xl.setDrawGridLines(true)
-        xl.setAvoidFirstLastClipping(true)
-        xl.isEnabled = true
-        val leftAxis = mChart!!.axisLeft
-        leftAxis.textColor = Color.BLACK
-        leftAxis.setDrawGridLines(true)
-        leftAxis.axisMaximum = 18f
-        leftAxis.axisMinimum = -18f
-        leftAxis.setDrawGridLines(true)
-        val rightAxis = mChart!!.axisRight
-        rightAxis.isEnabled = false
-        mChart!!.setDrawBorders(true)
-    }
-
     fun startService() = sendCommandToService(ServiceActions.START_OR_RESUME)
         .also {
             accelerometer.initiateSensor(application)
