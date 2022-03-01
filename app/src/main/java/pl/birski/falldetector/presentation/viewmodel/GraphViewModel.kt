@@ -36,7 +36,6 @@ constructor(
     lateinit var accelerometer: Accelerometer
 
     private var thread: Thread? = null
-    var mChart: LineChart? = null
 
     private val _lineData = MutableLiveData<LineData?>()
     val lineData: LiveData<LineData?> get() = _lineData
@@ -46,19 +45,19 @@ constructor(
     private val GRAPH_UPDATE_SLEEP_TIME = 50L
     private val THREAD_SLEEP_TIME = 10L
 
-    private suspend fun updateGraph() {
+    private suspend fun updateGraph(lineData: LineData?) {
         stopGraphUpdates()
         job = MainScope().launch {
             while (true) {
-                measureAcceleration()
+                measureAcceleration(lineData = lineData)
                 delay(GRAPH_UPDATE_SLEEP_TIME)
             }
         }
     }
 
-    private fun runGraphUpdate() {
+    private fun runGraphUpdate(lineData: LineData?) {
         MainScope().launch {
-            updateGraph()
+            updateGraph(lineData = lineData)
         }
     }
 
@@ -67,10 +66,10 @@ constructor(
         job = null
     }
 
-    fun startService() = sendCommandToService(ServiceActions.START_OR_RESUME)
+    fun startService(lineData: LineData?) = sendCommandToService(ServiceActions.START_OR_RESUME)
         .also {
             accelerometer.initiateSensor(application)
-            runGraphUpdate()
+            runGraphUpdate(lineData = lineData)
         }
 
     fun stopService() = sendCommandToService(ServiceActions.STOP)
@@ -85,11 +84,11 @@ constructor(
             application.startService(it)
         }
 
-    private fun measureAcceleration() {
+    private fun measureAcceleration(lineData: LineData?) {
         accelerometer.acceleration.value?.let {
             Timber.d("Measured value: $it")
             if (plotData) {
-                addEntry(it)
+                addEntry(acceleration = it, lineData = lineData)
             }
             plotData = false
         }
@@ -134,8 +133,8 @@ constructor(
         DataSet.Z_AXIS -> acceleration.z ?: 0.0
     }
 
-    private fun addEntry(acceleration: Acceleration) {
-        val data = mChart?.data
+    private fun addEntry(acceleration: Acceleration, lineData: LineData?) {
+        val data = lineData
 
         data?.let {
 

@@ -21,14 +21,16 @@ class GraphFragment : Fragment() {
 
     private val viewModel: GraphViewModel by viewModels()
 
+    private val VISIBLE_X_RANGE_MAX = 150F
+    private val MAX_Y_AXIS_VALUE = 18F
+    private val MIN_Y_AXIS_VALUE = -18F
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
-
-        viewModel.mChart = binding.chart
 
         binding.chart.apply {
             // disable description text
@@ -67,8 +69,8 @@ class GraphFragment : Fragment() {
             val leftAxis = axisLeft
             leftAxis.textColor = Color.BLACK
             leftAxis.setDrawGridLines(true)
-            leftAxis.axisMaximum = 18f
-            leftAxis.axisMinimum = -18f
+            leftAxis.axisMaximum = MAX_Y_AXIS_VALUE
+            leftAxis.axisMinimum = MIN_Y_AXIS_VALUE
             leftAxis.setDrawGridLines(true)
             val rightAxis = axisRight
             rightAxis.isEnabled = false
@@ -76,7 +78,7 @@ class GraphFragment : Fragment() {
         }
 
         binding.start.setOnClickListener {
-            viewModel.startService()
+            viewModel.startService(binding.chart.lineData)
         }
 
         binding.stop.setOnClickListener {
@@ -87,7 +89,7 @@ class GraphFragment : Fragment() {
             feedMultiple()
             lineData.observe(viewLifecycleOwner) {
                 binding.chart.notifyDataSetChanged()
-                binding.chart.setVisibleXRangeMaximum(150f)
+                binding.chart.setVisibleXRangeMaximum(VISIBLE_X_RANGE_MAX)
                 it?.entryCount?.toFloat()?.let { count -> binding.chart.moveViewToX(count) }
             }
         }
