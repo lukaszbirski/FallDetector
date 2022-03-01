@@ -85,6 +85,11 @@ class GraphFragment : Fragment() {
 
         viewModel.apply {
             feedMultiple()
+            lineData.observe(viewLifecycleOwner) {
+                binding.chart.notifyDataSetChanged()
+                binding.chart.setVisibleXRangeMaximum(150f)
+                it?.entryCount?.toFloat()?.let { count -> binding.chart.moveViewToX(count) }
+            }
         }
 
         return binding.root

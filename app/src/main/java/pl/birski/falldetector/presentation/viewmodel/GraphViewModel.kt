@@ -3,9 +3,10 @@ package pl.birski.falldetector.presentation.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.graphics.Color
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -36,6 +37,9 @@ constructor(
 
     private var thread: Thread? = null
     var mChart: LineChart? = null
+
+    private val _lineData = MutableLiveData<LineData?>()
+    val lineData: LiveData<LineData?> get() = _lineData
 
     private var plotData = true
     private var job: Job? = null
@@ -91,7 +95,7 @@ constructor(
         }
     }
 
-    fun createSet(axis: DataSet) = LineDataSet(null, selectDescription(axis = axis))
+    private fun createSet(axis: DataSet) = LineDataSet(null, selectDescription(axis = axis))
         .also {
             it.axisDependency = YAxis.AxisDependency.LEFT
             it.lineWidth = 1f
@@ -149,15 +153,7 @@ constructor(
             data.addEntry(createEntry(acceleration, zMeasurement, DataSet.Z_AXIS), 2)
 
             data.notifyDataChanged()
-
-            // let the chart know it's data has changed
-            mChart!!.notifyDataSetChanged()
-
-            // limit the number of visible entries
-            mChart!!.setVisibleXRangeMaximum(150f)
-
-            // move to the latest entry
-            mChart!!.moveViewToX(data.entryCount.toFloat())
+            _lineData.postValue(data)
         }
     }
 
