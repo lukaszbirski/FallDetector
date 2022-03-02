@@ -6,8 +6,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import pl.birski.falldetector.presentation.BaseApplication
 import javax.inject.Singleton
+import pl.birski.falldetector.presentation.BaseApplication
 
 @Module
 @InstallIn(SingletonComponent::class)

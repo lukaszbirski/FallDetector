@@ -12,8 +12,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
 import pl.birski.falldetector.R
 import pl.birski.falldetector.data.Accelerometer
-import pl.birski.falldetector.presentation.MainActivity
 import pl.birski.falldetector.other.Constants
+import pl.birski.falldetector.presentation.MainActivity
 import pl.birski.falldetector.service.enum.ServiceActions
 
 @Module
