@@ -23,8 +23,8 @@ class GraphFragment : Fragment() {
     private val viewModel: GraphViewModel by viewModels()
 
     private val VISIBLE_X_RANGE_MAX = 150F
-    private val MAX_Y_AXIS_VALUE = 18F
-    private val MIN_Y_AXIS_VALUE = -18F
+    private val MAX_Y_AXIS_VALUE = 1.5F
+    private val MIN_Y_AXIS_VALUE = -1.5F
 
     override fun onCreateView(
         inflater: LayoutInflater,
