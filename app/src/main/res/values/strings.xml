@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">Fall Detector</string>
+
+    <!--    Notification starts here-->
     <string name="notification_title">Fall Detector is running</string>
+    <!--    Notification ends here-->
+
+    <!--    Graph Fragment starts here-->
+    <string name="graph_fragment_button_start_text">Start</string>
+    <string name="graph_fragment_button_stop_text">Stop</string>
+    <string name="graph_fragment_chip_acc_text">ACC.</string>
+    <string name="graph_fragment_chip_delta_text">\u0394</string>
+    <string name="graph_fragment_x_axis_acc_text">X-axis acceleration</string>
+    <string name="graph_fragment_y_axis_acc_text">Y-axis acceleration</string>
+    <string name="graph_fragment_z_axis_acc_text">Z-axis acceleration</string>
+    <!--    Graph Fragment ends here-->
+
 </resources>

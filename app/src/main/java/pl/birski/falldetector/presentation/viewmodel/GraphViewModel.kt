@@ -6,7 +6,6 @@ import android.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -18,7 +17,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pl.birski.falldetector.R
 import pl.birski.falldetector.data.Accelerometer
+import pl.birski.falldetector.data.Normalizer
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.DataSet
@@ -29,21 +30,24 @@ import timber.log.Timber
 class GraphViewModel
 @Inject
 constructor(
-    private val application: Application
+    private val application: Application,
+    private val normalizer: Normalizer
 ) : ViewModel() {
 
     @Inject
     lateinit var accelerometer: Accelerometer
-
-    private var thread: Thread? = null
 
     private val _lineData = MutableLiveData<LineData?>()
     val lineData: LiveData<LineData?> get() = _lineData
 
     private var plotData = true
     private var job: Job? = null
+    private var thread: Thread? = null
+
     private val GRAPH_UPDATE_SLEEP_TIME = 50L
     private val THREAD_SLEEP_TIME = 10L
+
+    private var isNormalized = false
 
     private suspend fun updateGraph(lineData: LineData?) {
         stopGraphUpdates()
@@ -88,7 +92,10 @@ constructor(
         accelerometer.acceleration.value?.let {
             Timber.d("Measured value: $it")
             if (plotData) {
-                addEntry(acceleration = it, lineData = lineData)
+                addEntry(
+                    acceleration = if (isNormalized) normalizer.normalize(it) else it,
+                    lineData = lineData
+                )
             }
             plotData = false
         }
@@ -107,9 +114,12 @@ constructor(
         }
 
     private fun selectDescription(axis: DataSet) = when (axis) {
-        DataSet.X_AXIS -> "X-axis acceleration"
-        DataSet.Y_AXIS -> "Y-axis acceleration"
-        DataSet.Z_AXIS -> "Z-axis acceleration"
+        DataSet.X_AXIS ->
+            application.applicationContext.getString(R.string.graph_fragment_x_axis_acc_text)
+        DataSet.Y_AXIS ->
+            application.applicationContext.getString(R.string.graph_fragment_y_axis_acc_text)
+        DataSet.Z_AXIS ->
+            application.applicationContext.getString(R.string.graph_fragment_z_axis_acc_text)
     }
 
     private fun selectLineColor(axis: DataSet) = when (axis) {
@@ -171,5 +181,9 @@ constructor(
             }
         }
         thread!!.start()
+    }
+
+    fun selectChip(isDeltaSelected: Boolean) {
+        isNormalized = isDeltaSelected
     }
 }

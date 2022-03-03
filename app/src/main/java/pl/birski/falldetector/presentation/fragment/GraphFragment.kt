@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.LineData
+import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.databinding.FragmentGraphBinding
 import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
@@ -22,8 +24,8 @@ class GraphFragment : Fragment() {
     private val viewModel: GraphViewModel by viewModels()
 
     private val VISIBLE_X_RANGE_MAX = 150F
-    private val MAX_Y_AXIS_VALUE = 18F
-    private val MIN_Y_AXIS_VALUE = -18F
+    private val MAX_Y_AXIS_VALUE = 1.5F
+    private val MIN_Y_AXIS_VALUE = -1.5F
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,7 +34,41 @@ class GraphFragment : Fragment() {
     ): View? {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
-        binding.chart.apply {
+        setChart(binding.chart)
+        checkChip(binding.accChip)
+
+        binding.start.setOnClickListener {
+            viewModel.startService(binding.chart.lineData)
+        }
+
+        binding.stop.setOnClickListener {
+            viewModel.stopService()
+        }
+
+        binding.chipGroup.setOnCheckedChangeListener { _, id ->
+            viewModel.selectChip(isDeltaChipSelected(id))
+        }
+
+        viewModel.apply {
+            feedMultiple()
+
+            lineData.observe(viewLifecycleOwner) {
+                binding.chart.notifyDataSetChanged()
+                binding.chart.setVisibleXRangeMaximum(VISIBLE_X_RANGE_MAX)
+                it?.entryCount?.toFloat()?.let { count -> binding.chart.moveViewToX(count) }
+            }
+        }
+
+        return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+    private fun setChart(chart: LineChart) {
+        chart.apply {
             // disable description text
             description.isEnabled = false
 
@@ -76,24 +112,16 @@ class GraphFragment : Fragment() {
             rightAxis.isEnabled = false
             setDrawBorders(true)
         }
+    }
 
-        binding.start.setOnClickListener {
-            viewModel.startService(binding.chart.lineData)
-        }
+    private fun checkChip(chip: Chip) {
+        // in default ACC Chip is checked
+        chip.isChecked = true
+    }
 
-        binding.stop.setOnClickListener {
-            viewModel.stopService()
-        }
-
-        viewModel.apply {
-            feedMultiple()
-            lineData.observe(viewLifecycleOwner) {
-                binding.chart.notifyDataSetChanged()
-                binding.chart.setVisibleXRangeMaximum(VISIBLE_X_RANGE_MAX)
-                it?.entryCount?.toFloat()?.let { count -> binding.chart.moveViewToX(count) }
-            }
-        }
-
-        return binding.root
+    private fun isDeltaChipSelected(id: Int) = when (id) {
+        binding.accChip.id -> false
+        binding.deltaChip.id -> true
+        else -> false
     }
 }

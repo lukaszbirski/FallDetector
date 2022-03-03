@@ -24,7 +24,7 @@ class Accelerometer @Inject constructor() : SensorEventListener {
                 "y: ${event?.values?.get(1)}, " +
                 "z: ${event?.values?.get(2)}"
         )
-        acceleration.value = getAcceleration(event)
+        acceleration.value = event?.let { getAcceleration(it) }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -43,9 +43,9 @@ class Accelerometer @Inject constructor() : SensorEventListener {
         manager.unregisterListener(this)
     }
 
-    private fun getAcceleration(event: SensorEvent?) = Acceleration(
-        event?.values?.get(0)?.toDouble(),
-        event?.values?.get(1)?.toDouble(),
-        event?.values?.get(2)?.toDouble()
+    private fun getAcceleration(event: SensorEvent) = Acceleration(
+        (event.values[0].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
+        (event.values[1].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
+        (event.values[2].div(SensorManager.STANDARD_GRAVITY)).toDouble()
     )
 }
