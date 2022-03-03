@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.LineData
+import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.databinding.FragmentGraphBinding
 import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
@@ -34,6 +35,7 @@ class GraphFragment : Fragment() {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
         setChart(binding.chart)
+        checkChip(binding.accChip)
 
         binding.start.setOnClickListener {
             viewModel.startService(binding.chart.lineData)
@@ -54,16 +56,6 @@ class GraphFragment : Fragment() {
                 binding.chart.notifyDataSetChanged()
                 binding.chart.setVisibleXRangeMaximum(VISIBLE_X_RANGE_MAX)
                 it?.entryCount?.toFloat()?.let { count -> binding.chart.moveViewToX(count) }
-            }
-
-            isDeltaChipSelected.observe(viewLifecycleOwner) {
-                if (it) {
-                    binding.accChip.isChecked = false
-                    binding.deltaChip.isChecked = true
-                } else {
-                    binding.accChip.isChecked = true
-                    binding.deltaChip.isChecked = false
-                }
             }
         }
 
@@ -120,6 +112,11 @@ class GraphFragment : Fragment() {
             rightAxis.isEnabled = false
             setDrawBorders(true)
         }
+    }
+
+    private fun checkChip(chip: Chip) {
+        // in default ACC Chip is checked
+        chip.isChecked = true
     }
 
     private fun isDeltaChipSelected(id: Int) = when (id) {

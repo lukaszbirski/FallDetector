@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
 import pl.birski.falldetector.data.Accelerometer
+import pl.birski.falldetector.data.Normalizer
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.DataSet
@@ -29,28 +30,24 @@ import timber.log.Timber
 class GraphViewModel
 @Inject
 constructor(
-    private val application: Application
+    private val application: Application,
+    private val normalizer: Normalizer
 ) : ViewModel() {
 
     @Inject
     lateinit var accelerometer: Accelerometer
 
-    private var thread: Thread? = null
-
     private val _lineData = MutableLiveData<LineData?>()
     val lineData: LiveData<LineData?> get() = _lineData
 
-    private val _isDeltaChipSelected = MutableLiveData<Boolean>()
-    val isDeltaChipSelected: LiveData<Boolean> get() = _isDeltaChipSelected
-
     private var plotData = true
     private var job: Job? = null
+    private var thread: Thread? = null
+
     private val GRAPH_UPDATE_SLEEP_TIME = 50L
     private val THREAD_SLEEP_TIME = 10L
 
-    init {
-        _isDeltaChipSelected.postValue(false)
-    }
+    private var isNormalized = false
 
     private suspend fun updateGraph(lineData: LineData?) {
         stopGraphUpdates()
@@ -95,7 +92,10 @@ constructor(
         accelerometer.acceleration.value?.let {
             Timber.d("Measured value: $it")
             if (plotData) {
-                addEntry(acceleration = it, lineData = lineData)
+                addEntry(
+                    acceleration = if (isNormalized) normalizer.normalize(it) else it,
+                    lineData = lineData
+                )
             }
             plotData = false
         }
@@ -184,6 +184,6 @@ constructor(
     }
 
     fun selectChip(isDeltaSelected: Boolean) {
-        _isDeltaChipSelected.postValue(isDeltaSelected)
+        isNormalized = isDeltaSelected
     }
 }
