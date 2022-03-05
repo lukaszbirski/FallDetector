@@ -9,8 +9,12 @@ class Normalizer {
     private var previousZ = 0.0
 
     fun normalize(acceleration: Acceleration): Acceleration {
+
         val normalized = Acceleration(
-            acceleration.x - previousX, acceleration.y - previousY, acceleration.z - previousZ
+            acceleration.x - previousX,
+            acceleration.y - previousY,
+            acceleration.z - previousZ,
+            acceleration.timeStamp
         )
         previousX = acceleration.x
         previousY = acceleration.y

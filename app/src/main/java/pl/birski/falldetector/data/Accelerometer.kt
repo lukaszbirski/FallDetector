@@ -5,6 +5,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import javax.inject.Inject
@@ -21,33 +22,29 @@ class Accelerometer @Inject constructor() : SensorEventListener {
     @Inject
     lateinit var stabilizer: Stabilizer
 
-    val buffers: Buffers = Buffers(Constants.BUFFER_COUNT, Constants.N, 0, Double.NaN)
-
-    private var anteX: Double = Double.NaN
-    private var anteY: Double = Double.NaN
-    private var anteZ: Double = Double.NaN
-    private var anteTime: Long = 0
-    private var regular: Long = 0
-
     // Android sampling is irregular, thus the signal is (linearly) resampled at 50 Hz
     private fun resample(postTime: Long, postX: Double, postY: Double, postZ: Double) {
-        if (0L == anteTime) {
-            regular = postTime + Constants.INTERVAL_MS
+        if (0L == stabilizer.anteTime) {
+            stabilizer.regular = postTime + Constants.INTERVAL_MS
             return
         }
-        while (regular < postTime) {
-            val x = stabilizer.linearRecalculation(anteTime, anteX, postTime, postX, regular)
-            val y = stabilizer.linearRecalculation(anteTime, anteY, postTime, postY, regular)
-            val z = stabilizer.linearRecalculation(anteTime, anteZ, postTime, postZ, regular)
-            android.util.Log.d("testuje", "resample: x: $x, y: $y, z: $z")
+        while (stabilizer.regular < postTime) {
+            val x = stabilizer.linearRecalculation(stabilizer.anteTime, stabilizer.anteX, postTime, postX, stabilizer.regular)
+            val y = stabilizer.linearRecalculation(stabilizer.anteTime, stabilizer.anteY, postTime, postY, stabilizer.regular)
+            val z = stabilizer.linearRecalculation(stabilizer.anteTime, stabilizer.anteZ, postTime, postZ, stabilizer.regular)
+
+            Log.d("testuje", "resample: anteX ${stabilizer.anteX}")
+            Log.d("testuje", "resample: postX $postX")
+            Log.d("testuje", "resample: x $x")
+            Log.d("testuje", "resample: --------------------------")
             // sending signal should be here somewhere
-            buffers.position = (buffers.position + 1) % Constants.N
-            regular += Constants.INTERVAL_MS
+            stabilizer.buffers.position = (stabilizer.buffers.position + 1) % Constants.N
+            stabilizer.regular += Constants.INTERVAL_MS
         }
     }
 
     private fun protect(postTime: Long, postX: Double, postY: Double, postZ: Double) {
-        synchronized(buffers) {
+        synchronized(stabilizer.buffers) {
             resample(postTime, postX, postY, postZ)
         }
     }
@@ -71,10 +68,10 @@ class Accelerometer @Inject constructor() : SensorEventListener {
             val postY = event.values[1].toDouble() / SensorManager.STANDARD_GRAVITY
             val postZ = event.values[2].toDouble() / SensorManager.STANDARD_GRAVITY
             protect(postTime, postX, postY, postZ)
-            anteTime = postTime
-            anteX = postX
-            anteY = postY
-            anteZ = postZ
+            stabilizer.anteTime = postTime
+            stabilizer.anteX = postX
+            stabilizer.anteY = postY
+            stabilizer.anteZ = postZ
             android.util.Log.d("testuje", "onSensorChanged: x: $postX, y: $postY")
         }
     }
@@ -86,6 +83,7 @@ class Accelerometer @Inject constructor() : SensorEventListener {
     private fun getAcceleration(event: SensorEvent) = Acceleration(
         (event.values[0].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
         (event.values[1].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
-        (event.values[2].div(SensorManager.STANDARD_GRAVITY)).toDouble()
+        (event.values[2].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
+        event.timestamp / 1000000
     )
 }
