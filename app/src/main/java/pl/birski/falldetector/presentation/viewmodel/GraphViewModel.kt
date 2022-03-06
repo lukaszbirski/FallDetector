@@ -18,8 +18,8 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
-import pl.birski.falldetector.data.Accelerometer
 import pl.birski.falldetector.data.Normalizer
+import pl.birski.falldetector.data.Sensor
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.DataSet
@@ -35,7 +35,7 @@ constructor(
 ) : ViewModel() {
 
     @Inject
-    lateinit var accelerometer: Accelerometer
+    lateinit var sensor: Sensor
 
     private val _lineData = MutableLiveData<LineData?>()
     val lineData: LiveData<LineData?> get() = _lineData
@@ -72,13 +72,13 @@ constructor(
 
     fun startService(lineData: LineData?) = sendCommandToService(ServiceActions.START_OR_RESUME)
         .also {
-            accelerometer.initiateSensor(application)
+            sensor.initiateSensor(application)
             runGraphUpdate(lineData = lineData)
         }
 
     fun stopService() = sendCommandToService(ServiceActions.STOP)
         .also {
-            accelerometer.stopMeasurement()
+            sensor.stopMeasurement()
             stopGraphUpdates()
         }
 
@@ -89,7 +89,7 @@ constructor(
         }
 
     private fun measureAcceleration(lineData: LineData?) {
-        accelerometer.acceleration.value?.let {
+        sensor.acceleration.value?.let {
             Timber.d("Measured value: $it")
             if (plotData) {
                 addEntry(
