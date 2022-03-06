@@ -21,4 +21,6 @@ class Stabilizer {
     ): Double {
         return ante + (post - ante) * (now - before).toDouble() / (after - before).toDouble()
     }
+
+    inner class Buffers(count: Int, size: Int, var position: Int, value: Double)
 }

@@ -29,9 +29,15 @@ class Accelerometer @Inject constructor() : SensorEventListener {
             return
         }
         while (stabilizer.regular < postTime) {
-            val x = stabilizer.linearRecalculation(stabilizer.anteTime, stabilizer.anteX, postTime, postX, stabilizer.regular)
-            val y = stabilizer.linearRecalculation(stabilizer.anteTime, stabilizer.anteY, postTime, postY, stabilizer.regular)
-            val z = stabilizer.linearRecalculation(stabilizer.anteTime, stabilizer.anteZ, postTime, postZ, stabilizer.regular)
+            val x = stabilizer.linearRecalculation(
+                stabilizer.anteTime, stabilizer.anteX, postTime, postX, stabilizer.regular
+            )
+            val y = stabilizer.linearRecalculation(
+                stabilizer.anteTime, stabilizer.anteY, postTime, postY, stabilizer.regular
+            )
+            val z = stabilizer.linearRecalculation(
+                stabilizer.anteTime, stabilizer.anteZ, postTime, postZ, stabilizer.regular
+            )
 
             Log.d("testuje", "resample: anteX ${stabilizer.anteX}")
             Log.d("testuje", "resample: postX $postX")
