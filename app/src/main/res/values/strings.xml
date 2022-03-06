@@ -13,6 +13,11 @@
     <string name="graph_fragment_x_axis_acc_text">X-axis acceleration</string>
     <string name="graph_fragment_y_axis_acc_text">Y-axis acceleration</string>
     <string name="graph_fragment_z_axis_acc_text">Z-axis acceleration</string>
+    <string name="graph_fragment_angular_velocity_text">Angular velocity values:</string>
+    <string name="graph_fragment_acceleration_text">Acceleration values:</string>
+    <string name="graph_fragment_angular_velocity_x_value_string">X : %s rad/s</string>
+    <string name="graph_fragment_angular_velocity_y_value_string">Y : %s rad/s</string>
+    <string name="graph_fragment_angular_velocity_z_value_string">Z : %s rad/s</string>
     <!--    Graph Fragment ends here-->
 
 </resources>

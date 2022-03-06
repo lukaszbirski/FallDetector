@@ -14,6 +14,7 @@ import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.databinding.FragmentGraphBinding
 import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
+import pl.birski.falldetector.service.enum.DataSet
 
 @AndroidEntryPoint
 class GraphFragment : Fragment() {
@@ -36,6 +37,7 @@ class GraphFragment : Fragment() {
 
         setChart(binding.chart)
         checkChip(binding.accChip)
+        setInitialVelocities()
 
         binding.start.setOnClickListener {
             viewModel.startService(binding.chart.lineData)
@@ -56,6 +58,14 @@ class GraphFragment : Fragment() {
                 binding.chart.notifyDataSetChanged()
                 binding.chart.setVisibleXRangeMaximum(VISIBLE_X_RANGE_MAX)
                 it?.entryCount?.toFloat()?.let { count -> binding.chart.moveViewToX(count) }
+            }
+
+            velocity.observe(viewLifecycleOwner) {
+                it?.let {
+                    binding.velocityXTextView.text = formatVelocityValue(DataSet.X_AXIS, it.x)
+                    binding.velocityYTextView.text = formatVelocityValue(DataSet.Y_AXIS, it.y)
+                    binding.velocityZTextView.text = formatVelocityValue(DataSet.Z_AXIS, it.z)
+                }
             }
         }
 
@@ -123,5 +133,11 @@ class GraphFragment : Fragment() {
         binding.accChip.id -> false
         binding.deltaChip.id -> true
         else -> false
+    }
+
+    private fun setInitialVelocities() {
+        binding.velocityXTextView.text = viewModel.formatVelocityValue(DataSet.X_AXIS, 0.0)
+        binding.velocityYTextView.text = viewModel.formatVelocityValue(DataSet.Y_AXIS, 0.0)
+        binding.velocityZTextView.text = viewModel.formatVelocityValue(DataSet.Z_AXIS, 0.0)
     }
 }

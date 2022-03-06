@@ -21,6 +21,7 @@ import pl.birski.falldetector.R
 import pl.birski.falldetector.data.Normalizer
 import pl.birski.falldetector.data.Sensor
 import pl.birski.falldetector.model.Acceleration
+import pl.birski.falldetector.model.AngularVelocity
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.DataSet
 import pl.birski.falldetector.service.enum.ServiceActions
@@ -39,6 +40,9 @@ constructor(
 
     private val _lineData = MutableLiveData<LineData?>()
     val lineData: LiveData<LineData?> get() = _lineData
+
+    private val _velocity = MutableLiveData<AngularVelocity?>()
+    val velocity: LiveData<AngularVelocity?> get() = _velocity
 
     private var plotData = true
     private var job: Job? = null
@@ -90,7 +94,7 @@ constructor(
 
     private fun measureAcceleration(lineData: LineData?) {
         sensor.acceleration.value?.let {
-            Timber.d("Measured value: $it")
+            Timber.d("Measured acceleration value is: $it")
             if (plotData) {
                 addEntry(
                     acceleration = if (isNormalized) normalizer.normalize(it) else it,
@@ -98,6 +102,10 @@ constructor(
                 )
             }
             plotData = false
+        }
+        sensor.angularVelocity.value?.let {
+            Timber.d("Measured angular velocity is: $it")
+            _velocity.postValue(it)
         }
     }
 
@@ -115,11 +123,11 @@ constructor(
 
     private fun selectDescription(axis: DataSet) = when (axis) {
         DataSet.X_AXIS ->
-            application.applicationContext.getString(R.string.graph_fragment_x_axis_acc_text)
+            application.getString(R.string.graph_fragment_x_axis_acc_text)
         DataSet.Y_AXIS ->
-            application.applicationContext.getString(R.string.graph_fragment_y_axis_acc_text)
+            application.getString(R.string.graph_fragment_y_axis_acc_text)
         DataSet.Z_AXIS ->
-            application.applicationContext.getString(R.string.graph_fragment_z_axis_acc_text)
+            application.getString(R.string.graph_fragment_z_axis_acc_text)
     }
 
     private fun selectLineColor(axis: DataSet) = when (axis) {
@@ -186,4 +194,24 @@ constructor(
     fun selectChip(isDeltaSelected: Boolean) {
         isNormalized = isDeltaSelected
     }
+
+    fun formatVelocityValue(dataSet: DataSet, value: Double): String = when (dataSet) {
+        DataSet.X_AXIS -> {
+            application.getString(
+                R.string.graph_fragment_angular_velocity_x_value_string, round(3, value)
+            )
+        }
+        DataSet.Y_AXIS -> {
+            application.getString(
+                R.string.graph_fragment_angular_velocity_y_value_string, round(3, value)
+            )
+        }
+        DataSet.Z_AXIS -> {
+            application.getString(
+                R.string.graph_fragment_angular_velocity_z_value_string, round(3, value)
+            )
+        }
+    }
+
+    private fun round(decimals: Int = 2, number: Number) = "%.${decimals}f".format(number).trim()
 }
