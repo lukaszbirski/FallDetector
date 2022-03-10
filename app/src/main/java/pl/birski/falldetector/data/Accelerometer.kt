@@ -5,7 +5,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import javax.inject.Inject
@@ -35,13 +34,11 @@ class Accelerometer @Inject constructor() : SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        val acceleration = getAcceleration(event = event)
-        stabilizer.stabilizeSignal(acceleration)
-        Log.d(
-            "testuje",
-            "onSensorChanged: " +
-                "x: ${acceleration.timeStamp}"
-        )
+        val rawAcceleration = getAcceleration(event = event)
+        val resampledAcceleration = stabilizer.stabilizeSignal(rawAcceleration)
+        Timber.d("Current acceleration is equal to: $rawAcceleration")
+        Timber.d("Resampled acceleration is equal to: $resampledAcceleration")
+        acceleration.value = rawAcceleration
     }
 
     fun stopMeasurement() {
