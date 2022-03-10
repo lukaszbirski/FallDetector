@@ -8,47 +8,47 @@ class Stabilizer {
 
     private val buffers: Buffers = Buffers(Constants.BUFFER_COUNT, Constants.N, 0, Double.NaN)
 
-    private var nextAcceleration: Acceleration = Acceleration(Double.NaN, Double.NaN, Double.NaN, 0)
+    private var currentAcc: Acceleration = Acceleration(Double.NaN, Double.NaN, Double.NaN, 0)
     private var regular: Long = 0
 
-    fun stabilizeSignal(acceleration: Acceleration) {
+    fun stabilizeSignal(previousAcc: Acceleration) {
         synchronized(buffers) {
-            resample(acceleration = acceleration)
+            resample(previousAcc = previousAcc)
         }
-        nextAcceleration = acceleration
+        currentAcc = previousAcc
     }
 
     // Android sampling is irregular, hence signal is (linearly) resampled at 50 Hz
-    private fun resample(acceleration: Acceleration) {
-        if (0L == nextAcceleration.timeStamp) {
-            regular = acceleration.timeStamp + Constants.INTERVAL_MILISEC
+    private fun resample(previousAcc: Acceleration) {
+        if (0L == currentAcc.timeStamp) {
+            regular = previousAcc.timeStamp + Constants.INTERVAL_MILISEC
             return
         }
-        while (regular < acceleration.timeStamp) {
+        while (regular < previousAcc.timeStamp) {
             val x = linearRecalculation(
-                nextAcceleration.timeStamp,
-                nextAcceleration.x,
-                acceleration.timeStamp,
-                acceleration.x,
+                currentAcc.timeStamp,
+                currentAcc.x,
+                previousAcc.timeStamp,
+                previousAcc.x,
                 regular
             )
             val y = linearRecalculation(
-                nextAcceleration.timeStamp,
-                nextAcceleration.y,
-                acceleration.timeStamp,
-                acceleration.x,
+                currentAcc.timeStamp,
+                currentAcc.y,
+                previousAcc.timeStamp,
+                previousAcc.y,
                 regular
             )
             val z = linearRecalculation(
-                nextAcceleration.timeStamp,
-                nextAcceleration.z,
-                acceleration.timeStamp,
-                acceleration.x,
+                currentAcc.timeStamp,
+                currentAcc.z,
+                previousAcc.timeStamp,
+                previousAcc.z,
                 regular
             )
 
-            Log.d("testuje", "resample: anteX ${nextAcceleration.x}")
-            Log.d("testuje", "resample: postX ${acceleration.x}")
+            Log.d("testuje", "resample: anteX ${currentAcc.x}")
+            Log.d("testuje", "resample: postX ${previousAcc.x}")
             Log.d("testuje", "resample: x $x")
             Log.d("testuje", "resample: --------------------------")
             // TODO sending signal should be here somewhere
