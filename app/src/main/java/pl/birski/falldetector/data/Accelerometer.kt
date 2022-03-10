@@ -22,36 +22,9 @@ class Accelerometer @Inject constructor() : SensorEventListener {
     @Inject
     lateinit var stabilizer: Stabilizer
 
-    // Android sampling is irregular, thus the signal is (linearly) resampled at 50 Hz
-    private fun resample(postTime: Long, postX: Double, postY: Double, postZ: Double) {
-        if (0L == stabilizer.anteTime) {
-            stabilizer.regular = postTime + Constants.INTERVAL_MS
-            return
-        }
-        while (stabilizer.regular < postTime) {
-            val x = stabilizer.linearRecalculation(
-                stabilizer.anteTime, stabilizer.anteX, postTime, postX, stabilizer.regular
-            )
-            val y = stabilizer.linearRecalculation(
-                stabilizer.anteTime, stabilizer.anteY, postTime, postY, stabilizer.regular
-            )
-            val z = stabilizer.linearRecalculation(
-                stabilizer.anteTime, stabilizer.anteZ, postTime, postZ, stabilizer.regular
-            )
-
-            Log.d("testuje", "resample: anteX ${stabilizer.anteX}")
-            Log.d("testuje", "resample: postX $postX")
-            Log.d("testuje", "resample: x $x")
-            Log.d("testuje", "resample: --------------------------")
-            // sending signal should be here somewhere
-            stabilizer.buffers.position = (stabilizer.buffers.position + 1) % Constants.N
-            stabilizer.regular += Constants.INTERVAL_MS
-        }
-    }
-
     private fun protect(postTime: Long, postX: Double, postY: Double, postZ: Double) {
         synchronized(stabilizer.buffers) {
-            resample(postTime, postX, postY, postZ)
+            stabilizer.resample(postTime, postX, postY, postZ)
         }
     }
 
