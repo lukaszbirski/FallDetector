@@ -31,7 +31,7 @@ class Accelerometer @Inject constructor() : SensorEventListener {
     fun initiateSensor(context: Context) {
         manager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val accelerometer: Sensor = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        manager.registerListener(this, accelerometer, Constants.INTERVAL_MS * 1000)
+        manager.registerListener(this, accelerometer, Constants.INTERVAL_MILISEC * 1000)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -39,10 +39,6 @@ class Accelerometer @Inject constructor() : SensorEventListener {
         stabilizer.stabilizeSignal(
             acceleration.timeStamp, acceleration.x, acceleration.y, acceleration.z
         )
-        stabilizer.anteTime = acceleration.timeStamp
-        stabilizer.anteX = acceleration.x
-        stabilizer.anteY = acceleration.y
-        stabilizer.anteZ = acceleration.z
         Log.d(
             "testuje",
             "onSensorChanged: " +

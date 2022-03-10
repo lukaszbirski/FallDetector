@@ -17,12 +17,16 @@ class Stabilizer {
         synchronized(buffers) {
             resample(postTime, postX, postY, postZ)
         }
+        anteTime = postTime
+        anteX = postX
+        anteY = postY
+        anteZ = postZ
     }
 
-    // Android sampling is irregular, signal is (linearly) resampled at 50 Hz
+    // Android sampling is irregular, hence signal is (linearly) resampled at 50 Hz
     private fun resample(postTime: Long, postX: Double, postY: Double, postZ: Double) {
         if (0L == anteTime) {
-            regular = postTime + Constants.INTERVAL_MS
+            regular = postTime + Constants.INTERVAL_MILISEC
             return
         }
         while (regular < postTime) {
@@ -34,9 +38,9 @@ class Stabilizer {
             Log.d("testuje", "resample: postX $postX")
             Log.d("testuje", "resample: x $x")
             Log.d("testuje", "resample: --------------------------")
-            // sending signal should be here somewhere
+            // TODO sending signal should be here somewhere
             buffers.position = (buffers.position + 1) % Constants.N
-            regular += Constants.INTERVAL_MS
+            regular += Constants.INTERVAL_MILISEC
         }
     }
 
