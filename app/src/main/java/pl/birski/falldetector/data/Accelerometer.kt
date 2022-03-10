@@ -22,12 +22,6 @@ class Accelerometer @Inject constructor() : SensorEventListener {
     @Inject
     lateinit var stabilizer: Stabilizer
 
-    private fun protect(postTime: Long, postX: Double, postY: Double, postZ: Double) {
-        synchronized(stabilizer.buffers) {
-            stabilizer.resample(postTime, postX, postY, postZ)
-        }
-    }
-
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         if (Sensor.TYPE_ACCELEROMETER == sensor?.type) {
             Timber.d("Accuracy of the accelerometer is now equal to $accuracy")
@@ -41,18 +35,20 @@ class Accelerometer @Inject constructor() : SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        if (Sensor.TYPE_ACCELEROMETER == event.sensor.type) {
-            val postTime: Long = event.timestamp / 1000000
-            val postX = event.values[0].toDouble() / SensorManager.STANDARD_GRAVITY
-            val postY = event.values[1].toDouble() / SensorManager.STANDARD_GRAVITY
-            val postZ = event.values[2].toDouble() / SensorManager.STANDARD_GRAVITY
-            protect(postTime, postX, postY, postZ)
-            stabilizer.anteTime = postTime
-            stabilizer.anteX = postX
-            stabilizer.anteY = postY
-            stabilizer.anteZ = postZ
-            android.util.Log.d("testuje", "onSensorChanged: x: $postX, y: $postY")
-        }
+        val acceleration = getAcceleration(event = event)
+        stabilizer.stabilizeSignal(
+            acceleration.timeStamp, acceleration.x, acceleration.y, acceleration.z
+        )
+        stabilizer.anteTime = acceleration.timeStamp
+        stabilizer.anteX = acceleration.x
+        stabilizer.anteY = acceleration.y
+        stabilizer.anteZ = acceleration.z
+        Log.d(
+            "testuje",
+            "onSensorChanged: " +
+                "x: ${acceleration.x}, " +
+                "y: ${acceleration.y}"
+        )
     }
 
     fun stopMeasurement() {
