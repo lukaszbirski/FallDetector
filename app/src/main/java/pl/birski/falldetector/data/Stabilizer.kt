@@ -9,7 +9,7 @@ class Stabilizer {
     private val buffers: Buffers = Buffers(Constants.BUFFER_COUNT, Constants.N, 0, Double.NaN)
 
     private var currentAcc: Acceleration = Acceleration(Double.NaN, Double.NaN, Double.NaN, 0)
-    private var regular: Long = 0
+    private var timeStamp: Long = 0
 
     fun stabilizeSignal(previousAcc: Acceleration) {
         synchronized(buffers) {
@@ -21,39 +21,40 @@ class Stabilizer {
     // Android sampling is irregular, hence signal is (linearly) resampled at 50 Hz
     private fun resample(previousAcc: Acceleration) {
         if (0L == currentAcc.timeStamp) {
-            regular = previousAcc.timeStamp + Constants.INTERVAL_MILISEC
+            timeStamp = previousAcc.timeStamp + Constants.INTERVAL_MILISEC
             return
         }
-        while (regular < previousAcc.timeStamp) {
+        while (timeStamp < previousAcc.timeStamp) {
             val x = linearRecalculation(
                 currentAcc.timeStamp,
                 currentAcc.x,
                 previousAcc.timeStamp,
                 previousAcc.x,
-                regular
+                timeStamp
             )
             val y = linearRecalculation(
                 currentAcc.timeStamp,
                 currentAcc.y,
                 previousAcc.timeStamp,
                 previousAcc.y,
-                regular
+                timeStamp
             )
             val z = linearRecalculation(
                 currentAcc.timeStamp,
                 currentAcc.z,
                 previousAcc.timeStamp,
                 previousAcc.z,
-                regular
+                timeStamp
             )
 
-            Log.d("testuje", "resample: anteX ${currentAcc.x}")
-            Log.d("testuje", "resample: postX ${previousAcc.x}")
-            Log.d("testuje", "resample: x $x")
             Log.d("testuje", "resample: --------------------------")
+            Log.d("testuje", "resample: anteX ${currentAcc.timeStamp}")
+            Log.d("testuje", "resample: postX ${previousAcc.timeStamp}")
+            Log.d("testuje", "resample: x $timeStamp")
+
             // TODO sending signal should be here somewhere
             buffers.position = (buffers.position + 1) % Constants.N
-            regular += Constants.INTERVAL_MILISEC
+            timeStamp += Constants.INTERVAL_MILISEC
         }
     }
 

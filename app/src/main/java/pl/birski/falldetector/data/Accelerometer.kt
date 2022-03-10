@@ -40,8 +40,7 @@ class Accelerometer @Inject constructor() : SensorEventListener {
         Log.d(
             "testuje",
             "onSensorChanged: " +
-                "x: ${acceleration.x}, " +
-                "y: ${acceleration.y}"
+                "x: ${acceleration.timeStamp}"
         )
     }
 
