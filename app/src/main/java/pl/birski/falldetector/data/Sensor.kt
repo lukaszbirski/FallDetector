@@ -19,32 +19,32 @@ class Sensor @Inject constructor() : SensorEventListener {
     val acceleration: MutableState<Acceleration?> = mutableStateOf(null)
     val angularVelocity: MutableState<AngularVelocity?> = mutableStateOf(null)
 
-    override fun onSensorChanged(event: SensorEvent) {
-        when (event.sensor.type) {
-            Sensor.TYPE_ACCELEROMETER -> {
-                Timber.d(
-                    "Current acceleration is equal to " +
-                        "x: ${event?.values?.get(0)}, " +
-                        "y: ${event?.values?.get(1)}, " +
-                        "z: ${event?.values?.get(2)}"
-                )
-                acceleration.value = event?.let { getAcceleration(it) }
-            }
-            Sensor.TYPE_GYROSCOPE -> {
-                Timber.d(
-                    "Current angular velocity is equal to " +
-                        "x: ${event?.values?.get(0)}, " +
-                        "y: ${event?.values?.get(1)}, " +
-                        "z: ${event?.values?.get(2)}"
-                )
-                angularVelocity.value = event?.let { getVelocity(it) }
-            }
+    @Inject
+    lateinit var stabilizer: Stabilizer
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        when (sensor?.type) {
+            Sensor.TYPE_ACCELEROMETER ->
+                Timber.d("Accuracy of the accelerometer is now equal to $accuracy")
+            Sensor.TYPE_GYROSCOPE ->
+                Timber.d("Accuracy of the gyroscope is now equal to $accuracy")
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        if (Sensor.TYPE_ACCELEROMETER == sensor?.type) {
-            Timber.d("Accuracy of the accelerometer is now equal to $accuracy")
+    override fun onSensorChanged(event: SensorEvent) {
+        when (event.sensor.type) {
+            Sensor.TYPE_ACCELEROMETER -> {
+                val rawAcceleration = getAcceleration(event = event)
+                val resampledAcceleration = stabilizer.stabilizeSignal(rawAcceleration)
+                Timber.d("Current acceleration is equal to: $rawAcceleration")
+                Timber.d("Resampled acceleration is equal to: $resampledAcceleration")
+                acceleration.value = rawAcceleration
+            }
+            Sensor.TYPE_GYROSCOPE -> {
+                val rawVelocity = getVelocity(event = event)
+                Timber.d("Current angular velocity is equal to: $rawVelocity")
+                angularVelocity.value = rawVelocity
+            }
         }
     }
 
@@ -67,12 +67,14 @@ class Sensor @Inject constructor() : SensorEventListener {
     private fun getAcceleration(event: SensorEvent) = Acceleration(
         (event.values[0].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
         (event.values[1].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
-        (event.values[2].div(SensorManager.STANDARD_GRAVITY)).toDouble()
+        (event.values[2].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
+        event.timestamp / 1000000
     )
 
     private fun getVelocity(event: SensorEvent) = AngularVelocity(
         event.values[0].toDouble(),
         event.values[1].toDouble(),
-        event.values[2].toDouble()
+        event.values[2].toDouble(),
+        event.timestamp / 1000000
     )
 }
