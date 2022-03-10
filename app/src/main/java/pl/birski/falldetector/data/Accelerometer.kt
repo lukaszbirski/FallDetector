@@ -36,9 +36,7 @@ class Accelerometer @Inject constructor() : SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent) {
         val acceleration = getAcceleration(event = event)
-        stabilizer.stabilizeSignal(
-            acceleration.timeStamp, acceleration.x, acceleration.y, acceleration.z
-        )
+        stabilizer.stabilizeSignal(acceleration)
         Log.d(
             "testuje",
             "onSensorChanged: " +
