@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import javax.inject.Inject
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
+import pl.birski.falldetector.other.Constants
 import timber.log.Timber
 
 class Sensor @Inject constructor() : SensorEventListener {
@@ -53,10 +54,10 @@ class Sensor @Inject constructor() : SensorEventListener {
         val sensor: Sensor? = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         val gyroscope: Sensor? = manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
         sensor?.let {
-            manager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+            manager.registerListener(this, sensor, Constants.INTERVAL_MILISEC * 1000)
         }
         gyroscope?.let {
-            manager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL)
+            manager.registerListener(this, gyroscope, Constants.INTERVAL_MILISEC * 1000)
         }
     }
 
