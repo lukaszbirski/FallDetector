@@ -23,6 +23,8 @@ class Sensor @Inject constructor() : SensorEventListener {
     private var rawAcceleration = Acceleration(0.0, 0.0, 0.0, 0)
     private var rawVelocity = AngularVelocity(0.0, 0.0, 0.0, 0)
 
+    private val buffers: Buffers = Buffers(Constants.BUFFER_COUNT, Constants.N, 0, Double.NaN)
+
     @Inject
     lateinit var stabilizer: Stabilizer
 
@@ -41,8 +43,10 @@ class Sensor @Inject constructor() : SensorEventListener {
                 rawAcceleration = getAcceleration(event = event)
                 acceleration.value = rawAcceleration
                 Timber.d("Current acceleration is equal to: $rawAcceleration")
-                val resampledSignal = stabilizer.stabilizeSignal(rawAcceleration, rawVelocity)
+                val resampledSignal =
+                    stabilizer.stabilizeSignal(rawAcceleration, rawVelocity, buffers)
                 Timber.d("Resampled signal is equal to: $resampledSignal")
+                buffers.position = (buffers.position + 1) % Constants.N
             }
             Sensor.TYPE_GYROSCOPE -> {
                 rawVelocity = getVelocity(event = event)
@@ -81,4 +85,6 @@ class Sensor @Inject constructor() : SensorEventListener {
         event.values[2].toDouble(),
         event.timestamp / 1000000
     )
+
+    inner class Buffers(count: Int, size: Int, var position: Int, value: Double)
 }
