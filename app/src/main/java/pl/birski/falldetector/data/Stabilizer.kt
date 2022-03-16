@@ -2,17 +2,18 @@ package pl.birski.falldetector.data
 
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
+import pl.birski.falldetector.model.SensorData
 import pl.birski.falldetector.other.Constants
 
 class Stabilizer {
 
     private var timeStamp: Long = 0
 
-    private var currentAcceleration = Acceleration(Double.NaN, Double.NaN, Double.NaN, 0)
-    private var resampledAcceleration = Acceleration(Double.NaN, Double.NaN, Double.NaN, timeStamp)
+    private var currentAcceleration = Acceleration(0.0, 0.0, 0.0, timeStamp)
+    private var resampledAcceleration = Acceleration(0.0, 0.0, 0.0, timeStamp)
 
-    private var currentVelocity = AngularVelocity(Double.NaN, Double.NaN, Double.NaN, 0)
-    private var resampledVelocity = AngularVelocity(Double.NaN, Double.NaN, Double.NaN, timeStamp)
+    private var currentVelocity = AngularVelocity(0.0, 0.0, 0.0, 0)
+    private var resampledVelocity = AngularVelocity(0.0, 0.0, 0.0, timeStamp)
 
     fun stabilizeSignal(
         previousAcc: Acceleration,

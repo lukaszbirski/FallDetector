@@ -15,7 +15,11 @@ import timber.log.Timber
 
 class Sensor @Inject constructor() : SensorEventListener {
 
+    private val ALPHA = 0.09f // signal frequency is 50Hz and cut-off frequency is 5 Hz
+
     private lateinit var manager: SensorManager
+
+    private val buffers: Buffers = Buffers(Constants.BUFFER_COUNT, Constants.N, 0, Double.NaN)
 
     val acceleration: MutableState<Acceleration?> = mutableStateOf(null)
     val angularVelocity: MutableState<AngularVelocity?> = mutableStateOf(null)
@@ -23,10 +27,13 @@ class Sensor @Inject constructor() : SensorEventListener {
     private var rawAcceleration = Acceleration(0.0, 0.0, 0.0, 0)
     private var rawVelocity = AngularVelocity(0.0, 0.0, 0.0, 0)
 
-    private val buffers: Buffers = Buffers(Constants.BUFFER_COUNT, Constants.N, 0, Double.NaN)
+    private var filteredAcceleration = floatArrayOf(0.0f, 0.0f, 0.0f)
 
     @Inject
     lateinit var stabilizer: Stabilizer
+
+    @Inject
+    lateinit var filter: Filter
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         when (sensor?.type) {
@@ -40,7 +47,9 @@ class Sensor @Inject constructor() : SensorEventListener {
     override fun onSensorChanged(event: SensorEvent) {
         when (event.sensor.type) {
             Sensor.TYPE_ACCELEROMETER -> {
-                rawAcceleration = getAcceleration(event = event)
+                filteredAcceleration =
+                    filter.lowPassFilter(event.values.clone(), filteredAcceleration, ALPHA)
+                rawAcceleration = getAcceleration(event, filteredAcceleration)
                 acceleration.value = rawAcceleration
                 Timber.d("Current acceleration is equal to: $rawAcceleration")
                 val resampledSignal =
@@ -72,10 +81,10 @@ class Sensor @Inject constructor() : SensorEventListener {
         manager.unregisterListener(this)
     }
 
-    private fun getAcceleration(event: SensorEvent) = Acceleration(
-        (event.values[0].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
-        (event.values[1].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
-        (event.values[2].div(SensorManager.STANDARD_GRAVITY)).toDouble(),
+    private fun getAcceleration(event: SensorEvent, acceleration: FloatArray) = Acceleration(
+        acceleration[0].div(SensorManager.STANDARD_GRAVITY).toDouble(),
+        acceleration[1].div(SensorManager.STANDARD_GRAVITY).toDouble(),
+        acceleration[2].div(SensorManager.STANDARD_GRAVITY).toDouble(),
         event.timestamp / 1000000
     )
 
