@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import javax.inject.Inject
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
+import pl.birski.falldetector.other.Constants
 import timber.log.Timber
 
 class Sensor @Inject constructor() : SensorEventListener {
@@ -18,6 +19,9 @@ class Sensor @Inject constructor() : SensorEventListener {
 
     val acceleration: MutableState<Acceleration?> = mutableStateOf(null)
     val angularVelocity: MutableState<AngularVelocity?> = mutableStateOf(null)
+
+    private var rawAcceleration = Acceleration(0.0, 0.0, 0.0, 0)
+    private var rawVelocity = AngularVelocity(0.0, 0.0, 0.0, 0)
 
     @Inject
     lateinit var stabilizer: Stabilizer
@@ -34,16 +38,16 @@ class Sensor @Inject constructor() : SensorEventListener {
     override fun onSensorChanged(event: SensorEvent) {
         when (event.sensor.type) {
             Sensor.TYPE_ACCELEROMETER -> {
-                val rawAcceleration = getAcceleration(event = event)
-                val resampledAcceleration = stabilizer.stabilizeSignal(rawAcceleration)
-                Timber.d("Current acceleration is equal to: $rawAcceleration")
-                Timber.d("Resampled acceleration is equal to: $resampledAcceleration")
+                rawAcceleration = getAcceleration(event = event)
                 acceleration.value = rawAcceleration
+                Timber.d("Current acceleration is equal to: $rawAcceleration")
+                val resampledSignal = stabilizer.stabilizeSignal(rawAcceleration, rawVelocity)
+                Timber.d("Resampled signal is equal to: $resampledSignal")
             }
             Sensor.TYPE_GYROSCOPE -> {
-                val rawVelocity = getVelocity(event = event)
-                Timber.d("Current angular velocity is equal to: $rawVelocity")
+                rawVelocity = getVelocity(event = event)
                 angularVelocity.value = rawVelocity
+                Timber.d("Current angular velocity is equal to: $rawVelocity")
             }
         }
     }
@@ -53,10 +57,10 @@ class Sensor @Inject constructor() : SensorEventListener {
         val sensor: Sensor? = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         val gyroscope: Sensor? = manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
         sensor?.let {
-            manager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+            manager.registerListener(this, sensor, Constants.INTERVAL_MILISEC * 1000)
         }
         gyroscope?.let {
-            manager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL)
+            manager.registerListener(this, gyroscope, Constants.INTERVAL_MILISEC * 1000)
         }
     }
 
