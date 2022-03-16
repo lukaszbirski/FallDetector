@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import pl.birski.falldetector.data.Filter
 import pl.birski.falldetector.data.Normalizer
 import pl.birski.falldetector.data.Stabilizer
 
@@ -19,4 +20,8 @@ object AccelerometerModule {
     @Singleton
     @Provides
     fun provideStabilizer() = Stabilizer()
+
+    @Singleton
+    @Provides
+    fun provideLowPassFilter() = Filter()
 }

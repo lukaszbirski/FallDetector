@@ -2,21 +2,24 @@ package pl.birski.falldetector.data
 
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
+import pl.birski.falldetector.model.SensorData
 import pl.birski.falldetector.other.Constants
 
 class Stabilizer {
 
-    private val buffers: Buffers = Buffers(Constants.BUFFER_COUNT, Constants.N, 0, Double.NaN)
-
     private var timeStamp: Long = 0
 
-    private var currentAcceleration = Acceleration(Double.NaN, Double.NaN, Double.NaN, 0)
-    private var resampledAcceleration = Acceleration(Double.NaN, Double.NaN, Double.NaN, timeStamp)
+    private var currentAcceleration = Acceleration(0.0, 0.0, 0.0, timeStamp)
+    private var resampledAcceleration = Acceleration(0.0, 0.0, 0.0, timeStamp)
 
-    private var currentVelocity = AngularVelocity(Double.NaN, Double.NaN, Double.NaN, 0)
-    private var resampledVelocity = AngularVelocity(Double.NaN, Double.NaN, Double.NaN, timeStamp)
+    private var currentVelocity = AngularVelocity(0.0, 0.0, 0.0, 0)
+    private var resampledVelocity = AngularVelocity(0.0, 0.0, 0.0, timeStamp)
 
-    fun stabilizeSignal(previousAcc: Acceleration, previousVelocity: AngularVelocity): SensorData {
+    fun stabilizeSignal(
+        previousAcc: Acceleration,
+        previousVelocity: AngularVelocity,
+        buffers: Sensor.Buffers
+    ): SensorData {
         synchronized(buffers) {
             resample(previousAcc = previousAcc, previousVelocity = previousVelocity)
         }
@@ -89,7 +92,6 @@ class Stabilizer {
                 z = velZ
             )
 
-            buffers.position = (buffers.position + 1) % Constants.N
             timeStamp += Constants.INTERVAL_MILISEC
         }
     }
@@ -103,6 +105,4 @@ class Stabilizer {
     ): Double {
         return valueAfter + (valuePrevious - valueAfter) * (currentTime - timeAfter).toDouble() / (timePrevious - timeAfter).toDouble()
     }
-
-    inner class Buffers(count: Int, size: Int, var position: Int, value: Double)
 }
