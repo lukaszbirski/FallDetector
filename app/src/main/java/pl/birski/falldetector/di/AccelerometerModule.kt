@@ -1,10 +1,13 @@
 package pl.birski.falldetector.di
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import pl.birski.falldetector.data.FallDetector
 import pl.birski.falldetector.data.Filter
 import pl.birski.falldetector.data.Normalizer
 import pl.birski.falldetector.data.Stabilizer
@@ -24,4 +27,8 @@ object AccelerometerModule {
     @Singleton
     @Provides
     fun provideLowPassFilter() = Filter()
+
+    @Singleton
+    @Provides
+    fun provideFallDetector(@ApplicationContext app: Context) = FallDetector(app)
 }

@@ -15,6 +15,15 @@ import timber.log.Timber
 
 class Sensor @Inject constructor() : SensorEventListener {
 
+    @Inject
+    lateinit var stabilizer: Stabilizer
+
+    @Inject
+    lateinit var filter: Filter
+
+    @Inject
+    lateinit var fallDetector: FallDetector
+
     private val ALPHA = 0.09f // signal frequency is 50Hz and cut-off frequency is 5 Hz
 
     private lateinit var manager: SensorManager
@@ -28,12 +37,6 @@ class Sensor @Inject constructor() : SensorEventListener {
     private var rawVelocity = AngularVelocity(0.0, 0.0, 0.0, 0)
 
     private var filteredAcceleration = floatArrayOf(0.0f, 0.0f, 0.0f)
-
-    @Inject
-    lateinit var stabilizer: Stabilizer
-
-    @Inject
-    lateinit var filter: Filter
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         when (sensor?.type) {
@@ -55,6 +58,8 @@ class Sensor @Inject constructor() : SensorEventListener {
                 val resampledSignal =
                     stabilizer.stabilizeSignal(rawAcceleration, rawVelocity, buffers)
                 Timber.d("Resampled signal is equal to: $resampledSignal")
+                // Core of detecting fall is here
+                fallDetector.detectFall(resampledSignal)
                 buffers.position = (buffers.position + 1) % Constants.N
             }
             Sensor.TYPE_GYROSCOPE -> {
@@ -82,9 +87,9 @@ class Sensor @Inject constructor() : SensorEventListener {
     }
 
     private fun getAcceleration(event: SensorEvent, acceleration: FloatArray) = Acceleration(
-        acceleration[0].div(SensorManager.STANDARD_GRAVITY).toDouble(),
-        acceleration[1].div(SensorManager.STANDARD_GRAVITY).toDouble(),
-        acceleration[2].div(SensorManager.STANDARD_GRAVITY).toDouble(),
+        acceleration[0].div(1).toDouble(),
+        acceleration[1].div(1).toDouble(),
+        acceleration[2].div(1).toDouble(),
         event.timestamp / 1000000
     )
 
