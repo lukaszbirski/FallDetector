@@ -1,7 +1,7 @@
 package pl.birski.falldetector.data
 
 import android.content.Context
-import android.widget.Toast
+import android.content.Intent
 import javax.inject.Inject
 import kotlin.math.abs
 import pl.birski.falldetector.model.Acceleration
@@ -42,7 +42,8 @@ class FallDetector @Inject constructor(
         val calculatedSV = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
         if (calculatedSV > CSV_THRESHOLD) {
             Timber.d("SV value [$calculatedSV] is grater that CSV threshold!")
-            isCurrentSumVectorEqualToMaxSumVector(calculatedSV)
+            sendBroadcast()
+            // isCurrentSumVectorEqualToMaxSumVector(calculatedSV)
         } else {
             // Fall not detected
             return
@@ -53,7 +54,6 @@ class FallDetector @Inject constructor(
         if (getSumVectorMaxValue() == calculatedSV) {
             Timber.d("SV value [$calculatedSV] is current SW max!")
             // TODO
-            showToast()
         } else {
             // Fall not detected
             return
@@ -70,9 +70,9 @@ class FallDetector @Inject constructor(
     private fun performEuclidianNormalization(x: Double, y: Double, z: Double) =
         abs(x) + abs(y) + abs(z)
 
-    private fun showToast() {
-        Toast.makeText(context, "FALL DETECTED!", Toast.LENGTH_LONG).show()
-    }
-
     private fun getWindowMiddleValueIndex() = slidingWindow.size / 2
+
+    private fun sendBroadcast() = Intent(Constants.CUSTOM_FALL_DETECTED_RECEIVER).also {
+        context.sendBroadcast(it)
+    }
 }

@@ -13,16 +13,11 @@ import pl.birski.falldetector.model.AngularVelocity
 import pl.birski.falldetector.other.Constants
 import timber.log.Timber
 
-class Sensor @Inject constructor() : SensorEventListener {
-
-    @Inject
-    lateinit var stabilizer: Stabilizer
-
-    @Inject
-    lateinit var filter: Filter
-
-    @Inject
-    lateinit var fallDetector: FallDetector
+class Sensor @Inject constructor(
+    private val filter: Filter,
+    private val fallDetector: FallDetector,
+    private val stabilizer: Stabilizer
+) : SensorEventListener {
 
     private val ALPHA = 0.09f // signal frequency is 50Hz and cut-off frequency is 5 Hz
 
@@ -60,7 +55,6 @@ class Sensor @Inject constructor() : SensorEventListener {
                 Timber.d("Resampled signal is equal to: $resampledSignal")
                 // Core of detecting fall is here
                 fallDetector.detectFall(resampledSignal)
-                buffers.position = (buffers.position + 1) % Constants.N
             }
             Sensor.TYPE_GYROSCOPE -> {
                 rawVelocity = getVelocity(event = event)

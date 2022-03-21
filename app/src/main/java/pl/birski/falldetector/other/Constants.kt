@@ -13,4 +13,6 @@ object Constants {
     const val N = DURATION_S * 1000 / INTERVAL_MILISEC
 
     const val BUFFER_COUNT: Int = 19
+
+    const val CUSTOM_FALL_DETECTED_RECEIVER = "pl.birski.falldetectorCUSTOM_INTENT"
 }

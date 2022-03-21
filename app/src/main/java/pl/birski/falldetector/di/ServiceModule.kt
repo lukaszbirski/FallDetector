@@ -11,7 +11,6 @@ import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
 import pl.birski.falldetector.R
-import pl.birski.falldetector.data.Sensor
 import pl.birski.falldetector.other.Constants
 import pl.birski.falldetector.presentation.MainActivity
 import pl.birski.falldetector.service.enum.ServiceActions
@@ -19,10 +18,6 @@ import pl.birski.falldetector.service.enum.ServiceActions
 @Module
 @InstallIn(ServiceComponent::class)
 object ServiceModule {
-
-    @ServiceScoped
-    @Provides
-    fun provideFallDetector() = Sensor()
 
     @ServiceScoped
     @Provides

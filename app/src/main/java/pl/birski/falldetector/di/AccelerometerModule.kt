@@ -10,11 +10,20 @@ import javax.inject.Singleton
 import pl.birski.falldetector.data.FallDetector
 import pl.birski.falldetector.data.Filter
 import pl.birski.falldetector.data.Normalizer
+import pl.birski.falldetector.data.Sensor
 import pl.birski.falldetector.data.Stabilizer
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AccelerometerModule {
+
+    @Singleton
+    @Provides
+    fun provideSensor(
+        filter: Filter,
+        fallDetector: FallDetector,
+        stabilizer: Stabilizer
+    ) = Sensor(filter, fallDetector, stabilizer)
 
     @Singleton
     @Provides
