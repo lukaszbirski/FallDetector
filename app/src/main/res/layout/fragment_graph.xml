@@ -127,6 +127,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="70dp"
                     android:layout_marginTop="50dp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/velocityLinearLayout">
 
@@ -134,7 +135,7 @@
                         android:id="@+id/start"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginHorizontal="10dp"
                         android:layout_weight="1"
                         android:text="@string/graph_fragment_button_start_text" />
 
@@ -142,7 +143,7 @@
                         android:id="@+id/stop"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginHorizontal="10dp"
                         android:layout_weight="1"
                         android:text="@string/graph_fragment_button_stop_text" />
 

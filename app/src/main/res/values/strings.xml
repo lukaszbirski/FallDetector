@@ -20,4 +20,9 @@
     <string name="graph_fragment_angular_velocity_z_value_string">Z : %s rad/s</string>
     <!--    Graph Fragment ends here-->
 
+    <!--    Sensor starts here-->
+    <string name="gyroscope_not_supported_toast_text">GYROSCOPE IS NOT SUPPORTED!</string>
+    <string name="accelerometer_not_supported_toast_text">ACCELEROMETER IS NOT SUPPORTED!</string>
+    <!--    Sensor ends here-->
+
 </resources>

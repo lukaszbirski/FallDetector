@@ -12,20 +12,27 @@ import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.BuildConfig
 import pl.birski.falldetector.R
 import pl.birski.falldetector.other.Constants
+import pl.birski.falldetector.presentation.listener.PassDataInterface
 import pl.birski.falldetector.presentation.viewmodel.MainViewModel
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), PassDataInterface {
 
     private val viewModel: MainViewModel by viewModels()
 
+    private var isFallDetected = false
+
     private var mMessageReceiver = object : BroadcastReceiver() {
+
         override fun onReceive(context: Context?, intent: Intent) {
+
             intent.action.let {
-                Toast.makeText(context, "FALL DETECTED!", Toast.LENGTH_LONG).show()
-                viewModel.stopService()
+                if (!isFallDetected) {
+                    Toast.makeText(context, "FALL DETECTED!", Toast.LENGTH_LONG).show()
+                    isFallDetected = true
+                }
             }
         }
     }
@@ -34,9 +41,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        IntentFilter(Constants.CUSTOM_FALL_DETECTED_RECEIVER).also {
-            registerReceiver(mMessageReceiver, it)
-        }
+        registerBroadcastReceiver()
 
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
@@ -45,6 +50,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        unregisterBroadcastReceiver()
+    }
+
+    private fun unregisterBroadcastReceiver() {
         unregisterReceiver(mMessageReceiver)
+    }
+
+    private fun registerBroadcastReceiver() {
+        IntentFilter(Constants.CUSTOM_FALL_DETECTED_RECEIVER).also {
+            registerReceiver(mMessageReceiver, it)
+        }
+    }
+
+    override fun onDataReceived(data: Boolean) {
+        isFallDetected = data
     }
 }

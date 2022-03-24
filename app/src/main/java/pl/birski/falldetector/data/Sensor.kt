@@ -5,9 +5,11 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import javax.inject.Inject
+import pl.birski.falldetector.R
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
 import pl.birski.falldetector.other.Constants
@@ -70,10 +72,18 @@ class Sensor @Inject constructor(
         val gyroscope: Sensor? = manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
         sensor?.let {
             manager.registerListener(this, sensor, Constants.INTERVAL_MILISEC * 1000)
-        }
+        } ?: Toast.makeText(
+            context,
+            context.getText(R.string.gyroscope_not_supported_toast_text),
+            Toast.LENGTH_LONG
+        ).show()
         gyroscope?.let {
             manager.registerListener(this, gyroscope, Constants.INTERVAL_MILISEC * 1000)
-        }
+        } ?: Toast.makeText(
+            context,
+            context.getText(R.string.accelerometer_not_supported_toast_text),
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     fun stopMeasurement() {
