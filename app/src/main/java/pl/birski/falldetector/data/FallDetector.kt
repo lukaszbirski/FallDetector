@@ -3,7 +3,8 @@ package pl.birski.falldetector.data
 import android.content.Context
 import android.content.Intent
 import javax.inject.Inject
-import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.SensorData
 import pl.birski.falldetector.other.Constants
@@ -68,7 +69,7 @@ class FallDetector @Inject constructor(
     }
 
     private fun performEuclidianNormalization(x: Double, y: Double, z: Double) =
-        abs(x) + abs(y) + abs(z)
+        sqrt(x.pow(2) + y.pow(2) + z.pow(2))
 
     private fun getWindowMiddleValueIndex() = slidingWindow.size / 2
 

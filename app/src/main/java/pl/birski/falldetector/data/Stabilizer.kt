@@ -17,10 +17,9 @@ class Stabilizer {
 
     fun stabilizeSignal(
         previousAcc: Acceleration,
-        previousVelocity: AngularVelocity,
-        buffers: Sensor.Buffers
+        previousVelocity: AngularVelocity
     ): SensorData {
-        synchronized(buffers) {
+        synchronized(Any()) {
             resample(previousAcc = previousAcc, previousVelocity = previousVelocity)
         }
         currentAcceleration = previousAcc

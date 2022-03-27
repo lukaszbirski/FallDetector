@@ -9,4 +9,22 @@ class Filter {
         }
         return output
     }
+
+    fun highPassFilter(
+        input: FloatArray,
+        output: FloatArray,
+        gravity: FloatArray,
+        alpha: Float
+    ): List<FloatArray> {
+
+        for (i in gravity.indices) {
+            gravity[i] = alpha * gravity[i] + (1 - alpha) * input[i]
+            output[i] = input[i] - gravity[i]
+        }
+
+        var resultList = mutableListOf<FloatArray>()
+        resultList.add(gravity)
+        resultList.add(output)
+        return resultList
+    }
 }

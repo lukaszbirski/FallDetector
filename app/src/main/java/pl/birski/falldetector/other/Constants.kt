@@ -14,5 +14,5 @@ object Constants {
 
     const val BUFFER_COUNT: Int = 19
 
-    const val CUSTOM_FALL_DETECTED_RECEIVER = "pl.birski.falldetectorCUSTOM_INTENT"
+    const val CUSTOM_FALL_DETECTED_RECEIVER = "pl.birski.falldetector.CUSTOM_INTENT"
 }
