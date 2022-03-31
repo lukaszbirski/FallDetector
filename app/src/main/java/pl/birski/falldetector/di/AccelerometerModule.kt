@@ -20,10 +20,9 @@ object AccelerometerModule {
     @Singleton
     @Provides
     fun provideSensor(
-        filter: Filter,
         fallDetector: FallDetector,
         stabilizer: Stabilizer
-    ) = Sensor(filter, fallDetector, stabilizer)
+    ) = Sensor(fallDetector, stabilizer)
 
     @Singleton
     @Provides
@@ -35,9 +34,10 @@ object AccelerometerModule {
 
     @Singleton
     @Provides
-    fun provideLowPassFilter() = Filter()
+    fun provideFilter() = Filter()
 
     @Singleton
     @Provides
-    fun provideFallDetector(@ApplicationContext app: Context) = FallDetector(app)
+    fun provideFallDetector(@ApplicationContext app: Context, filter: Filter) =
+        FallDetector(app, filter)
 }

@@ -16,27 +16,17 @@ import pl.birski.falldetector.other.Constants
 import timber.log.Timber
 
 class Sensor @Inject constructor(
-    private val filter: Filter,
     private val fallDetector: FallDetector,
     private val stabilizer: Stabilizer
 ) : SensorEventListener {
-
-    private val ALPHA = 0.09f // signal frequency is 50Hz and cut-off frequency is 5 Hz
 
     private lateinit var manager: SensorManager
 
     val acceleration: MutableState<Acceleration?> = mutableStateOf(null)
     val angularVelocity: MutableState<AngularVelocity?> = mutableStateOf(null)
 
-    private var rawLowFilteredAcceleration = Acceleration(0.0, 0.0, 0.0, 0)
-    private var rawHighFilteredAcceleration = Acceleration(0.0, 0.0, 0.0, 0)
     private var rawAcceleration = Acceleration(0.0, 0.0, 0.0, 0)
-
     private var rawVelocity = AngularVelocity(0.0, 0.0, 0.0, 0)
-
-    private var filteredLowAcceleration = floatArrayOf(0.0f, 0.0f, 0.0f)
-    private var filteredHighAcceleration = floatArrayOf(0.0f, 0.0f, 0.0f)
-    private var gravity = floatArrayOf(0.0f, 0.0f, 0.0f)
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         when (sensor?.type) {
@@ -57,23 +47,6 @@ class Sensor @Inject constructor(
 
                 val resampledSignal = stabilizer.stabilizeSignal(rawAcceleration, rawVelocity)
                 Timber.d("Resampled signal is equal to: $resampledSignal")
-
-                filteredLowAcceleration =
-                    filter.lowPassFilter(event.values.clone(), filteredLowAcceleration, ALPHA)
-
-                rawLowFilteredAcceleration = getAcceleration(event, filteredLowAcceleration)
-
-                val highFilterResult = filter.highPassFilter(
-                    event.values.clone(),
-                    filteredHighAcceleration,
-                    gravity,
-                    ALPHA
-                )
-
-                gravity = highFilterResult[0]
-                filteredHighAcceleration = highFilterResult[1]
-
-                rawHighFilteredAcceleration = getAcceleration(event, filteredHighAcceleration)
 
                 // Core of detecting fall is here
                 fallDetector.detectFall(resampledSignal)
@@ -109,13 +82,6 @@ class Sensor @Inject constructor(
     fun stopMeasurement() {
         manager.unregisterListener(this)
     }
-
-    private fun getAcceleration(event: SensorEvent, acceleration: FloatArray) = Acceleration(
-        acceleration[0].div(1).toDouble(),
-        acceleration[1].div(1).toDouble(),
-        acceleration[2].div(1).toDouble(),
-        event.timestamp / 1000000
-    )
 
     private fun getAcceleration(event: SensorEvent) = Acceleration(
         event.values[0].div(SensorManager.STANDARD_GRAVITY).toDouble(),

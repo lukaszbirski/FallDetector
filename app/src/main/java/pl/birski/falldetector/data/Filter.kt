@@ -27,4 +27,10 @@ class Filter {
         resultList.add(output)
         return resultList
     }
+
+    fun calculateAlpha(cutOffFrequency: Double, frequency: Double): Float {
+        val dt = 1F.div(frequency)
+        val period = 1F.div(cutOffFrequency)
+        return dt.div(dt + period).toFloat()
+    }
 }
