@@ -1,5 +1,7 @@
 package pl.birski.falldetector.data
 
+import pl.birski.falldetector.model.HighPassFilterData
+
 class Filter {
 
     fun lowPassFilter(input: FloatArray, output: FloatArray?, alpha: Float): FloatArray {
@@ -12,20 +14,14 @@ class Filter {
 
     fun highPassFilter(
         input: FloatArray,
-        output: FloatArray,
-        gravity: FloatArray,
+        hpfData: HighPassFilterData,
         alpha: Float
-    ): List<FloatArray> {
-
-        for (i in gravity.indices) {
-            gravity[i] = alpha * gravity[i] + (1 - alpha) * input[i]
-            output[i] = input[i] - gravity[i]
+    ): HighPassFilterData {
+        for (i in hpfData.gravity.indices) {
+            hpfData.gravity[i] = alpha * hpfData.gravity[i] + (1 - alpha) * input[i]
+            hpfData.acceleration[i] = input[i] - hpfData.gravity[i]
         }
-
-        var resultList = mutableListOf<FloatArray>()
-        resultList.add(gravity)
-        resultList.add(output)
-        return resultList
+        return hpfData
     }
 
     fun calculateAlpha(cutOffFrequency: Double, frequency: Double): Float {

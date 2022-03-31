@@ -5,6 +5,7 @@ import android.content.Intent
 import javax.inject.Inject
 import kotlin.math.sqrt
 import pl.birski.falldetector.model.Acceleration
+import pl.birski.falldetector.model.HighPassFilterData
 import pl.birski.falldetector.model.SensorData
 import pl.birski.falldetector.other.Constants
 import pl.birski.falldetector.service.enum.DataSet
@@ -19,15 +20,16 @@ class FallDetector @Inject constructor(
     private val ALPHA = filter.calculateAlpha(0.25, 50.0)
     private val G_CONST = 1.0
 
-    private var lpfAcceleration = floatArrayOf(0.0f, 0.0f, 0.0f)
-    private var hpfAcceleration = floatArrayOf(0.0f, 0.0f, 0.0f)
-    private var gravity = floatArrayOf(0.0f, 0.0f, 0.0f)
-
-    private val SV_TOT_FALLING = 0.6
     private val SV_TOT_THRESHOLD = 2.0
     private val SV_D_THRESHOLD = 1.7
     private val SV_MAX_MIN_THRESHOLD = 2.0
     private val VERTICAL_ACC_THRESHOLD = 1.5
+
+    private var lpfAcceleration = floatArrayOf(0.0f, 0.0f, 0.0f)
+    private var hpfData = HighPassFilterData(
+        floatArrayOf(0.0f, 0.0f, 0.0f),
+        floatArrayOf(0.0f, 0.0f, 0.0f)
+    )
 
     private var slidingWindow: MutableList<Acceleration> = mutableListOf()
 
@@ -50,15 +52,10 @@ class FallDetector @Inject constructor(
         )
 
         lpfAcceleration = filter.lowPassFilter(accelerationFloatArray, lpfAcceleration, ALPHA)
-
-        val hpfResult =
-            filter.highPassFilter(accelerationFloatArray, hpfAcceleration, gravity, ALPHA)
-
-        gravity = hpfResult[0]
-        hpfAcceleration = hpfResult[1]
+        hpfData = filter.highPassFilter(accelerationFloatArray, hpfData, ALPHA)
 
         val lpfAcceleration = getAcceleration(sensorData.acceleration, lpfAcceleration)
-        val hpfAcceleration = getAcceleration(sensorData.acceleration, hpfAcceleration)
+        val hpfAcceleration = getAcceleration(sensorData.acceleration, hpfData.acceleration)
 
         detectImpact(lpfAcceleration, hpfAcceleration)
     }
@@ -73,6 +70,7 @@ class FallDetector @Inject constructor(
             isSumVectorGreaterThanThreshold(svDynamic, SV_D_THRESHOLD)
         ) {
             Timber.d("Rapid acceleration was detected!")
+            sendBroadcast()
         }
     }
 
