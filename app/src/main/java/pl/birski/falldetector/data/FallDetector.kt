@@ -25,6 +25,9 @@ class FallDetector @Inject constructor(
 
     private val SV_TOT_FALLING = 0.6
     private val SV_TOT_THRESHOLD = 2.0
+    private val SV_D_THRESHOLD = 1.7
+    private val SV_MAX_MIN_THRESHOLD = 2.0
+    private val VERTICAL_ACC_THRESHOLD = 1.5
 
     private var slidingWindow: MutableList<Acceleration> = mutableListOf()
 
@@ -48,52 +51,45 @@ class FallDetector @Inject constructor(
 
         lpfAcceleration = filter.lowPassFilter(accelerationFloatArray, lpfAcceleration, ALPHA)
 
-        val lpfAcceleration = getAcceleration(sensorData.acceleration, lpfAcceleration)
-        val svTOT = calculateSumVector(lpfAcceleration.x, lpfAcceleration.y, lpfAcceleration.z)
-
         val hpfResult =
             filter.highPassFilter(accelerationFloatArray, hpfAcceleration, gravity, ALPHA)
 
         gravity = hpfResult[0]
         hpfAcceleration = hpfResult[1]
 
+        val lpfAcceleration = getAcceleration(sensorData.acceleration, lpfAcceleration)
         val hpfAcceleration = getAcceleration(sensorData.acceleration, hpfAcceleration)
-        val svD = calculateSumVector(hpfAcceleration.x, hpfAcceleration.y, hpfAcceleration.z)
-        val z2 = calculateVerticalAcceleration(svTOT = svTOT, svD = svD)
 
+        detectImpact(lpfAcceleration, hpfAcceleration)
+    }
+
+    private fun detectImpact(lpfAcceleration: Acceleration, hpfAcceleration: Acceleration) {
+        val svTotal = calculateSumVector(lpfAcceleration.x, lpfAcceleration.y, lpfAcceleration.z)
+        val svDynamic = calculateSumVector(hpfAcceleration.x, hpfAcceleration.y, hpfAcceleration.z)
+
+        if (isMinMaxSumVectorGreaterThanThreshold() ||
+            isVerticalAccelerationGreaterThanThreshold(svTotal, svDynamic) ||
+            isSumVectorGreaterThanThreshold(svTotal, SV_TOT_THRESHOLD) ||
+            isSumVectorGreaterThanThreshold(svDynamic, SV_D_THRESHOLD)
+        ) {
+            Timber.d("Rapid acceleration was detected!")
+        }
+    }
+
+    private fun isSumVectorGreaterThanThreshold(sumVector: Double, threshold: Double) =
+        sumVector > threshold
+
+    private fun isMinMaxSumVectorGreaterThanThreshold(): Boolean {
         val xMinMax = getMaxValue(DataSet.X_AXIS) - getMinValue(DataSet.X_AXIS)
         val yMinMax = getMaxValue(DataSet.Y_AXIS) - getMinValue(DataSet.Y_AXIS)
         val zMinMax = getMaxValue(DataSet.Z_AXIS) - getMinValue(DataSet.Z_AXIS)
-        val svMinMax = calculateSumVector(xMinMax, yMinMax, zMinMax)
-
-        Timber.d("data SV total: $svTOT")
-        Timber.d("data SV dynamic: $svD")
-        Timber.d("data  Z2 : $z2")
-        Timber.d("data svMinMax : $svMinMax")
-        Timber.d("data ----------------------------------------")
+        return calculateSumVector(xMinMax, yMinMax, zMinMax) > SV_MAX_MIN_THRESHOLD
     }
-//
-//    private fun isSumVectorGreaterThanCSThreshold(acceleration: Acceleration) {
-//        val calculatedSV = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
-//        if (calculatedSV > CSV_THRESHOLD) {
-//            Timber.d("SV value [$calculatedSV] is grater that CSV threshold!")
-//            sendBroadcast()
-//            // isCurrentSumVectorEqualToMaxSumVector(calculatedSV)
-//        } else {
-//            // Fall not detected
-//            return
-//        }
-//    }
-//
-//    private fun isCurrentSumVectorEqualToMaxSumVector(calculatedSV: Double) {
-//        if (getSumVectorMaxValue() == calculatedSV) {
-//            Timber.d("SV value [$calculatedSV] is current SW max!")
-//            // TODO
-//        } else {
-//            // Fall not detected
-//            return
-//        }
-//    }
+
+    private fun isVerticalAccelerationGreaterThanThreshold(
+        svTotal: Double,
+        svDynamic: Double
+    ) = calculateVerticalAcceleration(svTotal, svDynamic) > VERTICAL_ACC_THRESHOLD
 
     private fun calculateSumVector(x: Double, y: Double, z: Double) =
         sqrt(x * x + y * y + z * z)
