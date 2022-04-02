@@ -16,22 +16,29 @@ class FallDetector @Inject constructor(
     private val filter: Filter
 ) {
 
-    // signal frequency is 50Hz and cut-off frequency is 5 Hz
+    // signal frequency is 50Hz and cut-off frequency is 0.25 Hz
     private val ALPHA = filter.calculateAlpha(0.25, 50.0)
-    private val G_CONST = 1.0
 
+    private val INTERVAL_MILISEC = 20 // frequency is set to 50 Hz
+    private val SLIDING_WINDOW_TIME_SEC = 0.1F // SW size is 2 sec
+    private val SLIDING_WINDOW_SIZE = SLIDING_WINDOW_TIME_SEC * 1000 / INTERVAL_MILISEC
+
+    private val IMPACT_TIME_SPAN = 2000 / INTERVAL_MILISEC // after impact need to wait 2 sec
+
+    private val G_CONST = 1.0
     private val SV_TOT_THRESHOLD = 2.0
     private val SV_D_THRESHOLD = 1.7
     private val SV_MAX_MIN_THRESHOLD = 2.0
     private val VERTICAL_ACC_THRESHOLD = 1.5
 
-    private var lpfAcceleration = floatArrayOf(0.0f, 0.0f, 0.0f)
+    private var lpfData = floatArrayOf(0.0f, 0.0f, 0.0f)
     private var hpfData = HighPassFilterData(
         floatArrayOf(0.0f, 0.0f, 0.0f),
         floatArrayOf(0.0f, 0.0f, 0.0f)
     )
 
     private var slidingWindow: MutableList<Acceleration> = mutableListOf()
+    private var impactTimeOut: Int = -1
 
     fun detectFall(sensorData: SensorData) {
         addAccelerationValueToWindow(sensorData)
@@ -39,7 +46,7 @@ class FallDetector @Inject constructor(
     }
 
     private fun addAccelerationValueToWindow(sensorData: SensorData) {
-        if (slidingWindow.size >= Constants.SLIDING_WINDOW_SIZE) slidingWindow.removeAt(0)
+        if (slidingWindow.size >= SLIDING_WINDOW_SIZE) slidingWindow.removeAt(0)
         slidingWindow.add(sensorData.acceleration)
     }
 
@@ -51,13 +58,37 @@ class FallDetector @Inject constructor(
             sensorData.acceleration.z.toFloat()
         )
 
-        lpfAcceleration = filter.lowPassFilter(accelerationFloatArray, lpfAcceleration, ALPHA)
+        lpfData = filter.lowPassFilter(accelerationFloatArray, lpfData, ALPHA)
         hpfData = filter.highPassFilter(accelerationFloatArray, hpfData, ALPHA)
 
-        val lpfAcceleration = getAcceleration(sensorData.acceleration, lpfAcceleration)
+        val lpfAcceleration = getAcceleration(sensorData.acceleration, lpfData)
         val hpfAcceleration = getAcceleration(sensorData.acceleration, hpfData.acceleration)
 
+        useImpactPostureAlgorithm(lpfAcceleration, hpfAcceleration)
+    }
+
+    private fun detectPosture(lpfAcceleration: Acceleration) {
+
+        // posture must be detected 2 sec after the impact
+        // it is marked as impactTimeOut == 0
+        if (impactTimeOut == 0) {
+            // The posture was detected 2 s
+            // after the impact from the LP filtered vertical signal, based on the
+            // average acceleration in a 0.4 s time interval, with a signal value of
+            // 0.5g or lower considered to be a lying posture.
+        }
+    }
+
+    private fun useImpactPostureAlgorithm(
+        lpfAcceleration: Acceleration,
+        hpfAcceleration: Acceleration
+    ) {
+        // first use detectImpact()
+        // if impact was observed wait 2 sec
+        // detect posture
+        impactTimeOut = expireTimeOut(impactTimeOut)
         detectImpact(lpfAcceleration, hpfAcceleration)
+        detectPosture(lpfAcceleration)
     }
 
     private fun detectImpact(lpfAcceleration: Acceleration, hpfAcceleration: Acceleration) {
@@ -69,10 +100,13 @@ class FallDetector @Inject constructor(
             isSumVectorGreaterThanThreshold(svTotal, SV_TOT_THRESHOLD) ||
             isSumVectorGreaterThanThreshold(svDynamic, SV_D_THRESHOLD)
         ) {
-            Timber.d("Rapid acceleration was detected!")
-            sendBroadcast()
+            Timber.d("Impact was detected!")
+            // impact was detected, set impact time out
+            impactTimeOut = IMPACT_TIME_SPAN
         }
     }
+
+    private fun expireTimeOut(timeOut: Int) = if (timeOut > -1) timeOut - 1 else -1
 
     private fun isSumVectorGreaterThanThreshold(sumVector: Double, threshold: Double) =
         sumVector > threshold
