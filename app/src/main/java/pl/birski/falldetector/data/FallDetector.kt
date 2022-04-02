@@ -8,6 +8,8 @@ import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.HighPassFilterData
 import pl.birski.falldetector.model.SensorData
 import pl.birski.falldetector.other.Constants
+import pl.birski.falldetector.other.Constants.IMPACT_TIME_SPAN
+import pl.birski.falldetector.other.Constants.SLIDING_WINDOW_SIZE
 import pl.birski.falldetector.service.enum.DataSet
 import timber.log.Timber
 
@@ -18,12 +20,6 @@ class FallDetector @Inject constructor(
 
     // signal frequency is 50Hz and cut-off frequency is 0.25 Hz
     private val ALPHA = filter.calculateAlpha(0.25, 50.0)
-
-    private val INTERVAL_MILISEC = 20 // frequency is set to 50 Hz
-    private val SLIDING_WINDOW_TIME_SEC = 0.1F // SW size is 2 sec
-    private val SLIDING_WINDOW_SIZE = SLIDING_WINDOW_TIME_SEC * 1000 / INTERVAL_MILISEC
-
-    private val IMPACT_TIME_SPAN = 2000 / INTERVAL_MILISEC // after impact need to wait 2 sec
 
     private val G_CONST = 1.0
     private val SV_TOT_THRESHOLD = 2.0
@@ -64,7 +60,8 @@ class FallDetector @Inject constructor(
         val lpfAcceleration = getAcceleration(sensorData.acceleration, lpfData)
         val hpfAcceleration = getAcceleration(sensorData.acceleration, hpfData.acceleration)
 
-        useImpactPostureAlgorithm(lpfAcceleration, hpfAcceleration)
+        if (slidingWindow.size >= SLIDING_WINDOW_SIZE)
+            useImpactPostureAlgorithm(lpfAcceleration, hpfAcceleration)
     }
 
     private fun detectPosture(lpfAcceleration: Acceleration) {
@@ -72,6 +69,7 @@ class FallDetector @Inject constructor(
         // posture must be detected 2 sec after the impact
         // it is marked as impactTimeOut == 0
         if (impactTimeOut == 0) {
+            sendBroadcast()
             // The posture was detected 2 s
             // after the impact from the LP filtered vertical signal, based on the
             // average acceleration in a 0.4 s time interval, with a signal value of
@@ -131,19 +129,24 @@ class FallDetector @Inject constructor(
 
     private fun getMaxValue(dataSet: DataSet): Double {
         return when (dataSet) {
-            DataSet.X_AXIS -> slidingWindow.map { it.x }.maxOf { it }
-            DataSet.Y_AXIS -> slidingWindow.map { it.y }.maxOf { it }
-            DataSet.Z_AXIS -> slidingWindow.map { it.z }.maxOf { it }
+            DataSet.X_AXIS -> getDataForSumVectorMinMax().map { it.x }.maxOf { it }
+            DataSet.Y_AXIS -> getDataForSumVectorMinMax().map { it.y }.maxOf { it }
+            DataSet.Z_AXIS -> getDataForSumVectorMinMax().map { it.z }.maxOf { it }
         }
     }
 
     private fun getMinValue(dataSet: DataSet): Double {
         return when (dataSet) {
-            DataSet.X_AXIS -> slidingWindow.map { it.x }.minOf { it }
-            DataSet.Y_AXIS -> slidingWindow.map { it.y }.minOf { it }
-            DataSet.Z_AXIS -> slidingWindow.map { it.z }.minOf { it }
+            DataSet.X_AXIS -> getDataForSumVectorMinMax().map { it.x }.minOf { it }
+            DataSet.Y_AXIS -> getDataForSumVectorMinMax().map { it.y }.minOf { it }
+            DataSet.Z_AXIS -> getDataForSumVectorMinMax().map { it.z }.minOf { it }
         }
     }
+
+    private fun getDataForSumVectorMinMax() =
+        slidingWindow.subList(
+            slidingWindow.size - Constants.SV_MIN_MAX_SW_SIZE.toInt(), slidingWindow.size
+        )
 
     private fun getAcceleration(rawAcceleration: Acceleration, acceleration: FloatArray) =
         Acceleration(
