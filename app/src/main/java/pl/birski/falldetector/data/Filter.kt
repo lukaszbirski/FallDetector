@@ -18,7 +18,7 @@ class Filter {
         alpha: Float
     ): HighPassFilterData {
         for (i in hpfData.gravity.indices) {
-            hpfData.gravity[i] = alpha * hpfData.gravity[i] + (1 - alpha) * input[i]
+            hpfData.gravity[i] = (1 - alpha) * hpfData.gravity[i] + alpha * input[i]
             hpfData.acceleration[i] = input[i] - hpfData.gravity[i]
         }
         return hpfData
