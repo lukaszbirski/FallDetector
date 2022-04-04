@@ -8,7 +8,6 @@ import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.HighPassFilterData
 import pl.birski.falldetector.model.SensorData
 import pl.birski.falldetector.other.Constants
-import pl.birski.falldetector.other.Constants.IMPACT_TIME_SPAN
 import pl.birski.falldetector.other.Constants.SLIDING_WINDOW_SIZE
 import pl.birski.falldetector.service.enum.DataSet
 import timber.log.Timber
@@ -17,7 +16,6 @@ class FallDetector @Inject constructor(
     private val context: Context,
     private val filter: Filter
 ) {
-
     // signal frequency is 50Hz and cut-off frequency is 0.25 Hz
     private val ALPHA = filter.calculateAlpha(0.25, 50.0)
 
@@ -61,7 +59,7 @@ class FallDetector @Inject constructor(
         val hpfAcceleration = getAcceleration(sensorData.acceleration, hpfData.acceleration)
 
         if (slidingWindow.size >= SLIDING_WINDOW_SIZE)
-            useImpactPostureAlgorithm(lpfAcceleration, hpfAcceleration)
+            useImpactPostureAlgorithm(lpfAcceleration, hpfAcceleration, sensorData.acceleration)
     }
 
     private fun detectPosture(lpfAcceleration: Acceleration) {
@@ -79,18 +77,23 @@ class FallDetector @Inject constructor(
 
     private fun useImpactPostureAlgorithm(
         lpfAcceleration: Acceleration,
-        hpfAcceleration: Acceleration
+        hpfAcceleration: Acceleration,
+        acceleration: Acceleration
     ) {
         // first use detectImpact()
         // if impact was observed wait 2 sec
         // detect posture
         impactTimeOut = expireTimeOut(impactTimeOut)
-        detectImpact(lpfAcceleration, hpfAcceleration)
+        detectImpact(lpfAcceleration, hpfAcceleration, acceleration)
         detectPosture(lpfAcceleration)
     }
 
-    private fun detectImpact(lpfAcceleration: Acceleration, hpfAcceleration: Acceleration) {
-        val svTotal = calculateSumVector(lpfAcceleration.x, lpfAcceleration.y, lpfAcceleration.z)
+    private fun detectImpact(
+        lpfAcceleration: Acceleration,
+        hpfAcceleration: Acceleration,
+        acceleration: Acceleration
+    ) {
+        val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
         val svDynamic = calculateSumVector(hpfAcceleration.x, hpfAcceleration.y, hpfAcceleration.z)
 
         if (isMinMaxSumVectorGreaterThanThreshold() ||
@@ -100,7 +103,7 @@ class FallDetector @Inject constructor(
         ) {
             Timber.d("Impact was detected!")
             // impact was detected, set impact time out
-            impactTimeOut = IMPACT_TIME_SPAN
+            impactTimeOut = Constants.IMPACT_TIME_SPAN
         }
     }
 
