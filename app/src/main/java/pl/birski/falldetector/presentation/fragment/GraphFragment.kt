@@ -13,6 +13,7 @@ import com.github.mikephil.charting.data.LineData
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.databinding.FragmentGraphBinding
+import pl.birski.falldetector.presentation.listener.PassDataInterface
 import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
 import pl.birski.falldetector.service.enum.DataSet
 
@@ -28,6 +29,8 @@ class GraphFragment : Fragment() {
     private val MAX_Y_AXIS_VALUE = 1.5F
     private val MIN_Y_AXIS_VALUE = -1.5F
 
+    private lateinit var passDataInterface: PassDataInterface
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,16 +38,20 @@ class GraphFragment : Fragment() {
     ): View? {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
+        passDataInterface = requireActivity() as PassDataInterface
+
         setChart(binding.chart)
         checkChip(binding.accChip)
         setInitialVelocities()
 
         binding.start.setOnClickListener {
             viewModel.startService(binding.chart.lineData)
+            passDataInterface.onDataReceived(false)
         }
 
         binding.stop.setOnClickListener {
             viewModel.stopService()
+            passDataInterface.onDataReceived(true)
         }
 
         binding.chipGroup.setOnCheckedChangeListener { _, id ->
