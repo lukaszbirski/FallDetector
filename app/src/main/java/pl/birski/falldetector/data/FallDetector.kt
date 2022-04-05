@@ -2,6 +2,7 @@ package pl.birski.falldetector.data
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import javax.inject.Inject
 import kotlin.math.sqrt
 import pl.birski.falldetector.model.Acceleration
@@ -23,6 +24,7 @@ class FallDetector @Inject constructor(
     private val SV_D_THRESHOLD = 1.7
     private val SV_MAX_MIN_THRESHOLD = 2.0
     private val VERTICAL_ACC_THRESHOLD = 1.5
+    private val LYING_POSTURE_VERTICAL_THRESHOLD = 0.5
 
     private var lpfData = floatArrayOf(0.0f, 0.0f, 0.0f)
     private var hpfData = HighPassFilterData(
@@ -81,15 +83,19 @@ class FallDetector @Inject constructor(
     }
 
     private fun detectPosture() {
-
         // posture must be detected 2 sec after the impact
         // it is marked as impactTimeOut == 0
         if (impactTimeOut == 0) {
-            sendBroadcast()
-            // The posture was detected 2 s
-            // after the impact from the LP filtered vertical signal, based on the
-            // average acceleration in a 0.4 s time interval, with a signal value of
-            // 0.5g or lower considered to be a lying posture.
+
+            val sum = postureDetectionSW.sumOf { it.z }
+            val count = postureDetectionSW.size.toDouble()
+
+            // impact occurred if vertical signal, based on the average acceleration
+            // in a 0.4 s time interval is 0.5G or lower
+            if ((sum / count) > LYING_POSTURE_VERTICAL_THRESHOLD) {
+                Timber.d("Detected lying position!")
+                sendBroadcast()
+            }
         }
     }
 
