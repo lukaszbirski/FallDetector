@@ -38,15 +38,13 @@ class FallDetector @Inject constructor(
         measureFall(sensorData)
     }
 
-    private fun addAccelerationValueToMinMaxWindow(acceleration: Acceleration) {
-        if (minMaxSW.size >= Constants.MIN_MAX_SW_SIZE) minMaxSW.removeAt(0)
-        minMaxSW.add(acceleration)
-    }
-
-    private fun addAccelerationValueToPostureDetectionWindow(acceleration: Acceleration) {
-        if (postureDetectionSW.size >= Constants.POSTURE_DETECTION_SW_SIZE)
-            postureDetectionSW.removeAt(0)
-        postureDetectionSW.add(acceleration)
+    private fun addAccelerationToWindow(
+        acceleration: Acceleration,
+        windowSize: Int,
+        window: MutableList<Acceleration>
+    ) {
+        if (window.size >= windowSize) window.removeAt(0)
+        window.add(acceleration)
     }
 
     private fun measureFall(sensorData: SensorData) {
@@ -63,8 +61,17 @@ class FallDetector @Inject constructor(
         val lpfAcceleration = getAcceleration(sensorData.acceleration, lpfData)
         val hpfAcceleration = getAcceleration(sensorData.acceleration, hpfData.acceleration)
 
-        addAccelerationValueToMinMaxWindow(sensorData.acceleration)
-        addAccelerationValueToPostureDetectionWindow(lpfAcceleration)
+        addAccelerationToWindow(
+            acceleration = sensorData.acceleration,
+            windowSize = Constants.MIN_MAX_SW_SIZE.toInt(),
+            window = minMaxSW
+        )
+
+        addAccelerationToWindow(
+            acceleration = lpfAcceleration,
+            windowSize = Constants.POSTURE_DETECTION_SW_SIZE.toInt(),
+            window = postureDetectionSW
+        )
 
         if (postureDetectionSW.size >= Constants.POSTURE_DETECTION_SW_SIZE)
             useImpactPostureAlgorithm(
