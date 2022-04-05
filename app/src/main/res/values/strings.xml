@@ -5,6 +5,10 @@
     <string name="notification_title">Fall Detector is running</string>
     <!--    Notification ends here-->
 
+    <!--    Sensor starts here-->
+    <string name="fall_detected_toast_text">FALL DETECTED!</string>
+    <!--    Sensor ends here-->
+
     <!--    Graph Fragment starts here-->
     <string name="graph_fragment_button_start_text">Start</string>
     <string name="graph_fragment_button_stop_text">Stop</string>

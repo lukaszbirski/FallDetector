@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.BuildConfig
 import pl.birski.falldetector.R
@@ -30,8 +31,13 @@ class MainActivity : AppCompatActivity(), PassDataInterface {
 
             intent.action.let {
                 if (!isFallDetected) {
-                    Toast.makeText(context, "FALL DETECTED!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        context?.getString(R.string.fall_detected_toast_text),
+                        Toast.LENGTH_LONG
+                    ).show()
                     isFallDetected = true
+                    navigateToCounterFragment()
                 }
             }
         }
@@ -53,6 +59,10 @@ class MainActivity : AppCompatActivity(), PassDataInterface {
         unregisterBroadcastReceiver()
     }
 
+    override fun onDataReceived(data: Boolean) {
+        isFallDetected = data
+    }
+
     private fun unregisterBroadcastReceiver() {
         unregisterReceiver(mMessageReceiver)
     }
@@ -63,7 +73,10 @@ class MainActivity : AppCompatActivity(), PassDataInterface {
         }
     }
 
-    override fun onDataReceived(data: Boolean) {
-        isFallDetected = data
+    private fun navigateToCounterFragment() {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        navController.navigate(R.id.action_graphFragment_to_counterFragment)
     }
 }
