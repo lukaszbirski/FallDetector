@@ -8,7 +8,6 @@ import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.HighPassFilterData
 import pl.birski.falldetector.model.SensorData
 import pl.birski.falldetector.other.Constants
-import pl.birski.falldetector.other.Constants.SLIDING_WINDOW_SIZE
 import pl.birski.falldetector.service.enum.DataSet
 import timber.log.Timber
 
@@ -31,17 +30,23 @@ class FallDetector @Inject constructor(
         floatArrayOf(0.0f, 0.0f, 0.0f)
     )
 
-    private var slidingWindow: MutableList<Acceleration> = mutableListOf()
+    private var minMaxSW: MutableList<Acceleration> = mutableListOf()
+    private var postureDetectionSW: MutableList<Acceleration> = mutableListOf()
     private var impactTimeOut: Int = -1
 
     fun detectFall(sensorData: SensorData) {
-        addAccelerationValueToWindow(sensorData)
         measureFall(sensorData)
     }
 
-    private fun addAccelerationValueToWindow(sensorData: SensorData) {
-        if (slidingWindow.size >= SLIDING_WINDOW_SIZE) slidingWindow.removeAt(0)
-        slidingWindow.add(sensorData.acceleration)
+    private fun addAccelerationValueToMinMaxWindow(acceleration: Acceleration) {
+        if (minMaxSW.size >= Constants.MIN_MAX_SW_SIZE) minMaxSW.removeAt(0)
+        minMaxSW.add(acceleration)
+    }
+
+    private fun addAccelerationValueToPostureDetectionWindow(acceleration: Acceleration) {
+        if (postureDetectionSW.size >= Constants.POSTURE_DETECTION_SW_SIZE)
+            postureDetectionSW.removeAt(0)
+        postureDetectionSW.add(acceleration)
     }
 
     private fun measureFall(sensorData: SensorData) {
@@ -58,11 +63,17 @@ class FallDetector @Inject constructor(
         val lpfAcceleration = getAcceleration(sensorData.acceleration, lpfData)
         val hpfAcceleration = getAcceleration(sensorData.acceleration, hpfData.acceleration)
 
-        if (slidingWindow.size >= SLIDING_WINDOW_SIZE)
-            useImpactPostureAlgorithm(lpfAcceleration, hpfAcceleration, sensorData.acceleration)
+        addAccelerationValueToMinMaxWindow(sensorData.acceleration)
+        addAccelerationValueToPostureDetectionWindow(lpfAcceleration)
+
+        if (postureDetectionSW.size >= Constants.POSTURE_DETECTION_SW_SIZE)
+            useImpactPostureAlgorithm(
+                hpfAcceleration = hpfAcceleration,
+                acceleration = sensorData.acceleration
+            )
     }
 
-    private fun detectPosture(lpfAcceleration: Acceleration) {
+    private fun detectPosture() {
 
         // posture must be detected 2 sec after the impact
         // it is marked as impactTimeOut == 0
@@ -76,7 +87,6 @@ class FallDetector @Inject constructor(
     }
 
     private fun useImpactPostureAlgorithm(
-        lpfAcceleration: Acceleration,
         hpfAcceleration: Acceleration,
         acceleration: Acceleration
     ) {
@@ -84,12 +94,11 @@ class FallDetector @Inject constructor(
         // if impact was observed wait 2 sec
         // detect posture
         impactTimeOut = expireTimeOut(impactTimeOut)
-        detectImpact(lpfAcceleration, hpfAcceleration, acceleration)
-        detectPosture(lpfAcceleration)
+        detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
+        detectPosture()
     }
 
     private fun detectImpact(
-        lpfAcceleration: Acceleration,
         hpfAcceleration: Acceleration,
         acceleration: Acceleration
     ) {
@@ -132,24 +141,19 @@ class FallDetector @Inject constructor(
 
     private fun getMaxValue(dataSet: DataSet): Double {
         return when (dataSet) {
-            DataSet.X_AXIS -> getDataForSumVectorMinMax().map { it.x }.maxOf { it }
-            DataSet.Y_AXIS -> getDataForSumVectorMinMax().map { it.y }.maxOf { it }
-            DataSet.Z_AXIS -> getDataForSumVectorMinMax().map { it.z }.maxOf { it }
+            DataSet.X_AXIS -> minMaxSW.map { it.x }.maxOf { it }
+            DataSet.Y_AXIS -> minMaxSW.map { it.y }.maxOf { it }
+            DataSet.Z_AXIS -> minMaxSW.map { it.z }.maxOf { it }
         }
     }
 
     private fun getMinValue(dataSet: DataSet): Double {
         return when (dataSet) {
-            DataSet.X_AXIS -> getDataForSumVectorMinMax().map { it.x }.minOf { it }
-            DataSet.Y_AXIS -> getDataForSumVectorMinMax().map { it.y }.minOf { it }
-            DataSet.Z_AXIS -> getDataForSumVectorMinMax().map { it.z }.minOf { it }
+            DataSet.X_AXIS -> minMaxSW.map { it.x }.minOf { it }
+            DataSet.Y_AXIS -> minMaxSW.map { it.y }.minOf { it }
+            DataSet.Z_AXIS -> minMaxSW.map { it.z }.minOf { it }
         }
     }
-
-    private fun getDataForSumVectorMinMax() =
-        slidingWindow.subList(
-            slidingWindow.size - Constants.SV_MIN_MAX_SW_SIZE.toInt(), slidingWindow.size
-        )
 
     private fun getAcceleration(rawAcceleration: Acceleration, acceleration: FloatArray) =
         Acceleration(
