@@ -18,4 +18,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:navGraph="@navigation/main_graph" />
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/doctorBottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#aaa"
+        app:menu="@menu/bottom_nav_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

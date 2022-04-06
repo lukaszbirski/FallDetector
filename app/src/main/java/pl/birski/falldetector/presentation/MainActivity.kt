@@ -5,13 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.BuildConfig
 import pl.birski.falldetector.R
+import pl.birski.falldetector.databinding.ActivityMainBinding
 import pl.birski.falldetector.other.Constants
 import pl.birski.falldetector.presentation.listener.PassDataInterface
 import pl.birski.falldetector.presentation.viewmodel.MainViewModel
@@ -20,6 +24,9 @@ import timber.log.Timber.DebugTree
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), PassDataInterface {
+
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -45,13 +52,29 @@ class MainActivity : AppCompatActivity(), PassDataInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        registerBroadcastReceiver()
+        _binding = ActivityMainBinding.inflate(layoutInflater)
 
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
         }
+
+        registerBroadcastReceiver()
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+
+        binding.doctorBottomNav.setupWithNavController(navHostFragment.navController)
+
+        navHostFragment.findNavController()
+            .addOnDestinationChangedListener { _, destination, _ ->
+                when (destination.id) {
+                    R.id.settingsFragment, R.id.graphFragment ->
+                        binding.doctorBottomNav.visibility = View.VISIBLE
+                    else -> binding.doctorBottomNav.visibility = View.GONE
+                }
+            }
+
+        setContentView(binding.root)
     }
 
     override fun onStop() {

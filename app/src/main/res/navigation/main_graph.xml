@@ -22,4 +22,9 @@
             app:destination="@id/graphFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="pl.birski.falldetector.presentation.fragment.SettingsFragment"
+        android:label="SettingsFragment" />
+
 </navigation>

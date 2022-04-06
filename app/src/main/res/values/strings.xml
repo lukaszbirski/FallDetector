@@ -9,6 +9,11 @@
     <string name="fall_detected_toast_text">FALL DETECTED!</string>
     <!--    Sensor ends here-->
 
+    <!--    Bottom navigation starts here-->
+    <string name="bottom_navigation_graph_text">Graph</string>
+    <string name="bottom_navigation_settings_text">Settings</string>
+    <!--    Bottom navigation ends here-->
+
     <!--    Graph Fragment starts here-->
     <string name="graph_fragment_button_start_text">Start</string>
     <string name="graph_fragment_button_stop_text">Stop</string>
