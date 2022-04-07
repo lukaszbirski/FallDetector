@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.FragmentCounterBinding
+import pl.birski.falldetector.presentation.viewmodel.CounterViewModel
 
 @AndroidEntryPoint
 class CounterFragment : Fragment() {
@@ -17,10 +19,9 @@ class CounterFragment : Fragment() {
     private var _binding: FragmentCounterBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var timer: CountDownTimer
+    private val viewModel: CounterViewModel by viewModels()
 
-    private var timerLengthSeconds = 120L
-    private var secondsRemaining = 120L
+    private lateinit var timer: CountDownTimer
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,12 +55,12 @@ class CounterFragment : Fragment() {
 
     private fun startTimer() {
 
-        timer = object : CountDownTimer(secondsRemaining * 1000, 1000) {
+        timer = object : CountDownTimer(viewModel.getSecondsRemaining() * 1000, 1000) {
 
             override fun onFinish() = onTimerFinished()
 
             override fun onTick(millisUntilFinished: Long) {
-                secondsRemaining = millisUntilFinished / 1000
+                viewModel.updateSecondsRemaining(millisUntilFinished)
                 updateCountdownView()
             }
         }.start()
@@ -76,15 +77,11 @@ class CounterFragment : Fragment() {
     }
 
     private fun updateCountdownView() {
-        val minutesUntilFinished = secondsRemaining / 60
-        val secondsInMinuteUntilFinished = secondsRemaining - minutesUntilFinished * 60
-        val secondsStr = secondsInMinuteUntilFinished.toString()
-        binding.countdownTextView.text =
-            "$minutesUntilFinished:${if (secondsStr.length == 2) secondsStr else "0 $secondsStr"}"
-        binding.progressCountDown.progress = (timerLengthSeconds - secondsRemaining).toInt()
+        binding.countdownTextView.text = viewModel.getTextForCountdownTextView()
+        binding.progressCountDown.progress = viewModel.countProgress()
     }
 
     private fun setTimerLength() {
-        binding.progressCountDown.max = timerLengthSeconds.toInt()
+        binding.progressCountDown.max = viewModel.getTimerLengthSeconds().toInt()
     }
 }
