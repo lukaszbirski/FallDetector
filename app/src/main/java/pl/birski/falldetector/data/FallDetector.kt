@@ -8,12 +8,15 @@ import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.HighPassFilterData
 import pl.birski.falldetector.model.SensorData
 import pl.birski.falldetector.other.Constants
+import pl.birski.falldetector.other.PrefUtil
+import pl.birski.falldetector.service.enum.Algorithms
 import pl.birski.falldetector.service.enum.DataSet
 import timber.log.Timber
 
 class FallDetector @Inject constructor(
     private val context: Context,
-    private val filter: Filter
+    private val filter: Filter,
+    private val prefUtil: PrefUtil
 ) {
     // signal frequency is 50Hz and cut-off frequency is 0.25 Hz
     private val ALPHA = filter.calculateAlpha(0.25, 50.0)
@@ -79,16 +82,21 @@ class FallDetector @Inject constructor(
             window = postureDetectionSW
         )
 
-        if (postureDetectionSW.size >= Constants.POSTURE_DETECTION_SW_SIZE)
-// TODO add function checking which algorithm should be used
-//            useImpactPostureAlgorithm(
-//                hpfAcceleration = hpfAcceleration,
-//                acceleration = sensorData.acceleration
-//            )
-            useStartOfFallImpactPostureAlgorithm(
-                hpfAcceleration = hpfAcceleration,
-                acceleration = sensorData.acceleration
-            )
+        if (postureDetectionSW.size >= Constants.POSTURE_DETECTION_SW_SIZE) {
+
+            when (prefUtil.getDetectionAlgorithm()) {
+
+                Algorithms.IMPACT_POSTURE -> useImpactPostureAlgorithm(
+                    hpfAcceleration = hpfAcceleration,
+                    acceleration = sensorData.acceleration
+                )
+
+                Algorithms.START_IMPACT_POSTURE -> useStartOfFallImpactPostureAlgorithm(
+                    hpfAcceleration = hpfAcceleration,
+                    acceleration = sensorData.acceleration
+                )
+            }
+        }
     }
 
     private fun detectPosture() {
@@ -146,6 +154,7 @@ class FallDetector @Inject constructor(
         )
 
         if (SV_TOTAL_FALLING_THRESHOLD <= svTotalPrevious && svTotal < SV_TOTAL_FALLING_THRESHOLD) {
+            Timber.d("Start of the fall was detected!")
             fallingTimeOut = Constants.FALLING_TIME_SPAN
         }
 
@@ -159,7 +168,9 @@ class FallDetector @Inject constructor(
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
         val svDynamic = calculateSumVector(hpfAcceleration.x, hpfAcceleration.y, hpfAcceleration.z)
 
-        if (fallingTimeOut > -1) { // TODO add OR checking if it is first algorithm
+        // impact should be detected when using ImpactPosture algorithm
+        // or when start of the fall was detected
+        if (fallingTimeOut > -1 || prefUtil.getDetectionAlgorithm() == Algorithms.IMPACT_POSTURE) {
             if (isMinMaxSumVectorGreaterThanThreshold() ||
                 isVerticalAccelerationGreaterThanThreshold(svTotal, svDynamic) ||
                 isSumVectorGreaterThanThreshold(svTotal, SV_TOT_THRESHOLD) ||

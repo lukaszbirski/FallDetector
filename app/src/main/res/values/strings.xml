@@ -43,15 +43,20 @@
 
     <!--    Preferences starts here-->
     <string name="preferences_category_timer_title_text">Timer</string>
+    <string name="preferences_category_detection_algorithm_title_text">Detection Algorithm</string>
     <string name="preferences_list_timer_title_text">Timer Length</string>
+    <string name="preferences_list_algorithm_title_text">Select Algorithm</string>
     <string name="preferences_timer_array_one_minute_text">1 minute</string>
     <string name="preferences_timer_array_two_minute_text">2 minute</string>
     <string name="preferences_timer_array_five_minute_text">5 minute</string>
     <string name="preferences_timer_array_ten_minute_text">10 minute</string>
+    <string name="preferences_algorithms_array_impact_posture_text">IMPACT + POSTURE</string>
+    <string name="preferences_algorithms_array_impact_posture_fall_text">START OF FALL + IMPACT + POSTURE</string>
     <!--    Preferences ends here-->
 
     <!--    SharedPreferences starts here-->
     <string name="shared_preferences_timer_length_list_key" translatable="false">pl.birski.falldetector.timer_length_list_key</string>
+    <string name="shared_preferences_detection_algorithms_list_key" translatable="false">pl.birski.falldetector.detection_algorithms_list_key</string>
     <!--    SharedPreferences ends here-->
 
 </resources>

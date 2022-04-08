@@ -15,7 +15,7 @@ constructor(
     private var timerLengthSeconds = calculateTimeFromPrefs()
     private var secondsRemaining = calculateTimeFromPrefs()
 
-    private fun calculateTimeFromPrefs() = prefUtil.getTimerLength().toLong() * 60
+    private fun calculateTimeFromPrefs() = prefUtil.getTimerLength() * 60
 
     fun getTimerLengthSeconds() = timerLengthSeconds
 
