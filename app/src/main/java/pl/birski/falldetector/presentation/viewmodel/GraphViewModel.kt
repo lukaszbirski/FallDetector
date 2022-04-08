@@ -175,9 +175,7 @@ constructor(
     }
 
     fun feedMultiple() {
-        if (thread != null) {
-            thread!!.interrupt()
-        }
+        thread?.interrupt()
         thread = Thread {
             while (true) {
                 plotData = true
@@ -188,7 +186,7 @@ constructor(
                 }
             }
         }
-        thread!!.start()
+        thread?.start()
     }
 
     fun selectChip(isDeltaSelected: Boolean) {

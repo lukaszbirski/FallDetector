@@ -75,4 +75,10 @@ dependencies {
 
     // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    // Material ProgressBar
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
+
+    // Preferences
+    implementation 'androidx.preference:preference:1.2.0'
 }

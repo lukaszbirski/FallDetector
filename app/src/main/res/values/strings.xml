@@ -5,6 +5,15 @@
     <string name="notification_title">Fall Detector is running</string>
     <!--    Notification ends here-->
 
+    <!--    Sensor starts here-->
+    <string name="fall_detected_toast_text">FALL DETECTED!</string>
+    <!--    Sensor ends here-->
+
+    <!--    Bottom navigation starts here-->
+    <string name="bottom_navigation_graph_text">Graph</string>
+    <string name="bottom_navigation_settings_text">Settings</string>
+    <!--    Bottom navigation ends here-->
+
     <!--    Graph Fragment starts here-->
     <string name="graph_fragment_button_start_text">Start</string>
     <string name="graph_fragment_button_stop_text">Stop</string>
@@ -20,9 +29,29 @@
     <string name="graph_fragment_angular_velocity_z_value_string">Z : %s rad/s</string>
     <!--    Graph Fragment ends here-->
 
+    <!--    Counter Fragment starts here-->
+    <string name="counter_fragment_fall_detected_text">FALL DETECTED!</string>
+    <string name="counter_fragment_have_text">You have</string>
+    <string name="counter_fragment_abort_text">to abort</string>
+    <string name="counter_fragment_ok_text">I\'m OK</string>
+    <!--    Counter Fragment starts here-->
+
     <!--    Sensor starts here-->
     <string name="gyroscope_not_supported_toast_text">GYROSCOPE IS NOT SUPPORTED!</string>
     <string name="accelerometer_not_supported_toast_text">ACCELEROMETER IS NOT SUPPORTED!</string>
     <!--    Sensor ends here-->
+
+    <!--    Preferences starts here-->
+    <string name="preferences_category_timer_title_text">Timer</string>
+    <string name="preferences_list_timer_title_text">Timer Length</string>
+    <string name="preferences_timer_array_one_minute_text">1 minute</string>
+    <string name="preferences_timer_array_two_minute_text">2 minute</string>
+    <string name="preferences_timer_array_five_minute_text">5 minute</string>
+    <string name="preferences_timer_array_ten_minute_text">10 minute</string>
+    <!--    Preferences ends here-->
+
+    <!--    SharedPreferences starts here-->
+    <string name="shared_preferences_timer_length_list_key" translatable="false">pl.birski.falldetector.timer_length_list_key</string>
+    <!--    SharedPreferences ends here-->
 
 </resources>

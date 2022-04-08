@@ -7,5 +7,24 @@
     <fragment
         android:id="@+id/graphFragment"
         android:name="pl.birski.falldetector.presentation.fragment.GraphFragment"
-        android:label="GraphFragment" />
+        android:label="GraphFragment" >
+        <action
+            android:id="@+id/action_graphFragment_to_counterFragment"
+            app:destination="@id/counterFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/counterFragment"
+        android:name="pl.birski.falldetector.presentation.fragment.CounterFragment"
+        android:label="CounterFragment" >
+        <action
+            android:id="@+id/action_counterFragment_to_graphFragment"
+            app:destination="@id/graphFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="pl.birski.falldetector.presentation.fragment.SettingsFragment"
+        android:label="SettingsFragment" />
+
 </navigation>
