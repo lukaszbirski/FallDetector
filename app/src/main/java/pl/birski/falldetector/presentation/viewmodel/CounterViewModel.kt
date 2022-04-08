@@ -3,14 +3,19 @@ package pl.birski.falldetector.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import pl.birski.falldetector.other.PrefUtil
 
 @HiltViewModel
 class CounterViewModel
 @Inject
-constructor() : ViewModel() {
+constructor(
+    private val prefUtil: PrefUtil
+) : ViewModel() {
 
-    private var timerLengthSeconds = 120L
-    private var secondsRemaining = 120L
+    private var timerLengthSeconds = calculateTimeFromPrefs()
+    private var secondsRemaining = calculateTimeFromPrefs()
+
+    private fun calculateTimeFromPrefs() = prefUtil.getTimerLength().toLong() * 60
 
     fun getTimerLengthSeconds() = timerLengthSeconds
 

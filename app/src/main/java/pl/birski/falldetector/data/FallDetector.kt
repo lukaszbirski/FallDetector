@@ -2,7 +2,6 @@ package pl.birski.falldetector.data
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import javax.inject.Inject
 import kotlin.math.sqrt
 import pl.birski.falldetector.model.Acceleration

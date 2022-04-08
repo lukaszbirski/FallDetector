@@ -41,4 +41,17 @@
     <string name="accelerometer_not_supported_toast_text">ACCELEROMETER IS NOT SUPPORTED!</string>
     <!--    Sensor ends here-->
 
+    <!--    Preferences starts here-->
+    <string name="preferences_category_timer_title_text">Timer</string>
+    <string name="preferences_list_timer_title_text">Timer Length</string>
+    <string name="preferences_timer_array_one_minute_text">1 minute</string>
+    <string name="preferences_timer_array_two_minute_text">2 minute</string>
+    <string name="preferences_timer_array_five_minute_text">5 minute</string>
+    <string name="preferences_timer_array_ten_minute_text">10 minute</string>
+    <!--    Preferences ends here-->
+
+    <!--    SharedPreferences starts here-->
+    <string name="shared_preferences_timer_length_list_key" translatable="false">pl.birski.falldetector.timer_length_list_key</string>
+    <!--    SharedPreferences ends here-->
+
 </resources>

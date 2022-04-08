@@ -78,4 +78,7 @@ dependencies {
 
     // Material ProgressBar
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
+
+    // Preferences
+    implementation 'androidx.preference:preference:1.2.0'
 }
