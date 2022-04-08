@@ -17,4 +17,5 @@ object Constants {
     const val POSTURE_DETECTION_SW_SIZE = POSTURE_DETECTION_SW_TIME_SEC * 1000 / INTERVAL_MILISEC
 
     const val IMPACT_TIME_SPAN = 2000 / INTERVAL_MILISEC // after impact need to wait 2 sec
+    const val FALLING_TIME_SPAN = 1000 / INTERVAL_MILISEC // impact is measured within 1 sec frame
 }

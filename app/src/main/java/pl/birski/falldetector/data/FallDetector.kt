@@ -24,6 +24,7 @@ class FallDetector @Inject constructor(
     private val SV_MAX_MIN_THRESHOLD = 2.0
     private val VERTICAL_ACC_THRESHOLD = 1.5
     private val LYING_POSTURE_VERTICAL_THRESHOLD = 0.5
+    private val SV_TOTAL_FALLING_THRESHOLD = 0.6
 
     private var lpfData = floatArrayOf(0.0f, 0.0f, 0.0f)
     private var hpfData = HighPassFilterData(
@@ -33,7 +34,11 @@ class FallDetector @Inject constructor(
 
     private var minMaxSW: MutableList<Acceleration> = mutableListOf()
     private var postureDetectionSW: MutableList<Acceleration> = mutableListOf()
+
     private var impactTimeOut: Int = -1
+    private var fallingTimeOut: Int = -1
+
+    private var previousAcceleration: Acceleration = Acceleration(0.0, 0.0, 0.0, 0L)
 
     fun detectFall(sensorData: SensorData) {
         measureFall(sensorData)
@@ -75,7 +80,12 @@ class FallDetector @Inject constructor(
         )
 
         if (postureDetectionSW.size >= Constants.POSTURE_DETECTION_SW_SIZE)
-            useImpactPostureAlgorithm(
+// TODO add function checking which algorithm should be used
+//            useImpactPostureAlgorithm(
+//                hpfAcceleration = hpfAcceleration,
+//                acceleration = sensorData.acceleration
+//            )
+            useStartOfFallImpactPostureAlgorithm(
                 hpfAcceleration = hpfAcceleration,
                 acceleration = sensorData.acceleration
             )
@@ -110,6 +120,38 @@ class FallDetector @Inject constructor(
         detectPosture()
     }
 
+    private fun useStartOfFallImpactPostureAlgorithm(
+        hpfAcceleration: Acceleration,
+        acceleration: Acceleration
+    ) {
+        // first detected the start of the fall
+        // if SVTOT is lower than the threshold of 0.6g
+        // detect impact within a 1 sec frame
+        // if impact was observed wait 2 sec
+        // detect posture
+        impactTimeOut = expireTimeOut(impactTimeOut)
+        fallingTimeOut = expireTimeOut(fallingTimeOut)
+        detectStartOfFall(acceleration = acceleration)
+        detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
+        detectPosture()
+    }
+
+    private fun detectStartOfFall(acceleration: Acceleration) {
+
+        val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
+        val svTotalPrevious = calculateSumVector(
+            previousAcceleration.x,
+            previousAcceleration.y,
+            previousAcceleration.z
+        )
+
+        if (SV_TOTAL_FALLING_THRESHOLD <= svTotalPrevious && svTotal < SV_TOTAL_FALLING_THRESHOLD) {
+            fallingTimeOut = Constants.FALLING_TIME_SPAN
+        }
+
+        previousAcceleration = acceleration
+    }
+
     private fun detectImpact(
         hpfAcceleration: Acceleration,
         acceleration: Acceleration
@@ -117,14 +159,16 @@ class FallDetector @Inject constructor(
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
         val svDynamic = calculateSumVector(hpfAcceleration.x, hpfAcceleration.y, hpfAcceleration.z)
 
-        if (isMinMaxSumVectorGreaterThanThreshold() ||
-            isVerticalAccelerationGreaterThanThreshold(svTotal, svDynamic) ||
-            isSumVectorGreaterThanThreshold(svTotal, SV_TOT_THRESHOLD) ||
-            isSumVectorGreaterThanThreshold(svDynamic, SV_D_THRESHOLD)
-        ) {
-            Timber.d("Impact was detected!")
-            // impact was detected, set impact time out
-            impactTimeOut = Constants.IMPACT_TIME_SPAN
+        if (fallingTimeOut > -1) { // TODO add OR checking if it is first algorithm
+            if (isMinMaxSumVectorGreaterThanThreshold() ||
+                isVerticalAccelerationGreaterThanThreshold(svTotal, svDynamic) ||
+                isSumVectorGreaterThanThreshold(svTotal, SV_TOT_THRESHOLD) ||
+                isSumVectorGreaterThanThreshold(svDynamic, SV_D_THRESHOLD)
+            ) {
+                Timber.d("Impact was detected!")
+                // impact was detected, set impact time out
+                impactTimeOut = Constants.IMPACT_TIME_SPAN
+            }
         }
     }
 
