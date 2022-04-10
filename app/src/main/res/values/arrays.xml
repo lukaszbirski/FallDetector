@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <!-- Timer Lengths starts here -->
     <string-array name="timer_lengths_entries">
         <item>@string/preferences_timer_array_one_minute_text</item>
@@ -14,7 +15,21 @@
         <item>5</item>
         <item>10</item>
     </string-array>
-
     <!-- Timer Lengths ends here -->
+
+    <!-- Select algorithm starts here -->
+    <string-array name="detection_algorithms_entries">
+        <item>@string/preferences_algorithms_array_impact_posture_text</item>
+        <item>@string/preferences_algorithms_array_impact_posture_fall_text</item>
+        <item>@string/preferences_algorithms_array_impact_velocity_posture_fall_text</item>
+    </string-array>
+
+    <string-array name="detection_algorithms_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <!-- Select algorithm ends here -->
+
 
 </resources>

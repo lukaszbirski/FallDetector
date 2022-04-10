@@ -16,4 +16,18 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:title="@string/preferences_category_detection_algorithm_title_text"
+        android:icon="@drawable/ic_baseline_alarm_24">
+
+        <ListPreference
+            app:defaultValue="1"
+            app:entries="@array/detection_algorithms_entries"
+            app:entryValues="@array/detection_algorithms_values"
+            app:key="@string/shared_preferences_detection_algorithms_list_key"
+            app:title="@string/preferences_list_algorithm_title_text"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
