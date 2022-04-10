@@ -52,6 +52,7 @@
     <string name="preferences_timer_array_ten_minute_text">10 minute</string>
     <string name="preferences_algorithms_array_impact_posture_text">IMPACT + POSTURE</string>
     <string name="preferences_algorithms_array_impact_posture_fall_text">START OF FALL + IMPACT + POSTURE</string>
+    <string name="preferences_algorithms_array_impact_velocity_posture_fall_text">START OF FALL + VELOCITY + IMPACT + POSTURE</string>
     <!--    Preferences ends here-->
 
     <!--    SharedPreferences starts here-->
