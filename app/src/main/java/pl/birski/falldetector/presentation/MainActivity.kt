@@ -5,25 +5,35 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.BuildConfig
 import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.ActivityMainBinding
 import pl.birski.falldetector.other.Constants
+import pl.birski.falldetector.presentation.fragment.CounterFragment
+import pl.birski.falldetector.presentation.fragment.GraphFragment
+import pl.birski.falldetector.presentation.fragment.SettingsFragment
 import pl.birski.falldetector.presentation.listener.PassDataInterface
 import pl.birski.falldetector.presentation.viewmodel.MainViewModel
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), PassDataInterface {
+class MainActivity :
+    AppCompatActivity(),
+    PassDataInterface,
+    NavigationView.OnNavigationItemSelectedListener {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -44,7 +54,7 @@ class MainActivity : AppCompatActivity(), PassDataInterface {
                         Toast.LENGTH_LONG
                     ).show()
                     isFallDetected = true
-                    navigateToCounterFragment()
+                    setCurrentFragment(CounterFragment())
                 }
             }
         }
@@ -63,18 +73,45 @@ class MainActivity : AppCompatActivity(), PassDataInterface {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
 
-        binding.doctorBottomNav.setupWithNavController(navHostFragment.navController)
+        binding.bottomNav.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.graphFragment -> setCurrentFragment(GraphFragment())
+                R.id.settingsFragment -> setCurrentFragment(SettingsFragment())
+            }
+            true
+        }
 
         navHostFragment.findNavController()
             .addOnDestinationChangedListener { _, destination, _ ->
                 when (destination.id) {
                     R.id.settingsFragment, R.id.graphFragment ->
-                        binding.doctorBottomNav.visibility = View.VISIBLE
-                    else -> binding.doctorBottomNav.visibility = View.GONE
+                        binding.bottomNav.visibility = View.VISIBLE
+                    else -> binding.bottomNav.visibility = View.GONE
                 }
             }
 
+        setSupportActionBar(binding.toolbar)
+
+        val toggle = ActionBarDrawerToggle(
+            this, binding.drawerLayout, binding.toolbar,
+            R.string.accelerometer_not_supported_toast_text,
+            R.string.gyroscope_not_supported_toast_text
+        )
+
+        binding.navView.setNavigationItemSelectedListener(this)
+
+        binding.drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
         setContentView(binding.root)
+    }
+
+    override fun onBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onStop() {
@@ -84,6 +121,17 @@ class MainActivity : AppCompatActivity(), PassDataInterface {
 
     override fun onDataReceived(data: Boolean) {
         isFallDetected = data
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.graphFragment -> setCurrentFragment(GraphFragment())
+            R.id.settingsFragment -> setCurrentFragment(SettingsFragment())
+        }
+
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
+        return true
     }
 
     private fun unregisterBroadcastReceiver() {
@@ -96,10 +144,9 @@ class MainActivity : AppCompatActivity(), PassDataInterface {
         }
     }
 
-    private fun navigateToCounterFragment() {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        navController.navigate(R.id.action_graphFragment_to_counterFragment)
-    }
+    private fun setCurrentFragment(fragment: Fragment) =
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.main_nav_host_fragment, fragment)
+            commit()
+        }
 }
