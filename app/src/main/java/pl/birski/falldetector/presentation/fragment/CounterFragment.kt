@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.FragmentCounterBinding
@@ -36,8 +35,10 @@ class CounterFragment : Fragment() {
             timer.cancel()
             onTimerFinished()
 
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.action_counterFragment_to_graphFragment)
+            parentFragmentManager.beginTransaction().apply {
+                replace(R.id.main_nav_host_fragment, GraphFragment())
+                    .commit()
+            }
         }
 
         return binding.root

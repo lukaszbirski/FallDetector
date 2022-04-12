@@ -10,7 +10,6 @@ import androidx.fragment.app.viewModels
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.LineData
-import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.databinding.FragmentGraphBinding
 import pl.birski.falldetector.presentation.listener.PassDataInterface
@@ -41,7 +40,6 @@ class GraphFragment : Fragment() {
         passDataInterface = requireActivity() as PassDataInterface
 
         setChart(binding.chart)
-        checkChip(binding.accChip)
         setInitialVelocities()
 
         binding.start.setOnClickListener {
@@ -52,10 +50,6 @@ class GraphFragment : Fragment() {
         binding.stop.setOnClickListener {
             viewModel.stopService()
             passDataInterface.onDataReceived(true)
-        }
-
-        binding.chipGroup.setOnCheckedChangeListener { _, id ->
-            viewModel.selectChip(isDeltaChipSelected(id))
         }
 
         viewModel.apply {
@@ -129,17 +123,6 @@ class GraphFragment : Fragment() {
             rightAxis.isEnabled = false
             setDrawBorders(true)
         }
-    }
-
-    private fun checkChip(chip: Chip) {
-        // in default ACC Chip is checked
-        chip.isChecked = true
-    }
-
-    private fun isDeltaChipSelected(id: Int) = when (id) {
-        binding.accChip.id -> false
-        binding.deltaChip.id -> true
-        else -> false
     }
 
     private fun setInitialVelocities() {
