@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.FragmentCounterBinding
+import pl.birski.falldetector.presentation.listener.NavigateInterface
 import pl.birski.falldetector.presentation.viewmodel.CounterViewModel
 
 @AndroidEntryPoint
@@ -22,6 +22,8 @@ class CounterFragment : Fragment() {
 
     private lateinit var timer: CountDownTimer
 
+    private lateinit var navigateInterface: NavigateInterface
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,14 +33,12 @@ class CounterFragment : Fragment() {
 
         startTimer()
 
+        navigateInterface = requireActivity() as NavigateInterface
+
         binding.counterFragmentButton.setOnClickListener {
             timer.cancel()
             onTimerFinished()
-
-            parentFragmentManager.beginTransaction().apply {
-                replace(R.id.main_nav_host_fragment, GraphFragment())
-                    .commit()
-            }
+            navigateInterface.navigateToFragment(GraphFragment())
         }
 
         return binding.root

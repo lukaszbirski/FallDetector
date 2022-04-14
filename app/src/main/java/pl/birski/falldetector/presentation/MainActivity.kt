@@ -24,6 +24,7 @@ import pl.birski.falldetector.other.Constants
 import pl.birski.falldetector.presentation.fragment.CounterFragment
 import pl.birski.falldetector.presentation.fragment.GraphFragment
 import pl.birski.falldetector.presentation.fragment.SettingsFragment
+import pl.birski.falldetector.presentation.listener.NavigateInterface
 import pl.birski.falldetector.presentation.listener.PassDataInterface
 import pl.birski.falldetector.presentation.viewmodel.MainViewModel
 import timber.log.Timber
@@ -33,6 +34,7 @@ import timber.log.Timber.DebugTree
 class MainActivity :
     AppCompatActivity(),
     PassDataInterface,
+    NavigateInterface,
     NavigationView.OnNavigationItemSelectedListener {
 
     private var _binding: ActivityMainBinding? = null
@@ -54,7 +56,7 @@ class MainActivity :
                         Toast.LENGTH_LONG
                     ).show()
                     isFallDetected = true
-                    setCurrentFragment(CounterFragment())
+                    navigateToFragment(CounterFragment())
                 }
             }
         }
@@ -75,8 +77,8 @@ class MainActivity :
 
         binding.bottomNav.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.graphFragment -> setCurrentFragment(GraphFragment())
-                R.id.settingsFragment -> setCurrentFragment(SettingsFragment())
+                R.id.graphFragment -> navigateToFragment(GraphFragment())
+                R.id.settingsFragment -> navigateToFragment(SettingsFragment())
             }
             true
         }
@@ -94,8 +96,8 @@ class MainActivity :
 
         val toggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, binding.toolbar,
-            R.string.accelerometer_not_supported_toast_text,
-            R.string.gyroscope_not_supported_toast_text
+            R.string.navigation_drawer_open_text,
+            R.string.navigation_drawer_closed_text
         )
 
         binding.navView.setNavigationItemSelectedListener(this)
@@ -126,8 +128,8 @@ class MainActivity :
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
-            R.id.graphFragment -> setCurrentFragment(GraphFragment())
-            R.id.settingsFragment -> setCurrentFragment(SettingsFragment())
+            R.id.graphFragment -> navigateToFragment(GraphFragment())
+            R.id.settingsFragment -> navigateToFragment(SettingsFragment())
         }
 
         binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -144,9 +146,21 @@ class MainActivity :
         }
     }
 
-    private fun setCurrentFragment(fragment: Fragment) =
+    private fun hideAllNavigation(fragment: Fragment) {
+        if (fragment is CounterFragment) {
+            binding.bottomNav.visibility = View.GONE
+            supportActionBar?.hide()
+        } else {
+            binding.bottomNav.visibility = View.VISIBLE
+            supportActionBar?.show()
+        }
+    }
+
+    override fun navigateToFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.main_nav_host_fragment, fragment)
             commit()
+        }.also {
+            hideAllNavigation(fragment)
         }
 }
