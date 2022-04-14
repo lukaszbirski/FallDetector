@@ -3,6 +3,7 @@ package pl.birski.falldetector.di
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import dagger.Module
 import dagger.Provides
@@ -29,7 +30,11 @@ object ServiceModule {
         Intent(app, MainActivity::class.java).also {
             it.action = ServiceActions.SHOW.name
         },
-        PendingIntent.FLAG_UPDATE_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_MUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
     )
 
     @ServiceScoped
