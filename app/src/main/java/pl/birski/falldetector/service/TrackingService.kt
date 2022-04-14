@@ -3,7 +3,6 @@ package pl.birski.falldetector.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_LOW
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
@@ -21,8 +20,8 @@ class TrackingService : LifecycleService() {
     @Inject
     lateinit var notificationBuilder: NotificationCompat.Builder
 
-    @Inject
-    lateinit var pendingIntent: PendingIntent
+//    @Inject
+//    lateinit var pendingIntent: PendingIntent
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
