@@ -6,6 +6,7 @@ import android.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -14,7 +15,6 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
@@ -55,7 +55,7 @@ constructor(
 
     private suspend fun updateGraph(lineData: LineData?) {
         stopGraphUpdates()
-        job = MainScope().launch {
+        job = viewModelScope.launch {
             while (true) {
                 measureAcceleration(lineData = lineData)
                 delay(GRAPH_UPDATE_SLEEP_TIME)
@@ -64,7 +64,7 @@ constructor(
     }
 
     private fun runGraphUpdate(lineData: LineData?) {
-        MainScope().launch {
+        viewModelScope.launch {
             updateGraph(lineData = lineData)
         }
     }

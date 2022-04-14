@@ -20,9 +20,6 @@ class TrackingService : LifecycleService() {
     @Inject
     lateinit var notificationBuilder: NotificationCompat.Builder
 
-//    @Inject
-//    lateinit var pendingIntent: PendingIntent
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
             when (it.action) {
@@ -56,7 +53,6 @@ class TrackingService : LifecycleService() {
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
     }
 
-    // TODO needs to be corrected
     private fun stopForegroundService(intent: Intent?) {
         this.stopService(intent)
     }
