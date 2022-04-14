@@ -60,4 +60,9 @@
     <string name="shared_preferences_detection_algorithms_list_key" translatable="false">pl.birski.falldetector.detection_algorithms_list_key</string>
     <!--    SharedPreferences ends here-->
 
+    <!--    Drawer starts here-->
+    <string name="navigation_drawer_open_text">Navigation drawer is open</string>
+    <string name="navigation_drawer_closed_text">Navigation drawer is closed</string>
+    <!--    Drawer ends here-->
+
 </resources>
