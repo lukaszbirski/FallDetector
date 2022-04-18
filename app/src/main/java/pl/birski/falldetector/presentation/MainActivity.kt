@@ -56,7 +56,13 @@ class MainActivity :
                         Toast.LENGTH_LONG
                     ).show()
                     isFallDetected = true
-                    navigateToFragment(CounterFragment())
+
+                    Intent(context, LockScreenActivity::class.java).also {
+                        it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(it)
+                    }
                 }
             }
         }
@@ -116,8 +122,8 @@ class MainActivity :
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         unregisterBroadcastReceiver()
     }
 
