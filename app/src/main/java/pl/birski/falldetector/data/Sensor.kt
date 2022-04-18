@@ -67,14 +67,14 @@ class Sensor @Inject constructor(
             manager.registerListener(this, sensor, Constants.INTERVAL_MILISEC * 1000)
         } ?: Toast.makeText(
             context,
-            context.getText(R.string.gyroscope_not_supported_toast_text),
+            context.getText(R.string.accelerometer_not_supported_toast_text),
             Toast.LENGTH_LONG
         ).show()
         gyroscope?.let {
             manager.registerListener(this, gyroscope, Constants.INTERVAL_MILISEC * 1000)
         } ?: Toast.makeText(
             context,
-            context.getText(R.string.accelerometer_not_supported_toast_text),
+            context.getText(R.string.gyroscope_not_supported_toast_text),
             Toast.LENGTH_LONG
         ).show()
     }

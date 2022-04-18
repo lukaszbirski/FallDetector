@@ -21,10 +21,8 @@ import pl.birski.falldetector.BuildConfig
 import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.ActivityMainBinding
 import pl.birski.falldetector.other.Constants
-import pl.birski.falldetector.presentation.fragment.CounterFragment
 import pl.birski.falldetector.presentation.fragment.GraphFragment
 import pl.birski.falldetector.presentation.fragment.SettingsFragment
-import pl.birski.falldetector.presentation.listener.NavigateInterface
 import pl.birski.falldetector.presentation.listener.PassDataInterface
 import pl.birski.falldetector.presentation.viewmodel.MainViewModel
 import timber.log.Timber
@@ -34,7 +32,6 @@ import timber.log.Timber.DebugTree
 class MainActivity :
     AppCompatActivity(),
     PassDataInterface,
-    NavigateInterface,
     NavigationView.OnNavigationItemSelectedListener {
 
     private var _binding: ActivityMainBinding? = null
@@ -152,21 +149,9 @@ class MainActivity :
         }
     }
 
-    private fun hideAllNavigation(fragment: Fragment) {
-        if (fragment is CounterFragment) {
-            binding.bottomNav.visibility = View.GONE
-            supportActionBar?.hide()
-        } else {
-            binding.bottomNav.visibility = View.VISIBLE
-            supportActionBar?.show()
-        }
-    }
-
-    override fun navigateToFragment(fragment: Fragment) =
+    private fun navigateToFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.main_nav_host_fragment, fragment)
             commit()
-        }.also {
-            hideAllNavigation(fragment)
         }
 }
