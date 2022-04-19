@@ -6,7 +6,7 @@ import javax.inject.Inject
 import pl.birski.falldetector.other.PrefUtil
 
 @HiltViewModel
-class CounterViewModel
+class LockScreenViewModel
 @Inject
 constructor(
     private val prefUtil: PrefUtil
