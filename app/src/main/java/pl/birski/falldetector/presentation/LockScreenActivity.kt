@@ -1,6 +1,5 @@
 package pl.birski.falldetector.presentation
 
-import android.app.KeyguardManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -44,18 +43,16 @@ class LockScreenActivity : AppCompatActivity() {
     }
 
     private fun showWhenLockedAndTurnScreenOn() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true)
-            setTurnScreenOn(true)
-            val keyguardManager = getSystemService(KEYGUARD_SERVICE) as KeyguardManager
-            keyguardManager.requestDismissKeyguard(this, null)
-        } else {
-            window.addFlags(
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-            )
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setTurnScreenOn(true)
+            setShowWhenLocked(true)
         }
     }
 

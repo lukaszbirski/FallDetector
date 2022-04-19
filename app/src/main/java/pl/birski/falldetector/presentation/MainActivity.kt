@@ -58,6 +58,7 @@ class MainActivity :
                         it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        it.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
                         startActivity(it)
                     }
                 }
