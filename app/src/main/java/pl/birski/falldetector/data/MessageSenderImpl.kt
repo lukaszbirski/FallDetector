@@ -10,13 +10,14 @@ import android.telephony.SmsManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import javax.inject.Inject
+import pl.birski.falldetector.R
 import pl.birski.falldetector.other.Constants
 
 class MessageSenderImpl @Inject constructor(
     private val context: Context
 ) : MessageSender {
 
-    private val messageBody: String = "TESTUJE CZY DZIALA WYSYLANIE IMPL"
+    private val messageBody: String = context.getString(R.string.message_sender_text_body)
 
     private var mMessageSentParts = 0
     private var mMessageSentTotalParts = 0
@@ -30,7 +31,7 @@ class MessageSenderImpl @Inject constructor(
 
         registerBroadCastReceivers()
         mMessageSentCount = 0
-        sendSMS(messages[mMessageSentCount], "$messageBody $mMessageSentCount")
+        sendSMS(messages[mMessageSentCount], messageBody)
     }
 
     private fun sendNextMessage() {
@@ -38,7 +39,7 @@ class MessageSenderImpl @Inject constructor(
             sendSMS(messages[mMessageSentCount], "$messageBody $mMessageSentCount")
         } else {
             Toast.makeText(
-                context, "All SMS have been sent",
+                context, context.getString(R.string.message_sender_all_message_sent_text),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -95,13 +96,15 @@ class MessageSenderImpl @Inject constructor(
                                 sendNextMessage()
                             }
                             Toast.makeText(
-                                context, "SMS sent",
+                                context,
+                                context?.getString(R.string.message_sender_message_sent_text),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                         else -> {
                             Toast.makeText(
-                                context, "Failure while sending message",
+                                context,
+                                context?.getString(R.string.message_sender_error_when_sending_text),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -115,11 +118,13 @@ class MessageSenderImpl @Inject constructor(
                 override fun onReceive(context: Context?, intent: Intent?) {
                     when (resultCode) {
                         AppCompatActivity.RESULT_OK -> Toast.makeText(
-                            context, "SMS delivered",
+                            context,
+                            context?.getString(R.string.message_sender_message_delivered_text),
                             Toast.LENGTH_SHORT
                         ).show()
                         AppCompatActivity.RESULT_CANCELED -> Toast.makeText(
-                            context, "SMS not delivered",
+                            context,
+                            context?.getString(R.string.message_sender_message_not_delivered_text),
                             Toast.LENGTH_SHORT
                         ).show()
                     }

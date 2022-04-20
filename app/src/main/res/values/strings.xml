@@ -65,4 +65,13 @@
     <string name="navigation_drawer_closed_text">Navigation drawer is closed</string>
     <!--    Drawer ends here-->
 
+    <!--    Message Sender starts here-->
+    <string name="message_sender_text_body">I had an accident and I need help!</string>
+    <string name="message_sender_all_message_sent_text">All SMS have been sent</string>
+    <string name="message_sender_message_sent_text">SMS sent</string>
+    <string name="message_sender_error_when_sending_text">Failure while sending message</string>
+    <string name="message_sender_message_delivered_text">SMS delivered</string>
+    <string name="message_sender_message_not_delivered_text">SMS not delivered</string>
+    <!--    Message Sender ends here-->
+
 </resources>
