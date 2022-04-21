@@ -1,16 +1,12 @@
 package pl.birski.falldetector.presentation
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.databinding.ActivityLockScreenBinding
 import pl.birski.falldetector.presentation.viewmodel.LockScreenViewModel
@@ -23,8 +19,6 @@ class LockScreenActivity : AppCompatActivity() {
     private val viewModel: LockScreenViewModel by viewModels()
 
     private lateinit var timer: CountDownTimer
-
-    private val permissionRequest = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +65,7 @@ class LockScreenActivity : AppCompatActivity() {
 
         timer = object : CountDownTimer(viewModel.getSecondsRemaining() * 1000, 1000) {
 
-            override fun onFinish() = onTimerFinished()
+            override fun onFinish() = onTimerFinished().also { viewModel.sendMessages() }
 
             override fun onTick(millisUntilFinished: Long) {
                 viewModel.updateSecondsRemaining(millisUntilFinished)
@@ -86,7 +80,6 @@ class LockScreenActivity : AppCompatActivity() {
     }
 
     private fun onTimerFinished() {
-        sendMessages()
         binding.progressCountDown.progress = 0
         updateCountdownView()
     }
@@ -98,18 +91,5 @@ class LockScreenActivity : AppCompatActivity() {
 
     private fun setTimerLength() {
         binding.progressCountDown.max = viewModel.getTimerLengthSeconds().toInt()
-    }
-
-    private fun sendMessages() {
-        val permissionCheck =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            viewModel.sendMessages()
-        } else {
-            ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.SEND_SMS),
-                permissionRequest
-            )
-        }
     }
 }

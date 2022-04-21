@@ -17,6 +17,8 @@ object Constants {
     const val IMPACT_TIME_SPAN = 2000 / INTERVAL_MILISEC // after impact need to wait 2 sec
     const val FALLING_TIME_SPAN = 1000 / INTERVAL_MILISEC // impact is measured within 1 sec frame
 
+    const val PERMISSION_REQUEST_CODE = 101
+
     const val CUSTOM_FALL_DETECTED_RECEIVER = "pl.birski.falldetector.CUSTOM_INTENT"
 
     const val CUSTOM_FALL_DETECTED_INTENT_SMS_SENT = "pl.birski.falldetector.SMS_SENT"
