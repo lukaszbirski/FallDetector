@@ -162,7 +162,12 @@ class MainActivity :
 
     // TODO in future most likely will need to move permission code into different fragment
     private fun checkPermissions() {
-        if (!PermissionUtil.hasMessagesPermission(this))
+
+        val shouldDisplay =
+            PermissionUtil.returnPermissionsArray().map { shouldShowRequestPermissionRationale(it) }
+                .none { !it }
+
+        if (!PermissionUtil.hasMessagesPermission(this) && shouldDisplay)
             setDialog()
     }
 

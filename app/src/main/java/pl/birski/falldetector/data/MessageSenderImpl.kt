@@ -36,7 +36,7 @@ class MessageSenderImpl @Inject constructor(
 
     private fun sendNextMessage() {
         if (thereAreSmsToSend()) {
-            sendSMS(messages[mMessageSentCount], "$messageBody $mMessageSentCount")
+            sendSMS(messages[mMessageSentCount], messageBody)
         } else {
             Toast.makeText(
                 context, context.getString(R.string.message_sender_all_message_sent_text),
