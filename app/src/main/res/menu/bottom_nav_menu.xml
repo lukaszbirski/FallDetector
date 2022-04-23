@@ -5,6 +5,10 @@
         android:title="@string/bottom_navigation_graph_text"
         android:icon="@drawable/ic_signal_wave_24" />
 
+    <item android:id="@+id/contactsFragment"
+        android:title="@string/bottom_navigation_contacts_text"
+        android:icon="@drawable/ic_person_24" />
+
     <item android:id="@+id/settingsFragment"
         android:title="@string/bottom_navigation_settings_text"
         android:icon="@drawable/ic_baseline_settings_24" />

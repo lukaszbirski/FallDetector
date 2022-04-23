@@ -27,6 +27,7 @@ import pl.birski.falldetector.databinding.ActivityMainBinding
 import pl.birski.falldetector.other.Constants
 import pl.birski.falldetector.other.Constants.PERMISSION_REQUEST_CODE
 import pl.birski.falldetector.other.PermissionUtil
+import pl.birski.falldetector.presentation.fragment.ContactsFragment
 import pl.birski.falldetector.presentation.fragment.GraphFragment
 import pl.birski.falldetector.presentation.fragment.SettingsFragment
 import pl.birski.falldetector.presentation.listener.PassDataInterface
@@ -95,17 +96,14 @@ class MainActivity :
             supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
 
         binding.bottomNav.setOnItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.graphFragment -> navigateToFragment(GraphFragment())
-                R.id.settingsFragment -> navigateToFragment(SettingsFragment())
-            }
+            manageNavigation(menuItem)
             true
         }
 
         navHostFragment.findNavController()
             .addOnDestinationChangedListener { _, destination, _ ->
                 when (destination.id) {
-                    R.id.settingsFragment, R.id.graphFragment ->
+                    R.id.settingsFragment, R.id.graphFragment, R.id.contactsFragment ->
                         binding.bottomNav.visibility = View.VISIBLE
                     else -> binding.bottomNav.visibility = View.GONE
                 }
@@ -150,12 +148,7 @@ class MainActivity :
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-
-        when (item.itemId) {
-            R.id.graphFragment -> navigateToFragment(GraphFragment())
-            R.id.settingsFragment -> navigateToFragment(SettingsFragment())
-        }
-
+        manageNavigation(item)
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -205,6 +198,14 @@ class MainActivity :
     private fun registerBroadcastReceiver() {
         IntentFilter(Constants.CUSTOM_FALL_DETECTED_RECEIVER).also {
             registerReceiver(mMessageReceiver, it)
+        }
+    }
+
+    private fun manageNavigation(item: MenuItem) {
+        when (item.itemId) {
+            R.id.graphFragment -> navigateToFragment(GraphFragment())
+            R.id.settingsFragment -> navigateToFragment(SettingsFragment())
+            R.id.contactsFragment -> navigateToFragment(ContactsFragment())
         }
     }
 

@@ -4,14 +4,21 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+
         <item
             android:id="@+id/graphFragment"
             android:icon="@drawable/ic_signal_wave_24"
             android:title="@string/bottom_navigation_graph_text" />
+
+        <item android:id="@+id/contactsFragment"
+            android:title="@string/bottom_navigation_contacts_text"
+            android:icon="@drawable/ic_person_24" />
+
         <item
             android:id="@+id/settingsFragment"
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/bottom_navigation_settings_text" />
+
     </group>
 
 </menu>

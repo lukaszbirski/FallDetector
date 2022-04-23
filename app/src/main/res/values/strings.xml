@@ -12,6 +12,7 @@
     <!--    Bottom navigation starts here-->
     <string name="bottom_navigation_graph_text">Graph</string>
     <string name="bottom_navigation_settings_text">Settings</string>
+    <string name="bottom_navigation_contacts_text">Contacts</string>
     <!--    Bottom navigation ends here-->
 
     <!--    Graph Fragment starts here-->
