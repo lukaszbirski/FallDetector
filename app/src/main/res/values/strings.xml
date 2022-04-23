@@ -81,4 +81,14 @@
     <string name="permission_dialog_message_text">You have not granted application permissions. The app will ask for them once more. Lack of consent will prevent the normal functioning of the application</string>
     <!--    Permission Dialog ends here-->
 
+    <!--    Add Contact Dialog starts here-->
+    <string name="contact_dialog_title_text">Add contact</string>
+    <string name="contact_dialog_cancel_text">Cancel</string>
+    <string name="contact_dialog_add_text">Add</string>
+    <string name="contact_dialog_name_text">Name:</string>
+    <string name="contact_dialog_surname_text">Last name:</string>
+    <string name="contact_dialog_phone_text">Phone:</string>
+    <string name="contact_dialog_plus_text">+</string>
+    <!--    Add Contact Dialog starts here-->
+
 </resources>
