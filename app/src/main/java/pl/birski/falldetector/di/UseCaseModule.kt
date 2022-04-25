@@ -5,6 +5,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import pl.birski.falldetector.database.AppDatabase
+import pl.birski.falldetector.database.model.ContactEntity
+import pl.birski.falldetector.model.Contact
+import pl.birski.falldetector.model.util.ContactMapper
+import pl.birski.falldetector.model.util.DomainMapper
+import pl.birski.falldetector.usecase.AddContactUseCase
+import pl.birski.falldetector.usecase.GetAllContactsUseCase
 import pl.birski.falldetector.usecase.UseCaseFactory
 
 @Module
@@ -13,7 +20,43 @@ object UseCaseModule {
 
     @ViewModelScoped
     @Provides
-    fun provideUseCaseFactory(): UseCaseFactory {
-        return UseCaseFactory()
+    fun provideUseCaseFactory(
+        addDriverUseCase: AddContactUseCase,
+        getAllContactsUseCase: GetAllContactsUseCase
+    ): UseCaseFactory {
+        return UseCaseFactory(
+            addDriverUseCase = addDriverUseCase,
+            getAllContactsUseCase = getAllContactsUseCase
+        )
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideContactMapper(): ContactMapper {
+        return ContactMapper()
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideAddContactUseCase(
+        database: AppDatabase,
+        mapper: ContactMapper
+    ): AddContactUseCase {
+        return AddContactUseCase(
+            database = database,
+            mapper = mapper
+        )
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideGetAllContactsUseCase(
+        database: AppDatabase,
+        mapper: ContactMapper
+    ): GetAllContactsUseCase {
+        return GetAllContactsUseCase(
+            database = database,
+            mapper = mapper
+        )
     }
 }

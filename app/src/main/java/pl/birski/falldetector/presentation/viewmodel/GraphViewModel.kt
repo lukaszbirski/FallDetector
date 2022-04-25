@@ -189,10 +189,6 @@ constructor(
         thread?.start()
     }
 
-    fun selectChip(isDeltaSelected: Boolean) {
-        isNormalized = isDeltaSelected
-    }
-
     fun formatVelocityValue(dataSet: DataSet, value: Double): String = when (dataSet) {
         DataSet.X_AXIS -> {
             application.getString(

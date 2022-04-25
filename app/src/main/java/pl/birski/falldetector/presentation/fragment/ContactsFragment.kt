@@ -73,6 +73,12 @@ class ContactsFragment : Fragment() {
     ): View? {
         binding = FragmentContactsBinding.inflate(inflater, container, false)
 
+        viewModel.apply {
+
+            contacts.observe(viewLifecycleOwner) {
+            }
+        }
+
         binding.addContactButton.setOnClickListener {
             setAddContactDialog()
         }
