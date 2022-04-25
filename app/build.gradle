@@ -84,4 +84,15 @@ dependencies {
 
     // Easy Permissions
     implementation 'pub.devrel:easypermissions:3.0.0'
+
+    // Room
+    implementation 'androidx.room:room-runtime:2.4.2'
+    annotationProcessor 'androidx.room:room-compiler:2.4.2'
+    kapt 'androidx.room:room-compiler:2.4.2'
+    implementation 'androidx.room:room-rxjava2:2.4.2'
+
+    // RxJava 2
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+
 }
