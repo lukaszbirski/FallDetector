@@ -14,5 +14,9 @@
         android:id="@+id/settingsFragment"
         android:name="pl.birski.falldetector.presentation.fragment.SettingsFragment"
         android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="pl.birski.falldetector.presentation.fragment.ContactsFragment"
+        android:label="ContactsFragment" />
 
 </navigation>

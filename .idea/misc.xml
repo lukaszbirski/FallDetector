@@ -3,12 +3,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/border.xml" value="0.2565" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_baseline_alarm_24.xml" value="0.255" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_baseline_notifications_24.xml" value="0.266" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_baseline_person_add_24.xml" value="0.2565" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_baseline_remove_circle.xml" value="0.2565" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.2875" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_person_24.xml" value="0.1575" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_person_falling_down_24.xml" value="0.1" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_signal_wave_24.xml" value="0.2875" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/activity_lock_screen.xml" value="0.2390625" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/activity_main.xml" value="0.24954710144927536" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/add_contact_dialog.xml" value="0.18" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/contact_item.xml" value="0.33" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/fragment_contacts.xml" value="0.22" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/fragment_counter.xml" value="0.33" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/fragment_graph.xml" value="0.25" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/fragment_settings.xml" value="0.20208333333333334" />
