@@ -11,11 +11,13 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.FragmentContactsBinding
 import pl.birski.falldetector.presentation.fragment.adapter.ContactAdapter
+import pl.birski.falldetector.presentation.fragment.adapter.util.SwipeToDelete
 import pl.birski.falldetector.presentation.viewmodel.ContactsViewModel
 
 @AndroidEntryPoint
@@ -79,14 +81,18 @@ class ContactsFragment : Fragment() {
 
             contacts.observe(viewLifecycleOwner) { contacts ->
 
+                val adapter = ContactAdapter(contacts)
+
                 binding.contactsRecycler.also {
                     it.layoutManager = LinearLayoutManager(requireContext())
                     it.setHasFixedSize(true)
-                    it.adapter = ContactAdapter(contacts)
+                    it.adapter = adapter
+                    it.visibility = View.VISIBLE
+                    it.adapter?.notifyDataSetChanged()
+                    it.scrollToPosition(0)
                 }
-                binding.contactsRecycler.visibility = View.VISIBLE
-                binding.contactsRecycler.adapter?.notifyDataSetChanged()
-                binding.contactsRecycler.scrollToPosition(0)
+                val itemTouchHelper = ItemTouchHelper(SwipeToDelete(adapter))
+                itemTouchHelper.attachToRecyclerView(binding.contactsRecycler)
             }
         }
 

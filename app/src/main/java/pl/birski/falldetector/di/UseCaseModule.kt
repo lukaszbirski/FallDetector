@@ -12,6 +12,7 @@ import pl.birski.falldetector.model.util.ContactMapper
 import pl.birski.falldetector.model.util.DomainMapper
 import pl.birski.falldetector.usecase.AddContactUseCase
 import pl.birski.falldetector.usecase.GetAllContactsUseCase
+import pl.birski.falldetector.usecase.RemoveContactUseCase
 import pl.birski.falldetector.usecase.UseCaseFactory
 
 @Module
@@ -22,11 +23,13 @@ object UseCaseModule {
     @Provides
     fun provideUseCaseFactory(
         addDriverUseCase: AddContactUseCase,
-        getAllContactsUseCase: GetAllContactsUseCase
+        getAllContactsUseCase: GetAllContactsUseCase,
+        removeContactUseCase: RemoveContactUseCase
     ): UseCaseFactory {
         return UseCaseFactory(
             addDriverUseCase = addDriverUseCase,
-            getAllContactsUseCase = getAllContactsUseCase
+            getAllContactsUseCase = getAllContactsUseCase,
+            removeContactUseCase = removeContactUseCase
         )
     }
 
@@ -55,6 +58,18 @@ object UseCaseModule {
         mapper: ContactMapper
     ): GetAllContactsUseCase {
         return GetAllContactsUseCase(
+            database = database,
+            mapper = mapper
+        )
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideRemoveContactUSeCase(
+        database: AppDatabase,
+        mapper: ContactMapper
+    ): RemoveContactUseCase {
+        return RemoveContactUseCase(
             database = database,
             mapper = mapper
         )

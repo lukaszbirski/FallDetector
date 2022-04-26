@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.model.Contact
@@ -20,8 +21,8 @@ constructor(
 
     private var contact = Contact()
 
-    private val _contacts = MutableLiveData<List<Contact>>()
-    val contacts: LiveData<List<Contact>> get() = _contacts
+    private val _contacts = MutableLiveData<ArrayList<Contact>>()
+    val contacts: LiveData<ArrayList<Contact>> get() = _contacts
 
     init {
         getAllContacts()
@@ -35,8 +36,9 @@ constructor(
 
     fun addContact() {
         addPlusToPrefix()
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             useCaseFactory.addDriverUseCase.execute(contact)
+            getAllContacts()
         }
     }
 
@@ -45,10 +47,16 @@ constructor(
     }
 
     private fun getAllContacts() {
-        viewModelScope.launch {
-            val result = useCaseFactory.getAllContactsUseCase.execute()
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = useCaseFactory.getAllContactsUseCase.execute() as ArrayList
             Timber.d("Got ${result.size} contacts from database")
             _contacts.postValue(result)
+        }
+    }
+
+    private fun removeContact(contact: Contact) {
+        viewModelScope.launch(Dispatchers.IO) {
+            useCaseFactory.removeContactUseCase.execute(contact)
         }
     }
 

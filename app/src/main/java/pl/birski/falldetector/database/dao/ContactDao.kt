@@ -1,9 +1,6 @@
 package pl.birski.falldetector.database.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.* // ktlint-disable no-wildcard-imports
 import pl.birski.falldetector.database.model.ContactEntity
 
 @Dao
@@ -14,4 +11,7 @@ interface ContactDao {
 
     @Query("SELECT * FROM contacts")
     suspend fun getAllContacts(): List<ContactEntity>
+
+    @Delete
+    suspend fun deleteContact(contact: ContactEntity)
 }

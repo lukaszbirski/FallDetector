@@ -7,7 +7,7 @@ import pl.birski.falldetector.databinding.ContactItemBinding
 import pl.birski.falldetector.model.Contact
 
 class ContactAdapter(
-    private val contacts: List<Contact>,
+    private val contacts: ArrayList<Contact>,
 ) : RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() {
 
     override fun getItemCount() = contacts.size
@@ -26,5 +26,10 @@ class ContactAdapter(
             personTextView.text = "${contacts[position].name} ${contacts[position].surname}"
             numberTextView.text = "${contacts[position].prefix} ${contacts[position].number}"
         }
+    }
+
+    fun deleteItem(position: Int) {
+        contacts.removeAt(position)
+        notifyItemRemoved(position)
     }
 }
