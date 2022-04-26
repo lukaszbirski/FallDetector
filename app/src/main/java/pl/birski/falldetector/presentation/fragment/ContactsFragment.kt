@@ -83,7 +83,7 @@ class ContactsFragment : Fragment() {
 
             contacts.observe(viewLifecycleOwner) { contacts ->
 
-                val adapter = ContactAdapter(contacts)
+                val adapter = ContactAdapter(contacts, requireContext())
 
                 binding.contactsRecycler.also {
                     it.layoutManager = LinearLayoutManager(requireContext())

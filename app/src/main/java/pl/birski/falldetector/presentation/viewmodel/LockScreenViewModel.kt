@@ -1,24 +1,29 @@
 package pl.birski.falldetector.presentation.viewmodel
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import pl.birski.falldetector.R
 import pl.birski.falldetector.data.MessageSender
 import pl.birski.falldetector.other.PrefUtil
+import pl.birski.falldetector.usecase.UseCaseFactory
 
 @HiltViewModel
 class LockScreenViewModel
 @Inject
 constructor(
+    private val application: Application,
     private val prefUtil: PrefUtil,
-    private val messageSender: MessageSender
+    private val messageSender: MessageSender,
+    private val useCaseFactory: UseCaseFactory
 ) : ViewModel() {
 
     private var timerLengthSeconds = calculateTimeFromPrefs()
     private var secondsRemaining = calculateTimeFromPrefs()
-
-    // TODO in future it will came from local database
-    private var messages = arrayOf("+48 691326593", "+48 691326593", "+48 691326593")
 
     private fun calculateTimeFromPrefs() = prefUtil.getTimerLength() * 60
 
@@ -39,5 +44,17 @@ constructor(
         return "$minutes:${if (secondsString.length == 2) secondsString else "0 $secondsString"}"
     }
 
-    fun sendMessages() = messageSender.startSendMessages(messages)
+    fun sendMessages() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = useCaseFactory.getAllContactsUseCase.execute()
+            val array: Array<String> = result.map {
+                application.getString(
+                    R.string.template_phone_number,
+                    it.prefix,
+                    it.number
+                )
+            }.toTypedArray()
+            messageSender.startSendMessages(array)
+        }
+    }
 }
