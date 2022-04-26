@@ -1,6 +1,10 @@
 package pl.birski.falldetector.database.dao
 
-import androidx.room.* // ktlint-disable no-wildcard-imports
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import pl.birski.falldetector.database.model.ContactEntity
 
 @Dao

@@ -32,4 +32,6 @@ class ContactAdapter(
         contacts.removeAt(position)
         notifyItemRemoved(position)
     }
+
+    fun getContact(position: Int) = contacts[position]
 }

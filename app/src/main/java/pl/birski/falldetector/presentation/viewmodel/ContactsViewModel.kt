@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.model.Contact
 import pl.birski.falldetector.usecase.UseCaseFactory
@@ -19,7 +19,7 @@ constructor(
     private val useCaseFactory: UseCaseFactory
 ) : ViewModel() {
 
-    private var contact = Contact()
+    private var newContact = Contact()
 
     private val _contacts = MutableLiveData<ArrayList<Contact>>()
     val contacts: LiveData<ArrayList<Contact>> get() = _contacts
@@ -29,21 +29,21 @@ constructor(
     }
 
     fun setContactData(contact: Contact) {
-        this.contact = contact
+        this.newContact = contact
     }
 
-    fun getContact() = contact
+    fun getContact() = newContact
 
     fun addContact() {
         addPlusToPrefix()
         viewModelScope.launch(Dispatchers.IO) {
-            useCaseFactory.addDriverUseCase.execute(contact)
+            useCaseFactory.addDriverUseCase.execute(newContact)
             getAllContacts()
         }
     }
 
     private fun addPlusToPrefix() {
-        contact = contact.copy(prefix = "+${contact.prefix}")
+        newContact = newContact.copy(prefix = "+${newContact.prefix}")
     }
 
     private fun getAllContacts() {
@@ -54,15 +54,15 @@ constructor(
         }
     }
 
-    private fun removeContact(contact: Contact) {
+    fun removeContact(contact: Contact) {
         viewModelScope.launch(Dispatchers.IO) {
             useCaseFactory.removeContactUseCase.execute(contact)
         }
     }
 
     fun enableButton() =
-        contact.name.isNotBlank() &&
-            contact.surname.isNotBlank() &&
-            contact.prefix.isNotBlank() &&
-            contact.number.isNotBlank()
+        newContact.name.isNotBlank() &&
+            newContact.surname.isNotBlank() &&
+            newContact.prefix.isNotBlank() &&
+            newContact.number.isNotBlank()
 }

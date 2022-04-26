@@ -13,11 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.FragmentContactsBinding
 import pl.birski.falldetector.presentation.fragment.adapter.ContactAdapter
-import pl.birski.falldetector.presentation.fragment.adapter.util.SwipeToDelete
 import pl.birski.falldetector.presentation.viewmodel.ContactsViewModel
 
 @AndroidEntryPoint
@@ -32,6 +32,8 @@ class ContactsFragment : Fragment() {
     private lateinit var prefixEditText: EditText
     private lateinit var numberEditText: EditText
     private lateinit var btnPositive: Button
+
+    private lateinit var itemTouchHelper: ItemTouchHelper
 
     private val textWatcher: TextWatcher = object : TextWatcher {
         override fun onTextChanged(
@@ -91,8 +93,23 @@ class ContactsFragment : Fragment() {
                     it.adapter?.notifyDataSetChanged()
                     it.scrollToPosition(0)
                 }
-                val itemTouchHelper = ItemTouchHelper(SwipeToDelete(adapter))
-                itemTouchHelper.attachToRecyclerView(binding.contactsRecycler)
+
+                ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+                    override fun onMove(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder,
+                        target: RecyclerView.ViewHolder
+                    ): Boolean {
+                        return false
+                    }
+
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                        val position = viewHolder.adapterPosition
+                        val contact = adapter.getContact(position)
+                        adapter.deleteItem(position)
+                        viewModel.removeContact(contact)
+                    }
+                }).attachToRecyclerView(binding.contactsRecycler)
             }
         }
 
