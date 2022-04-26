@@ -89,6 +89,11 @@
     <string name="contact_dialog_surname_text">Last name:</string>
     <string name="contact_dialog_phone_text">Phone:</string>
     <string name="contact_dialog_plus_text">+</string>
-    <!--    Add Contact Dialog starts here-->
+    <!--    Add Contact Dialog ends here-->
+
+    <!--    Contacts Fragment starts here-->
+    <string name="contacts_fragment_recycler_title_text">Name / Telephone</string>
+    <string name="contacts_fragment_contacts_text">List of contacts</string>
+    <!--    Contacts Fragment ends here-->
 
 </resources>
