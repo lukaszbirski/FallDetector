@@ -4,10 +4,13 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.view.LayoutInflater
 import android.view.WindowManager
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
+import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.ActivityLockScreenBinding
 import pl.birski.falldetector.presentation.viewmodel.LockScreenViewModel
 
@@ -36,6 +39,12 @@ class LockScreenActivity : AppCompatActivity() {
             onTimerFinished()
             Intent(this, MainActivity::class.java).also {
                 startActivity(it)
+            }
+        }
+
+        viewModel.apply {
+            displayDialog.observe(this@LockScreenActivity) {
+                if (it) displayDialog()
             }
         }
 
@@ -91,5 +100,20 @@ class LockScreenActivity : AppCompatActivity() {
 
     private fun setTimerLength() {
         binding.progressCountDown.max = viewModel.getTimerLengthSeconds().toInt()
+    }
+
+    private fun displayDialog() {
+        AlertDialog.Builder(this).create().also {
+            val view = LayoutInflater.from(this).inflate(R.layout.time_out_dialog, null)
+            it.setView(view)
+            it.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.time_out_dialog_exit_text)) {
+                    dialog, _ ->
+                dialog.dismiss()
+                Intent(this, MainActivity::class.java).also { intent ->
+                    startActivity(intent)
+                }
+            }
+            it.show()
+        }
     }
 }

@@ -1,6 +1,8 @@
 package pl.birski.falldetector.presentation.viewmodel
 
 import android.app.Application
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,8 +24,15 @@ constructor(
     private val useCaseFactory: UseCaseFactory
 ) : ViewModel() {
 
+    private val _displayDialog = MutableLiveData<Boolean>()
+    val displayDialog: LiveData<Boolean> get() = _displayDialog
+
     private var timerLengthSeconds = calculateTimeFromPrefs()
     private var secondsRemaining = calculateTimeFromPrefs()
+
+    init {
+        _displayDialog.postValue(false)
+    }
 
     private fun calculateTimeFromPrefs() = prefUtil.getTimerLength() * 60
 
@@ -46,25 +55,26 @@ constructor(
 
     fun manageCountDownFinished() {
 
-        if (prefUtil.isSendingMessageAllowed()) {
-            // TODO if allowed send messages and then show new screen
-            sendMessages()
-        } else {
-            // TODO if not allowed just show new screen
-        }
+        prefUtil.isSendingMessageAllowed().takeIf { it }
+            .let { sendMessages() }
+
+        _displayDialog.postValue(true)
     }
 
     private fun sendMessages() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = useCaseFactory.getAllContactsUseCase.execute()
-            val array: Array<String> = result.map {
-                application.getString(
-                    R.string.template_phone_number,
-                    it.prefix,
-                    it.number
-                )
-            }.toTypedArray()
-            messageSender.startSendMessages(array)
+
+            result.takeIf { it.isNotEmpty() }?.let {
+                val array: Array<String> = it.map { contact ->
+                    application.getString(
+                        R.string.template_phone_number,
+                        contact.prefix,
+                        contact.number
+                    )
+                }.toTypedArray()
+                messageSender.startSendMessages(array)
+            }
         }
     }
 }

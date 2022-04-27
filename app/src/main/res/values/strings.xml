@@ -88,6 +88,10 @@
     <string name="contact_dialog_plus_text">+</string>
     <!--    Add Contact Dialog ends here-->
 
+    <!--    Time Out Dialog starts here-->
+    <string name="time_out_dialog_exit_text">Exit</string>
+    <!--    Time Out Dialog ends here-->
+
     <!--    Contacts Fragment starts here-->
     <string name="contacts_fragment_recycler_title_text">Name / Telephone</string>
     <string name="contacts_fragment_contacts_text">List of contacts</string>

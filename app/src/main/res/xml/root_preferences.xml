@@ -18,7 +18,7 @@
 
     <PreferenceCategory
         app:title="@string/preferences_category_detection_algorithm_title_text"
-        android:icon="@drawable/ic_baseline_alarm_24">
+        android:icon="@drawable/ic_baseline_settings_24">
 
         <ListPreference
             app:defaultValue="1"
