@@ -54,12 +54,9 @@
     <string name="preferences_algorithms_array_impact_posture_text">IMPACT + POSTURE</string>
     <string name="preferences_algorithms_array_impact_posture_fall_text">START OF FALL + IMPACT + POSTURE</string>
     <string name="preferences_algorithms_array_impact_velocity_posture_fall_text">START OF FALL + VELOCITY + IMPACT + POSTURE</string>
+    <string name="preferences_category_sending_notification_title_text">Sending notifications</string>
+    <string name="preferences_send_messages_title_text">Send messages</string>
     <!--    Preferences ends here-->
-
-    <!--    SharedPreferences starts here-->
-    <string name="shared_preferences_timer_length_list_key" translatable="false">pl.birski.falldetector.timer_length_list_key</string>
-    <string name="shared_preferences_detection_algorithms_list_key" translatable="false">pl.birski.falldetector.detection_algorithms_list_key</string>
-    <!--    SharedPreferences ends here-->
 
     <!--    Drawer starts here-->
     <string name="navigation_drawer_open_text">Navigation drawer is open</string>
@@ -91,9 +88,24 @@
     <string name="contact_dialog_plus_text">+</string>
     <!--    Add Contact Dialog ends here-->
 
+    <!--    Time Out Dialog starts here-->
+    <string name="time_out_dialog_exit_text">Exit</string>
+    <!--    Time Out Dialog ends here-->
+
     <!--    Contacts Fragment starts here-->
     <string name="contacts_fragment_recycler_title_text">Name / Telephone</string>
     <string name="contacts_fragment_contacts_text">List of contacts</string>
     <!--    Contacts Fragment ends here-->
+
+    <!--    SharedPreferences starts here-->
+    <string name="shared_preferences_timer_length_list_key" translatable="false">pl.birski.falldetector.timer_length_list_key</string>
+    <string name="shared_preferences_detection_algorithms_list_key" translatable="false">pl.birski.falldetector.detection_algorithms_list_key</string>
+    <string name="shared_preferences_send_message_key" translatable="false">pl.birski.falldetector.send_message_key</string>
+    <!--    SharedPreferences ends here-->
+
+    <!--    Templates start here-->
+    <string name="template_phone_number" translatable="false">%1$s %2$s</string>
+    <string name="template_person_name" translatable="false">%1$s %2$s</string>
+    <!--    Templates end here-->
 
 </resources>
