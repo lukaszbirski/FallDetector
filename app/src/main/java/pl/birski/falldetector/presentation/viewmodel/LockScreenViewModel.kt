@@ -44,7 +44,17 @@ constructor(
         return "$minutes:${if (secondsString.length == 2) secondsString else "0 $secondsString"}"
     }
 
-    fun sendMessages() {
+    fun manageCountDownFinished() {
+
+        if (prefUtil.isSendingMessageAllowed()) {
+            // TODO if allowed send messages and then show new screen
+            sendMessages()
+        } else {
+            // TODO if not allowed just show new screen
+        }
+    }
+
+    private fun sendMessages() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = useCaseFactory.getAllContactsUseCase.execute()
             val array: Array<String> = result.map {

@@ -54,6 +54,8 @@
     <string name="preferences_algorithms_array_impact_posture_text">IMPACT + POSTURE</string>
     <string name="preferences_algorithms_array_impact_posture_fall_text">START OF FALL + IMPACT + POSTURE</string>
     <string name="preferences_algorithms_array_impact_velocity_posture_fall_text">START OF FALL + VELOCITY + IMPACT + POSTURE</string>
+    <string name="preferences_category_sending_notification_title_text">Sending notifications</string>
+    <string name="preferences_send_messages_title_text">Send messages</string>
     <!--    Preferences ends here-->
 
     <!--    Drawer starts here-->
@@ -94,6 +96,7 @@
     <!--    SharedPreferences starts here-->
     <string name="shared_preferences_timer_length_list_key" translatable="false">pl.birski.falldetector.timer_length_list_key</string>
     <string name="shared_preferences_detection_algorithms_list_key" translatable="false">pl.birski.falldetector.detection_algorithms_list_key</string>
+    <string name="shared_preferences_send_message_key" translatable="false">pl.birski.falldetector.send_message_key</string>
     <!--    SharedPreferences ends here-->
 
     <!--    Templates start here-->

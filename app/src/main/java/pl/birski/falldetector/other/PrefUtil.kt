@@ -25,4 +25,9 @@ class PrefUtil @Inject constructor(
         ) ?: "1"
         return Algorithms.getByValue(selectedValue) ?: Algorithms.IMPACT_POSTURE
     }
+
+    fun isSendingMessageAllowed() = sp.getBoolean(
+        context.getString(R.string.shared_preferences_send_message_key),
+        false
+    )
 }

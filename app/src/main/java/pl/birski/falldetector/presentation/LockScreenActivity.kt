@@ -65,7 +65,7 @@ class LockScreenActivity : AppCompatActivity() {
 
         timer = object : CountDownTimer(viewModel.getSecondsRemaining() * 1000, 1000) {
 
-            override fun onFinish() = onTimerFinished().also { viewModel.sendMessages() }
+            override fun onFinish() = onTimerFinished().also { viewModel.manageCountDownFinished() }
 
             override fun onTick(millisUntilFinished: Long) {
                 viewModel.updateSecondsRemaining(millisUntilFinished)
