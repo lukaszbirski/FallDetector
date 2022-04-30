@@ -6,6 +6,11 @@
     <group android:checkableBehavior="single">
 
         <item
+            android:id="@+id/homeFragment"
+            android:icon="@drawable/ic_baseline_home_24"
+            android:title="@string/bottom_navigation_home_text" />
+
+        <item
             android:id="@+id/graphFragment"
             android:icon="@drawable/ic_signal_wave_24"
             android:title="@string/bottom_navigation_graph_text" />

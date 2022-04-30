@@ -29,6 +29,7 @@ import pl.birski.falldetector.other.Constants.PERMISSION_REQUEST_CODE
 import pl.birski.falldetector.other.PermissionUtil
 import pl.birski.falldetector.presentation.fragment.ContactsFragment
 import pl.birski.falldetector.presentation.fragment.GraphFragment
+import pl.birski.falldetector.presentation.fragment.HomeFragment
 import pl.birski.falldetector.presentation.fragment.SettingsFragment
 import pl.birski.falldetector.presentation.listener.PassDataInterface
 import pl.birski.falldetector.presentation.viewmodel.MainViewModel
@@ -103,8 +104,10 @@ class MainActivity :
         navHostFragment.findNavController()
             .addOnDestinationChangedListener { _, destination, _ ->
                 when (destination.id) {
-                    R.id.settingsFragment, R.id.graphFragment, R.id.contactsFragment ->
-                        binding.bottomNav.visibility = View.VISIBLE
+                    R.id.settingsFragment,
+                    R.id.graphFragment,
+                    R.id.contactsFragment,
+                    R.id.homeFragment -> binding.bottomNav.visibility = View.VISIBLE
                     else -> binding.bottomNav.visibility = View.GONE
                 }
             }
@@ -203,6 +206,7 @@ class MainActivity :
 
     private fun manageNavigation(item: MenuItem) {
         when (item.itemId) {
+            R.id.homeFragment -> navigateToFragment(HomeFragment())
             R.id.graphFragment -> navigateToFragment(GraphFragment())
             R.id.settingsFragment -> navigateToFragment(SettingsFragment())
             R.id.contactsFragment -> navigateToFragment(ContactsFragment())
