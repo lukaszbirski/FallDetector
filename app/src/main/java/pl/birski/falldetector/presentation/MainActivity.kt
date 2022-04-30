@@ -2,19 +2,15 @@ package pl.birski.falldetector.presentation
 
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
@@ -25,10 +21,9 @@ import pl.birski.falldetector.BuildConfig
 import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.ActivityMainBinding
 import pl.birski.falldetector.other.Constants
-import pl.birski.falldetector.other.Constants.PERMISSION_REQUEST_CODE
-import pl.birski.falldetector.other.PermissionUtil
 import pl.birski.falldetector.presentation.fragment.ContactsFragment
 import pl.birski.falldetector.presentation.fragment.GraphFragment
+import pl.birski.falldetector.presentation.fragment.HomeFragment
 import pl.birski.falldetector.presentation.fragment.SettingsFragment
 import pl.birski.falldetector.presentation.listener.PassDataInterface
 import pl.birski.falldetector.presentation.viewmodel.MainViewModel
@@ -72,16 +67,6 @@ class MainActivity :
         }
     }
 
-    // TODO in future most likely will need to move permission code into different fragment
-    private var requestSinglePermission = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) {
-        it.entries.forEachIndexed() { index, _ ->
-            PermissionUtil.returnPermissionsArray()[index]
-        }
-        checkPermissions()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -103,8 +88,10 @@ class MainActivity :
         navHostFragment.findNavController()
             .addOnDestinationChangedListener { _, destination, _ ->
                 when (destination.id) {
-                    R.id.settingsFragment, R.id.graphFragment, R.id.contactsFragment ->
-                        binding.bottomNav.visibility = View.VISIBLE
+                    R.id.settingsFragment,
+                    R.id.graphFragment,
+                    R.id.contactsFragment,
+                    R.id.homeFragment -> binding.bottomNav.visibility = View.VISIBLE
                     else -> binding.bottomNav.visibility = View.GONE
                 }
             }
@@ -122,11 +109,6 @@ class MainActivity :
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // TODO in future most likely will need to move permission code into different fragment
-        requestSinglePermission.launch(
-            PermissionUtil.returnPermissionsArray()
-        )
-
         setContentView(binding.root)
     }
 
@@ -143,8 +125,8 @@ class MainActivity :
         unregisterBroadcastReceiver()
     }
 
-    override fun onDataReceived(data: Boolean) {
-        isFallDetected = data
+    override fun onDataReceived(isDetected: Boolean) {
+        isFallDetected = isDetected
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -152,44 +134,6 @@ class MainActivity :
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
-
-    // TODO in future most likely will need to move permission code into different fragment
-    private fun checkPermissions() {
-
-        val shouldDisplay =
-            PermissionUtil.returnPermissionsArray().map { shouldShowRequestPermissionRationale(it) }
-                .none { !it }
-
-        if (!PermissionUtil.hasMessagesPermission(this) && shouldDisplay)
-            setDialog()
-    }
-
-    // TODO in future most likely will need to move permission code into different fragment
-    private fun setDialog() {
-        this.let {
-            val builder = AlertDialog.Builder(it)
-            builder.apply {
-                setTitle(R.string.permission_dialog_title_text)
-                setCancelable(false)
-                setMessage(R.string.permission_dialog_message_text)
-                setPositiveButton(
-                    R.string.permission_dialog_dismiss_text,
-                    DialogInterface.OnClickListener { dialog, id ->
-                        askForPermissions()
-                    }
-                )
-            }
-
-            builder.create()
-            builder.show()
-        }
-    }
-
-    // TODO in future most likely will need to move permission code into different fragment
-    private fun askForPermissions() = ActivityCompat.requestPermissions(
-        this, PermissionUtil.returnPermissionsArray(),
-        PERMISSION_REQUEST_CODE
-    )
 
     private fun unregisterBroadcastReceiver() {
         unregisterReceiver(mMessageReceiver)
@@ -203,6 +147,7 @@ class MainActivity :
 
     private fun manageNavigation(item: MenuItem) {
         when (item.itemId) {
+            R.id.homeFragment -> navigateToFragment(HomeFragment())
             R.id.graphFragment -> navigateToFragment(GraphFragment())
             R.id.settingsFragment -> navigateToFragment(SettingsFragment())
             R.id.contactsFragment -> navigateToFragment(ContactsFragment())
