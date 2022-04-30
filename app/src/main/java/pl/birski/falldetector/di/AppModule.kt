@@ -7,6 +7,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import pl.birski.falldetector.data.LocationTracker
+import pl.birski.falldetector.data.LocationTrackerImpl
 import pl.birski.falldetector.data.MessageSender
 import pl.birski.falldetector.data.MessageSenderImpl
 import pl.birski.falldetector.other.PrefUtil
@@ -30,4 +32,9 @@ object AppModule {
     @Provides
     fun provideMessageSender(@ApplicationContext app: Context): MessageSender =
         MessageSenderImpl(app)
+
+    @Singleton
+    @Provides
+    fun provideLocationTracker(@ApplicationContext app: Context): LocationTracker =
+        LocationTrackerImpl(app)
 }
