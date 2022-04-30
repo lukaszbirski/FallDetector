@@ -30,7 +30,6 @@ class LocationTrackerImpl @Inject constructor(
     private var location: Location? = null
     private var checkGPS = false
     private var checkNetwork = false
-    private var canGetLocation = false
 
     @SuppressLint("MissingPermission")
     private fun getLocation(): Location? {
@@ -48,8 +47,6 @@ class LocationTrackerImpl @Inject constructor(
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-
-                canGetLocation = true
 
                 checkGPS.takeIf { it }.let {
                     if (checkGPS) {
@@ -105,7 +102,8 @@ class LocationTrackerImpl @Inject constructor(
     }
 
     override fun locationEnabled(): Boolean {
-        return canGetLocation
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(GPS_PROVIDER)
     }
 
     private fun selectMoreAccurateLocation(locationByGps: Location?, locationByNetwork: Location?) {

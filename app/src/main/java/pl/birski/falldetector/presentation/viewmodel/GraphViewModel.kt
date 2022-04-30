@@ -1,5 +1,6 @@
 package pl.birski.falldetector.presentation.viewmodel
 
+import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.graphics.Color
@@ -18,6 +19,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
+import pl.birski.falldetector.data.LocationTracker
 import pl.birski.falldetector.data.Normalizer
 import pl.birski.falldetector.data.Sensor
 import pl.birski.falldetector.model.Acceleration
@@ -32,7 +34,8 @@ class GraphViewModel
 @Inject
 constructor(
     private val application: Application,
-    private val normalizer: Normalizer
+    private val normalizer: Normalizer,
+    private val locationTracker: LocationTracker
 ) : ViewModel() {
 
     @Inject
@@ -205,6 +208,11 @@ constructor(
                 R.string.graph_fragment_angular_velocity_z_value_string, round(3, value)
             )
         }
+    }
+
+    fun enableLocationService(activity: Activity) {
+        if (!locationTracker.locationEnabled())
+            locationTracker.showSettingsAlert(activity)
     }
 
     private fun round(decimals: Int = 2, number: Number) = "%.${decimals}f".format(number).trim()
