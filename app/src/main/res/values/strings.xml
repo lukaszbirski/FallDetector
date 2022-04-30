@@ -97,6 +97,14 @@
     <string name="contacts_fragment_contacts_text">List of contacts</string>
     <!--    Contacts Fragment ends here-->
 
+    <!--    LocationTracker starts here-->
+    <string name="location_tracker_toast_text">No Service Provider is available</string>
+    <string name="location_tracker_dialog_title_text">GPS is not Enabled!</string>
+    <string name="location_tracker_dialog_message_text">Do you want to turn on GPS?</string>
+    <string name="location_tracker_dialog_yes_text">Yes</string>
+    <string name="location_tracker_dialog_no_text">No</string>
+    <!--    LocationTracker ends here-->
+
     <!--    SharedPreferences starts here-->
     <string name="shared_preferences_timer_length_list_key" translatable="false">pl.birski.falldetector.timer_length_list_key</string>
     <string name="shared_preferences_detection_algorithms_list_key" translatable="false">pl.birski.falldetector.detection_algorithms_list_key</string>
