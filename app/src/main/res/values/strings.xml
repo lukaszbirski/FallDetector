@@ -5,10 +5,6 @@
     <string name="notification_title">Fall Detector is running</string>
     <!--    Notification ends here-->
 
-    <!--    Sensor starts here-->
-    <string name="fall_detected_toast_text">FALL DETECTED!</string>
-    <!--    Sensor ends here-->
-
     <!--    Bottom navigation starts here-->
     <string name="bottom_navigation_home_text">Home</string>
     <string name="bottom_navigation_graph_text">Graph</string>
@@ -65,7 +61,7 @@
     <!--    Drawer ends here-->
 
     <!--    Message Sender starts here-->
-    <string name="message_sender_text_body">I had an accident and I need help!</string>
+    <string name="message_sender_text_body">I had an accident and I need help! My location: %1$s</string>
     <string name="message_sender_all_message_sent_text">All SMS have been sent</string>
     <string name="message_sender_message_sent_text">SMS sent</string>
     <string name="message_sender_error_when_sending_text">Failure while sending message</string>

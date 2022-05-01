@@ -17,7 +17,7 @@ class MessageSenderImpl @Inject constructor(
     private val context: Context
 ) : MessageSender {
 
-    private val messageBody: String = context.getString(R.string.message_sender_text_body)
+    private var messageBody: String = context.getString(R.string.message_sender_text_body)
 
     private var mMessageSentParts = 0
     private var mMessageSentTotalParts = 0
@@ -25,9 +25,10 @@ class MessageSenderImpl @Inject constructor(
 
     private lateinit var messages: Array<String>
 
-    override fun startSendMessages(messages: Array<String>) {
+    override fun startSendMessages(messages: Array<String>, location: String) {
 
         this.messages = messages
+        this.messageBody = context.getString(R.string.message_sender_text_body, location)
 
         registerBroadCastReceivers()
         mMessageSentCount = 0
