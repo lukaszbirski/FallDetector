@@ -35,7 +35,7 @@ class LocationTrackerImpl @Inject constructor(
     private var checkNetwork = false
 
     @SuppressLint("MissingPermission")
-    private fun getLocation(): Location? {
+    private fun getLocation() {
         try {
             locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
 
@@ -83,6 +83,8 @@ class LocationTrackerImpl @Inject constructor(
                     }
                 }
 
+                location = locationNetwork
+
                 selectMoreAccurateLocation(
                     locationByGps = locationGPS,
                     locationByNetwork = locationNetwork
@@ -91,7 +93,6 @@ class LocationTrackerImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return location
     }
 
     override fun getLongitude(): Double {
@@ -153,18 +154,18 @@ class LocationTrackerImpl @Inject constructor(
         return null
     }
 
-    override fun onLocationChanged(location: Location) {
+    override fun onLocationChanged(loc: Location) {
 
-        when (location.provider) {
+        when (loc.provider) {
 
             NETWORK_PROVIDER -> locationNetwork?.let {
-                it.latitude = location.latitude
-                it.longitude = location.longitude
+                it.latitude = loc.latitude
+                it.longitude = loc.longitude
             }
 
             GPS_PROVIDER -> locationGPS?.let {
-                it.latitude = location.latitude
-                it.longitude = location.longitude
+                it.latitude = loc.latitude
+                it.longitude = loc.longitude
             }
         }
 

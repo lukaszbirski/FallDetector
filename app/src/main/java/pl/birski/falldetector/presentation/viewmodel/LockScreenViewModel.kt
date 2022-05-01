@@ -10,7 +10,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
-import pl.birski.falldetector.data.LocationTracker
 import pl.birski.falldetector.data.MessageSender
 import pl.birski.falldetector.other.PrefUtil
 import pl.birski.falldetector.usecase.UseCaseFactory
@@ -22,8 +21,7 @@ constructor(
     private val application: Application,
     private val prefUtil: PrefUtil,
     private val messageSender: MessageSender,
-    private val useCaseFactory: UseCaseFactory,
-    private val locationTracker: LocationTracker
+    private val useCaseFactory: UseCaseFactory
 ) : ViewModel() {
 
     private val _displayDialog = MutableLiveData<Boolean>()
@@ -75,7 +73,7 @@ constructor(
                         contact.number
                     )
                 }.toTypedArray()
-                messageSender.startSendMessages(array, locationTracker.getAddressOrLocation())
+                messageSender.startSendMessages(array)
             }
         }
     }

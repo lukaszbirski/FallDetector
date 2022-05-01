@@ -106,6 +106,7 @@ class LockScreenActivity : AppCompatActivity() {
         AlertDialog.Builder(this).create().also {
             val view = LayoutInflater.from(this).inflate(R.layout.time_out_dialog, null)
             it.setView(view)
+            it.setCancelable(false)
             it.setButton(
                 AlertDialog.BUTTON_NEGATIVE,
                 getString(R.string.time_out_dialog_exit_text)
