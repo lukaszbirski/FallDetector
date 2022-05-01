@@ -32,8 +32,6 @@ class LockScreenActivity : AppCompatActivity() {
 
         startTimer()
 
-        supportActionBar?.hide()
-
         binding.counterFragmentButton.setOnClickListener {
             timer.cancel()
             onTimerFinished()
