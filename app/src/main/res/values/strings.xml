@@ -1,5 +1,8 @@
 <resources>
+
+    <!--    Application Name starts here-->
     <string name="app_name">Fall Detector</string>
+    <!--    Application Name ends here-->
 
     <!--    Notification starts here-->
     <string name="notification_title">Fall Detector is running</string>
@@ -72,7 +75,7 @@
     <!--    Permission Dialog starts here-->
     <string name="permission_dialog_title_text">WARNING!</string>
     <string name="permission_dialog_dismiss_text">DISMISS</string>
-    <string name="permission_dialog_message_text">You have not granted application permissions. The app will ask for them once more. Lack of consent will prevent the normal functioning of the application</string>
+    <string name="permission_dialog_message_text">You have not granted application permissions. The app will ask for them once more. Lack of consent will prevent the normal functioning of the application.</string>
     <!--    Permission Dialog ends here-->
 
     <!--    Add Contact Dialog starts here-->
