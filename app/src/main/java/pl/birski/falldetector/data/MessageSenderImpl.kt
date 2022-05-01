@@ -14,10 +14,11 @@ import pl.birski.falldetector.R
 import pl.birski.falldetector.other.Constants
 
 class MessageSenderImpl @Inject constructor(
-    private val context: Context
+    private val context: Context,
+    private val locationTracker: LocationTracker
 ) : MessageSender {
 
-    private val messageBody: String = context.getString(R.string.message_sender_text_body)
+    private var messageBody: String = context.getString(R.string.message_sender_text_body)
 
     private var mMessageSentParts = 0
     private var mMessageSentTotalParts = 0
@@ -28,6 +29,12 @@ class MessageSenderImpl @Inject constructor(
     override fun startSendMessages(messages: Array<String>) {
 
         this.messages = messages
+        this.messageBody = context.getString(
+            R.string.message_sender_text_body,
+            locationTracker.getAddress(),
+            locationTracker.getLongitude().toString(),
+            locationTracker.getLatitude().toString()
+        )
 
         registerBroadCastReceivers()
         mMessageSentCount = 0

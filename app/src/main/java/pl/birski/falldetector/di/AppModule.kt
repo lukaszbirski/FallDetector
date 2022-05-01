@@ -30,8 +30,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideMessageSender(@ApplicationContext app: Context): MessageSender =
-        MessageSenderImpl(app)
+    fun provideMessageSender(
+        @ApplicationContext app: Context,
+        locationTracker: LocationTracker
+    ): MessageSender =
+        MessageSenderImpl(app, locationTracker)
 
     @Singleton
     @Provides

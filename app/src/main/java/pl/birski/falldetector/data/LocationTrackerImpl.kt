@@ -6,6 +6,8 @@ import android.app.AlertDialog
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -15,6 +17,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
 import android.widget.Toast
+import java.util.Locale
 import javax.inject.Inject
 import pl.birski.falldetector.R
 
@@ -30,10 +33,9 @@ class LocationTrackerImpl @Inject constructor(
     private var location: Location? = null
     private var checkGPS = false
     private var checkNetwork = false
-    private var canGetLocation = false
 
     @SuppressLint("MissingPermission")
-    private fun getLocation(): Location? {
+    private fun getLocation() {
         try {
             locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
 
@@ -48,8 +50,6 @@ class LocationTrackerImpl @Inject constructor(
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-
-                canGetLocation = true
 
                 checkGPS.takeIf { it }.let {
                     if (checkGPS) {
@@ -83,6 +83,8 @@ class LocationTrackerImpl @Inject constructor(
                     }
                 }
 
+                location = locationNetwork
+
                 selectMoreAccurateLocation(
                     locationByGps = locationGPS,
                     locationByNetwork = locationNetwork
@@ -91,7 +93,6 @@ class LocationTrackerImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return location
     }
 
     override fun getLongitude(): Double {
@@ -105,7 +106,8 @@ class LocationTrackerImpl @Inject constructor(
     }
 
     override fun locationEnabled(): Boolean {
-        return canGetLocation
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(GPS_PROVIDER)
     }
 
     private fun selectMoreAccurateLocation(locationByGps: Location?, locationByNetwork: Location?) {
@@ -121,16 +123,6 @@ class LocationTrackerImpl @Inject constructor(
                     it.latitude = locationByNetwork.latitude
                     it.longitude = locationByNetwork.longitude
                 }
-            }
-        } else if (locationByGps != null && locationByNetwork == null) {
-            location?.let {
-                it.latitude = locationByGps.latitude
-                it.longitude = locationByGps.longitude
-            }
-        } else if (locationByGps == null && locationByNetwork != null) {
-            location?.let {
-                it.latitude = locationByNetwork.latitude
-                it.longitude = locationByNetwork.longitude
             }
         }
     }
@@ -162,18 +154,18 @@ class LocationTrackerImpl @Inject constructor(
         return null
     }
 
-    override fun onLocationChanged(location: Location) {
+    override fun onLocationChanged(loc: Location) {
 
-        when (location.provider) {
+        when (loc.provider) {
 
             NETWORK_PROVIDER -> locationNetwork?.let {
-                it.latitude = location.latitude
-                it.longitude = location.longitude
+                it.latitude = loc.latitude
+                it.longitude = loc.longitude
             }
 
             GPS_PROVIDER -> locationGPS?.let {
-                it.latitude = location.latitude
-                it.longitude = location.longitude
+                it.latitude = loc.latitude
+                it.longitude = loc.longitude
             }
         }
 
@@ -181,6 +173,21 @@ class LocationTrackerImpl @Inject constructor(
             locationByGps = locationGPS,
             locationByNetwork = locationNetwork
         )
+    }
+
+    override fun getAddress(): String? {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1)
+
+        return addresses
+            .takeIf { it.isNotEmpty() }
+            ?.first()
+            ?.getAddressLine(0)
+            ?.substringBeforeLast(',')
+    }
+
+    override fun getAddressOrLocation(): String {
+        return getAddress() ?: "${getLatitude()}, ${getLongitude()}"
     }
 
     override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {}

@@ -53,6 +53,8 @@ class GraphFragment : Fragment() {
         }
 
         viewModel.apply {
+            enableLocationService(requireActivity())
+
             feedMultiple()
 
             lineData.observe(viewLifecycleOwner) {

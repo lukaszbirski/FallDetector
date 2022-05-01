@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -48,11 +47,7 @@ class MainActivity :
 
             intent.action.let {
                 if (!isFallDetected) {
-                    Toast.makeText(
-                        context,
-                        context?.getString(R.string.fall_detected_toast_text),
-                        Toast.LENGTH_LONG
-                    ).show()
+
                     isFallDetected = true
 
                     Intent(context, LockScreenActivity::class.java).also {
