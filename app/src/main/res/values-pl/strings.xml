@@ -1,0 +1,108 @@
+<resources>
+
+    <!--    Application Name starts here-->
+    <string name="app_name">Detektor upadku</string>
+    <!--    Application Name ends here-->
+
+    <!--    Notification starts here-->
+    <string name="notification_title">Detektor upadku jest włączony</string>
+    <!--    Notification ends here-->
+
+    <!--    Bottom navigation starts here-->
+    <string name="bottom_navigation_home_text">Dom</string>
+    <string name="bottom_navigation_graph_text">Wykres</string>
+    <string name="bottom_navigation_settings_text">Ustawienia</string>
+    <string name="bottom_navigation_contacts_text">Kontakty</string>
+    <!--    Bottom navigation ends here-->
+
+    <!--    Graph Fragment starts here-->
+    <string name="graph_fragment_button_start_text">Start</string>
+    <string name="graph_fragment_button_stop_text">Stop</string>
+    <string name="graph_fragment_chip_acc_text">ACC.</string>
+    <string name="graph_fragment_chip_delta_text">\u0394</string>
+    <string name="graph_fragment_x_axis_acc_text">przyśpieszenie oś-X</string>
+    <string name="graph_fragment_y_axis_acc_text">przyśpieszenie oś-Y</string>
+    <string name="graph_fragment_z_axis_acc_text">przyśpieszenie oś-Z</string>
+    <string name="graph_fragment_angular_velocity_text">Wartości prędkości kątowej:</string>
+    <string name="graph_fragment_acceleration_text">Wartości przyspieszenia:</string>
+    <string name="graph_fragment_angular_velocity_x_value_string">X : %s rad/s</string>
+    <string name="graph_fragment_angular_velocity_y_value_string">Y : %s rad/s</string>
+    <string name="graph_fragment_angular_velocity_z_value_string">Z : %s rad/s</string>
+    <!--    Graph Fragment ends here-->
+
+    <!--    Counter Fragment starts here-->
+    <string name="counter_fragment_fall_detected_text">WYKRYTO UPADEK!</string>
+    <string name="counter_fragment_have_text">Masz</string>
+    <string name="counter_fragment_abort_text">by przerwać</string>
+    <string name="counter_fragment_ok_text">Jestem OK</string>
+    <!--    Counter Fragment starts here-->
+
+    <!--    Sensor starts here-->
+    <string name="gyroscope_not_supported_toast_text">ŻYROSKOP NIE JEST WSPIERANY!</string>
+    <string name="accelerometer_not_supported_toast_text">AKCELEROMIERZ NIE JEST OBSŁUGIWANY!</string>
+    <!--    Sensor ends here-->
+
+    <!--    Preferences starts here-->
+    <string name="preferences_category_timer_title_text">Timer</string>
+    <string name="preferences_category_detection_algorithm_title_text">Algorytm wykrywania</string>
+    <string name="preferences_list_timer_title_text">Długość timera</string>
+    <string name="preferences_list_algorithm_title_text">Wybierz algorytm</string>
+    <string name="preferences_timer_array_one_minute_text">1 minuta</string>
+    <string name="preferences_timer_array_two_minute_text">2 minuty</string>
+    <string name="preferences_timer_array_five_minute_text">5 minut</string>
+    <string name="preferences_timer_array_ten_minute_text">10 minut</string>
+    <string name="preferences_algorithms_array_impact_posture_text">IMPAKT + POSTAWA</string>
+    <string name="preferences_algorithms_array_impact_posture_fall_text">POCZĄTEK UPADKU + IMPAKT + POSTAWA</string>
+    <string name="preferences_algorithms_array_impact_velocity_posture_fall_text">POCZĄTEK UPADKU + PRĘDKOŚĆ + IMPAKT + POSTAWA</string>
+    <string name="preferences_category_sending_notification_title_text">Wysyłanie powiadomień</string>
+    <string name="preferences_send_messages_title_text">Wyślij wiadomości</string>
+    <!--    Preferences ends here-->
+
+    <!--    Drawer starts here-->
+    <string name="navigation_drawer_open_text">Nawigacja jest otwarta</string>
+    <string name="navigation_drawer_closed_text">Nawigacja jest zamknięta</string>
+    <!--    Drawer ends here-->
+
+    <!--    Message Sender starts here-->
+    <string name="message_sender_text_body">Miałem wypadek i potrzebuję pomocy! Moje położenie: %1$s, GPS: %2$s, %3$s</string>
+    <string name="message_sender_all_message_sent_text">Wszystkie SMS-y zostały wysłane</string>
+    <string name="message_sender_message_sent_text">SMS wysłany</string>
+    <string name="message_sender_error_when_sending_text">Błąd podczas wysyłania wiadomości</string>
+    <string name="message_sender_message_delivered_text">SMS dostarczony</string>
+    <string name="message_sender_message_not_delivered_text">SMS nie dostarczony</string>
+    <!--    Message Sender ends here-->
+
+    <!--    Permission Dialog starts here-->
+    <string name="permission_dialog_title_text">OSTRZEŻENIE!</string>
+    <string name="permission_dialog_dismiss_text">ODRZUĆ</string>
+    <string name="permission_dialog_message_text">Nie przyznałeś uprawnień aplikacji. Aplikacja poprosi o nie jeszcze raz. Brak zgody uniemożliwi normalne funkcjonowanie aplikacji.</string>
+    <!--    Permission Dialog ends here-->
+
+    <!--    Add Contact Dialog starts here-->
+    <string name="contact_dialog_title_text">Dodaj kontakt</string>
+    <string name="contact_dialog_cancel_text">Anuluj</string>
+    <string name="contact_dialog_add_text">Dodaj</string>
+    <string name="contact_dialog_name_text">Imię:</string>
+    <string name="contact_dialog_surname_text">Nazwisko:</string>
+    <string name="contact_dialog_phone_text">Telefon:</string>
+    <string name="contact_dialog_plus_text">+</string>
+    <!--    Add Contact Dialog ends here-->
+
+    <!--    Time Out Dialog starts here-->
+    <string name="time_out_dialog_exit_text">Wyjście</string>
+    <!--    Time Out Dialog ends here-->
+
+    <!--    Contacts Fragment starts here-->
+    <string name="contacts_fragment_recycler_title_text">Osoba / Telefon</string>
+    <string name="contacts_fragment_contacts_text">Lista kontaktów</string>
+    <!--    Contacts Fragment ends here-->
+
+    <!--    LocationTracker starts here-->
+    <string name="location_tracker_toast_text">Brak użądzeń umożliwiających określenie położenie</string>
+    <string name="location_tracker_dialog_title_text">GPS nie jest włączony!</string>
+    <string name="location_tracker_dialog_message_text">Czy chcesz włączyć GPS?</string>
+    <string name="location_tracker_dialog_yes_text">Tak</string>
+    <string name="location_tracker_dialog_no_text">Nie</string>
+    <!--    LocationTracker ends here-->
+
+</resources>
