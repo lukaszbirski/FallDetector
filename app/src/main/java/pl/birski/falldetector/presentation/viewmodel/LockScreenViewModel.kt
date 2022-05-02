@@ -13,6 +13,7 @@ import pl.birski.falldetector.R
 import pl.birski.falldetector.data.MessageSender
 import pl.birski.falldetector.other.PrefUtil
 import pl.birski.falldetector.usecase.UseCaseFactory
+import timber.log.Timber
 
 @HiltViewModel
 class LockScreenViewModel
@@ -53,10 +54,12 @@ constructor(
         return "$minutes:${if (secondsString.length == 2) secondsString else "0 $secondsString"}"
     }
 
-    fun manageCountDownFinished() {
+    fun isSendingMessageAllowed() = prefUtil.isSendingMessageAllowed()
 
-        prefUtil.isSendingMessageAllowed().takeIf { it }
-            .let { sendMessages() }
+    fun manageCountDownFinished() {
+        Timber.d("Countdown finished")
+        isSendingMessageAllowed().takeIf { it }
+            ?.let { sendMessages() }
 
         _displayDialog.postValue(true)
     }
@@ -75,6 +78,7 @@ constructor(
                 }.toTypedArray()
                 messageSender.startSendMessages(array)
             }
+            Timber.d("Messages was sent!")
         }
     }
 }

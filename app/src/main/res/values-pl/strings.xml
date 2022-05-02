@@ -105,4 +105,9 @@
     <string name="location_tracker_dialog_no_text">Nie</string>
     <!--    LocationTracker ends here-->
 
+    <!--    Time Out Dialog starts here-->
+    <string name="time_our_dialog_counter_time_out_text">Koniec czasu</string>
+    <string name="time_our_dialog_message_sent_text">SMS został wysłany do wskazanych kontaktów!</string>
+    <!--    Time Out Dialog ends here-->
+
 </resources>

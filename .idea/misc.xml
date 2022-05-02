@@ -14,6 +14,17 @@
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_person_24.xml" value="0.1575" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_person_falling_down_24.xml" value="0.1" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_signal_wave_24.xml" value="0.2875" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_help.xml" value="0.215" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_no_show.xml" value="0.215" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_preauthorisation.xml" value="0.215" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_preauthorisation_cancellation.xml" value="0.215" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_preauthorisation_change_amount.xml" value="0.215" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_preauthorisation_completion.xml" value="0.215" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_receipt.xml" value="0.215" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_reconciliation.xml" value="0.215" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_register_card.xml" value="0.215" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_services.xml" value="0.215" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/nexo_home_ic_verify_card.xml" value="0.215" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/activity_lock_screen.xml" value="0.2" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/activity_main.xml" value="0.24954710144927536" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/add_contact_dialog.xml" value="0.5" />
@@ -25,7 +36,7 @@
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/fragment_settings.xml" value="0.20208333333333334" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/graph_layout.xml" value="0.175" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/nav_header.xml" value="0.33" />
-        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/time_out_dialog.xml" value="0.24010416666666667" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/time_out_dialog.xml" value="0.33" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/menu/drawer_menu.xml" value="0.33" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/xml/root_preferences.xml" value="0.33" />

@@ -105,6 +105,12 @@
     <string name="location_tracker_dialog_no_text">No</string>
     <!--    LocationTracker ends here-->
 
+    <!--    Time Out Dialog starts here-->
+    <string name="time_our_dialog_counter_time_out_text">Counter time out</string>
+    <string name="time_our_dialog_message_sent_text">Message has been sent to all contact persons!</string>
+
+    <!--    Time Out Dialog ends here-->
+
     <!--    SharedPreferences starts here-->
     <string name="shared_preferences_timer_length_list_key" translatable="false">pl.birski.falldetector.timer_length_list_key</string>
     <string name="shared_preferences_detection_algorithms_list_key" translatable="false">pl.birski.falldetector.detection_algorithms_list_key</string>
