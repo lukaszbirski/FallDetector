@@ -43,6 +43,9 @@ class LockScreenActivity : AppCompatActivity() {
         }
 
         viewModel.apply {
+
+            stopService()
+
             displayDialog.observe(this@LockScreenActivity) {
                 if (it) displayDialog()
             }

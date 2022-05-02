@@ -1,6 +1,7 @@
 package pl.birski.falldetector.presentation.viewmodel
 
 import android.app.Application
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +12,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
 import pl.birski.falldetector.data.MessageSender
+import pl.birski.falldetector.data.Sensor
 import pl.birski.falldetector.other.PrefUtil
+import pl.birski.falldetector.service.TrackingService
+import pl.birski.falldetector.service.enum.ServiceActions
 import pl.birski.falldetector.usecase.UseCaseFactory
 import timber.log.Timber
 
@@ -24,6 +28,9 @@ constructor(
     private val messageSender: MessageSender,
     private val useCaseFactory: UseCaseFactory
 ) : ViewModel() {
+
+    @Inject
+    lateinit var sensor: Sensor
 
     private val _displayDialog = MutableLiveData<Boolean>()
     val displayDialog: LiveData<Boolean> get() = _displayDialog
@@ -81,4 +88,13 @@ constructor(
             Timber.d("Messages was sent!")
         }
     }
+
+    fun stopService() = sendCommandToService(ServiceActions.STOP)
+        .also { sensor.stopMeasurement() }
+
+    private fun sendCommandToService(action: ServiceActions) =
+        Intent(application, TrackingService::class.java).also {
+            it.action = action.name
+            application.startService(it)
+        }
 }
