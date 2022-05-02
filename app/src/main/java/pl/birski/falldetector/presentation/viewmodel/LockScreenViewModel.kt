@@ -54,9 +54,11 @@ constructor(
         return "$minutes:${if (secondsString.length == 2) secondsString else "0 $secondsString"}"
     }
 
+    fun isSendingMessageAllowed() = prefUtil.isSendingMessageAllowed()
+
     fun manageCountDownFinished() {
         Timber.d("Countdown finished")
-        prefUtil.isSendingMessageAllowed().takeIf { it }
+        isSendingMessageAllowed().takeIf { it }
             ?.let { sendMessages() }
 
         _displayDialog.postValue(true)

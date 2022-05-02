@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.ActivityLockScreenBinding
+import pl.birski.falldetector.extensions.visibleOrGone
 import pl.birski.falldetector.presentation.viewmodel.LockScreenViewModel
 
 @AndroidEntryPoint
@@ -103,6 +105,10 @@ class LockScreenActivity : AppCompatActivity() {
     private fun displayDialog() {
         AlertDialog.Builder(this).create().also {
             val view = LayoutInflater.from(this).inflate(R.layout.time_out_dialog, null)
+
+            val messageSentTextView = view.findViewById<TextView>(R.id.messageSentTextView)
+            messageSentTextView.visibleOrGone(viewModel.isSendingMessageAllowed())
+
             it.setView(view)
             it.setCancelable(false)
             it.setButton(
