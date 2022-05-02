@@ -42,4 +42,16 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:title="@string/preferences_category_gyroscope_title_text"
+        android:icon="@drawable/ic_baseline_add_alert_24">
+
+        <SwitchPreference
+            app:defaultValue="0"
+            app:key="@string/shared_preferences_control_gyroscope_key"
+            app:title="@string/preferences_enable_gyroscope_title_text"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

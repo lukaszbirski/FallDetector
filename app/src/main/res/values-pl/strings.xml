@@ -55,7 +55,9 @@
     <string name="preferences_algorithms_array_impact_posture_fall_text">POCZĄTEK UPADKU + IMPAKT + POSTAWA</string>
     <string name="preferences_algorithms_array_impact_velocity_posture_fall_text">POCZĄTEK UPADKU + PRĘDKOŚĆ + IMPAKT + POSTAWA</string>
     <string name="preferences_category_sending_notification_title_text">Wysyłanie powiadomień</string>
+    <string name="preferences_category_gyroscope_title_text">Żyroskop</string>
     <string name="preferences_send_messages_title_text">Wyślij wiadomości</string>
+    <string name="preferences_enable_gyroscope_title_text">Włącz żyroskop</string>
     <!--    Preferences ends here-->
 
     <!--    Drawer starts here-->
