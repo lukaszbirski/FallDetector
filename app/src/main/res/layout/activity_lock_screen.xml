@@ -73,7 +73,7 @@
 
     <Button
         android:id="@+id/counterFragmentButton"
-        android:layout_width="125dp"
+        android:layout_width="140dp"
         android:layout_height="60dp"
         android:textSize="22sp"
         android:text="@string/counter_fragment_ok_text"
