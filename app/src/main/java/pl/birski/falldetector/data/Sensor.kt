@@ -13,11 +13,13 @@ import pl.birski.falldetector.R
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
 import pl.birski.falldetector.other.Constants
+import pl.birski.falldetector.other.PrefUtil
 import timber.log.Timber
 
 class Sensor @Inject constructor(
     private val fallDetector: FallDetector,
-    private val stabilizer: Stabilizer
+    private val stabilizer: Stabilizer,
+    private val prefUtil: PrefUtil
 ) : SensorEventListener {
 
     private lateinit var manager: SensorManager
@@ -70,7 +72,7 @@ class Sensor @Inject constructor(
             context.getText(R.string.accelerometer_not_supported_toast_text),
             Toast.LENGTH_LONG
         ).show()
-        gyroscope?.let {
+        gyroscope.takeIf { prefUtil.isGyroscopeEnabled() }?.let {
             manager.registerListener(this, gyroscope, Constants.INTERVAL_MILISEC * 1000)
         } ?: Toast.makeText(
             context,

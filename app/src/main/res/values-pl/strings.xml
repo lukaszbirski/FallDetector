@@ -38,7 +38,7 @@
     <!--    Counter Fragment starts here-->
 
     <!--    Sensor starts here-->
-    <string name="gyroscope_not_supported_toast_text">ŻYROSKOP NIE JEST WSPIERANY!</string>
+    <string name="gyroscope_not_supported_toast_text">ŻYROSKOP NIE JEST WSPIERANY LUB WYŁĄCZONY!</string>
     <string name="accelerometer_not_supported_toast_text">AKCELEROMIERZ NIE JEST OBSŁUGIWANY!</string>
     <!--    Sensor ends here-->
 

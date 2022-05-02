@@ -38,7 +38,7 @@
     <!--    Counter Fragment starts here-->
 
     <!--    Sensor starts here-->
-    <string name="gyroscope_not_supported_toast_text">GYROSCOPE IS NOT SUPPORTED!</string>
+    <string name="gyroscope_not_supported_toast_text">GYROSCOPE IS NOT SUPPORTED OR DISABLED!</string>
     <string name="accelerometer_not_supported_toast_text">ACCELEROMETER IS NOT SUPPORTED!</string>
     <!--    Sensor ends here-->
 

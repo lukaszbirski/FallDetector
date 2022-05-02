@@ -12,6 +12,7 @@ import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.LineData
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.databinding.FragmentGraphBinding
+import pl.birski.falldetector.extensions.visibleOrGone
 import pl.birski.falldetector.presentation.listener.PassDataInterface
 import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
 import pl.birski.falldetector.service.enum.DataSet
@@ -56,6 +57,8 @@ class GraphFragment : Fragment() {
             enableLocationService(requireActivity())
 
             feedMultiple()
+
+            binding.velocityLinearLayout.visibleOrGone(isGyroscopeEnabled())
 
             lineData.observe(viewLifecycleOwner) {
                 binding.chart.notifyDataSetChanged()
