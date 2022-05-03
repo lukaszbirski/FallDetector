@@ -107,10 +107,13 @@
     <string name="location_tracker_dialog_no_text">No</string>
     <!--    LocationTracker ends here-->
 
+    <!--    Settings Fragment starts here-->
+    <string name="settings_fragment_gyroscope_disabled_text">After turning off the gyroscope, it is recommended to restart the application</string>
+    <!--    Settings Fragment ends here-->
+
     <!--    Time Out Dialog starts here-->
     <string name="time_our_dialog_counter_time_out_text">Counter time out</string>
     <string name="time_our_dialog_message_sent_text">Message has been sent to all contact persons!</string>
-
     <!--    Time Out Dialog ends here-->
 
     <!--    SharedPreferences starts here-->
@@ -118,7 +121,6 @@
     <string name="shared_preferences_detection_algorithms_list_key" translatable="false">pl.birski.falldetector.detection_algorithms_list_key</string>
     <string name="shared_preferences_send_message_key" translatable="false">pl.birski.falldetector.send_message_key</string>
     <string name="shared_preferences_control_gyroscope_key" translatable="false">pl.birski.falldetector.control_gyroscope_key</string>
-
     <!--    SharedPreferences ends here-->
 
     <!--    Templates start here-->
