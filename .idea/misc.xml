@@ -11,6 +11,7 @@
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_baseline_remove_circle.xml" value="0.2565" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.2875" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_gear_icon.xml" value="0.246" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_gyroscope_24.xml" value="0.2605" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_person_24.xml" value="0.1575" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_person_falling_down_24.xml" value="0.1" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/drawable/ic_signal_wave_24.xml" value="0.2875" />
@@ -39,7 +40,7 @@
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/layout/time_out_dialog.xml" value="0.33" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
         <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/menu/drawer_menu.xml" value="0.33" />
-        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/xml/root_preferences.xml" value="0.33" />
+        <entry key="..\:/Users/lukas/AndroidStudioProjects/FallDetector/app/src/main/res/xml/root_preferences.xml" value="0.5" />
       </map>
     </option>
   </component>
