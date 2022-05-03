@@ -82,7 +82,9 @@ class Sensor @Inject constructor(
     }
 
     fun stopMeasurement() {
-        manager.unregisterListener(this)
+        manager.unregisterListener(this).also {
+            resetAngularVelocity()
+        }
     }
 
     private fun getAcceleration(event: SensorEvent) = Acceleration(
@@ -98,4 +100,9 @@ class Sensor @Inject constructor(
         event.values[2].toDouble(),
         event.timestamp / 1000000
     )
+
+    private fun resetAngularVelocity() {
+        angularVelocity.takeIf { !prefUtil.isGyroscopeEnabled() }
+            ?.let { it.value = null }
+    }
 }
