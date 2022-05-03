@@ -24,6 +24,7 @@ import pl.birski.falldetector.data.Normalizer
 import pl.birski.falldetector.data.Sensor
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
+import pl.birski.falldetector.other.PrefUtil
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.DataSet
 import pl.birski.falldetector.service.enum.ServiceActions
@@ -35,7 +36,8 @@ class GraphViewModel
 constructor(
     private val application: Application,
     private val normalizer: Normalizer,
-    private val locationTracker: LocationTracker
+    private val locationTracker: LocationTracker,
+    private val prefUtil: PrefUtil
 ) : ViewModel() {
 
     @Inject
@@ -214,6 +216,8 @@ constructor(
         if (!locationTracker.locationEnabled())
             locationTracker.showSettingsAlert(activity)
     }
+
+    fun isGyroscopeEnabled() = prefUtil.isGyroscopeEnabled()
 
     private fun round(decimals: Int = 2, number: Number) = "%.${decimals}f".format(number).trim()
 }

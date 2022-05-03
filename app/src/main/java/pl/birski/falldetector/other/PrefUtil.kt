@@ -30,4 +30,9 @@ class PrefUtil @Inject constructor(
         context.getString(R.string.shared_preferences_send_message_key),
         false
     )
+
+    fun isGyroscopeEnabled() = sp.getBoolean(
+        context.getString(R.string.shared_preferences_control_gyroscope_key),
+        false
+    )
 }

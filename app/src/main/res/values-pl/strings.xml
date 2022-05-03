@@ -38,7 +38,7 @@
     <!--    Counter Fragment starts here-->
 
     <!--    Sensor starts here-->
-    <string name="gyroscope_not_supported_toast_text">ŻYROSKOP NIE JEST WSPIERANY!</string>
+    <string name="gyroscope_not_supported_toast_text">ŻYROSKOP NIE JEST WSPIERANY LUB WYŁĄCZONY!</string>
     <string name="accelerometer_not_supported_toast_text">AKCELEROMIERZ NIE JEST OBSŁUGIWANY!</string>
     <!--    Sensor ends here-->
 
@@ -55,7 +55,9 @@
     <string name="preferences_algorithms_array_impact_posture_fall_text">POCZĄTEK UPADKU + IMPAKT + POSTAWA</string>
     <string name="preferences_algorithms_array_impact_velocity_posture_fall_text">POCZĄTEK UPADKU + PRĘDKOŚĆ + IMPAKT + POSTAWA</string>
     <string name="preferences_category_sending_notification_title_text">Wysyłanie powiadomień</string>
+    <string name="preferences_category_gyroscope_title_text">Żyroskop</string>
     <string name="preferences_send_messages_title_text">Wyślij wiadomości</string>
+    <string name="preferences_enable_gyroscope_title_text">Włącz żyroskop</string>
     <!--    Preferences ends here-->
 
     <!--    Drawer starts here-->
@@ -104,6 +106,10 @@
     <string name="location_tracker_dialog_yes_text">Tak</string>
     <string name="location_tracker_dialog_no_text">Nie</string>
     <!--    LocationTracker ends here-->
+
+    <!--    Settings Fragment starts here-->
+    <string name="settings_fragment_gyroscope_disabled_text">Po wyłączeniu żyroskopu zalecany jest restart aplikacji</string>
+    <!--    Settings Fragment ends here-->
 
     <!--    Time Out Dialog starts here-->
     <string name="time_our_dialog_counter_time_out_text">Koniec czasu</string>
