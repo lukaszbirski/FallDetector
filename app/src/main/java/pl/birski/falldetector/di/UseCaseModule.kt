@@ -46,7 +46,7 @@ object UseCaseModule {
         mapper: ContactMapper
     ): AddContactUseCase {
         return AddContactUseCase(
-            database = database,
+            contactDao = database.contactDao(),
             mapper = mapper
         )
     }
@@ -58,7 +58,7 @@ object UseCaseModule {
         mapper: ContactMapper
     ): GetAllContactsUseCase {
         return GetAllContactsUseCase(
-            database = database,
+            contactDao = database.contactDao(),
             mapper = mapper
         )
     }
@@ -70,7 +70,7 @@ object UseCaseModule {
         mapper: ContactMapper
     ): RemoveContactUseCase {
         return RemoveContactUseCase(
-            database = database,
+            contactDao = database.contactDao(),
             mapper = mapper
         )
     }
