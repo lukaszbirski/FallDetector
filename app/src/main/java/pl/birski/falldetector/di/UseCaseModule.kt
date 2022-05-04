@@ -58,7 +58,7 @@ object UseCaseModule {
         mapper: ContactMapper
     ): GetAllContactsUseCase {
         return GetAllContactsUseCase(
-            database = database,
+            contactDao = database.contactDao(),
             mapper = mapper
         )
     }
