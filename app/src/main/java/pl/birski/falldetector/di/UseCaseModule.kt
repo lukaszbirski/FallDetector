@@ -70,7 +70,7 @@ object UseCaseModule {
         mapper: ContactMapper
     ): RemoveContactUseCase {
         return RemoveContactUseCase(
-            database = database,
+            contactDao = database.contactDao(),
             mapper = mapper
         )
     }
