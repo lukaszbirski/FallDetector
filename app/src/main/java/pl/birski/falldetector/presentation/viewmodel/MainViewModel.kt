@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import pl.birski.falldetector.data.Sensor
+import pl.birski.falldetector.data.SensorImpl
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.ServiceActions
 
@@ -17,7 +17,7 @@ constructor(
 ) : ViewModel() {
 
     @Inject
-    lateinit var sensor: Sensor
+    lateinit var sensor: SensorImpl
 
     fun startService() = sendCommandToService(ServiceActions.START_OR_RESUME)
         .also {

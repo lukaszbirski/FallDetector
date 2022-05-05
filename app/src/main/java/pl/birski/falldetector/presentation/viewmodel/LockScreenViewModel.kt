@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
 import pl.birski.falldetector.data.MessageSender
-import pl.birski.falldetector.data.Sensor
+import pl.birski.falldetector.data.SensorImpl
 import pl.birski.falldetector.other.PrefUtil
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.ServiceActions
@@ -30,7 +30,7 @@ constructor(
 ) : ViewModel() {
 
     @Inject
-    lateinit var sensor: Sensor
+    lateinit var sensor: SensorImpl
 
     private val _displayDialog = MutableLiveData<Boolean>()
     val displayDialog: LiveData<Boolean> get() = _displayDialog

@@ -9,8 +9,10 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import pl.birski.falldetector.data.FallDetector
 import pl.birski.falldetector.data.Filter
+import pl.birski.falldetector.data.FilterImpl
 import pl.birski.falldetector.data.Normalizer
 import pl.birski.falldetector.data.Sensor
+import pl.birski.falldetector.data.SensorImpl
 import pl.birski.falldetector.data.Stabilizer
 import pl.birski.falldetector.other.PrefUtil
 
@@ -24,7 +26,7 @@ object AccelerometerModule {
         fallDetector: FallDetector,
         stabilizer: Stabilizer,
         prefUtil: PrefUtil
-    ) = Sensor(fallDetector, stabilizer, prefUtil)
+    ): Sensor = SensorImpl(fallDetector, stabilizer, prefUtil)
 
     @Singleton
     @Provides
@@ -36,7 +38,7 @@ object AccelerometerModule {
 
     @Singleton
     @Provides
-    fun provideFilter() = Filter()
+    fun provideFilter(): Filter = FilterImpl()
 
     @Singleton
     @Provides
