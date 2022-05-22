@@ -162,31 +162,31 @@ class FilterTest {
     fun testIfCalculatedAlphaIfCorrect() {
 
         assertEquals(
-            0.004f,
+            0.996f,
             filter.calculateAlpha(0.25, 50.0),
             0.001f
         )
 
         assertEquals(
-            0.009f,
+            0.991f,
             filter.calculateAlpha(0.5, 50.0),
             0.001f
         )
 
         assertEquals(
-            0.019f,
+            0.980f,
             filter.calculateAlpha(1.0, 50.0),
             0.001f
         )
 
         assertEquals(
-            0.090f,
+            0.910f,
             filter.calculateAlpha(1.0, 10.0),
             0.001f
         )
 
         assertEquals(
-            0.5f,
+            0.500f,
             filter.calculateAlpha(10.0, 10.0),
             0.001f
         )
