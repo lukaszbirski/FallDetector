@@ -24,8 +24,8 @@ class SensorImpl @Inject constructor(
 
     private lateinit var manager: SensorManager
 
-    val acceleration: MutableState<Acceleration?> = mutableStateOf(null)
-    val angularVelocity: MutableState<AngularVelocity?> = mutableStateOf(null)
+    private val acceleration: MutableState<Acceleration?> = mutableStateOf(null)
+    private val angularVelocity: MutableState<AngularVelocity?> = mutableStateOf(null)
 
     private var rawAcceleration = Acceleration(0.0, 0.0, 0.0, 0)
     private var rawVelocity = AngularVelocity(0.0, 0.0, 0.0, 0)
@@ -43,7 +43,7 @@ class SensorImpl @Inject constructor(
         when (event.sensor.type) {
             Sensor.TYPE_ACCELEROMETER -> {
 
-                rawAcceleration = getAcceleration(event = event)
+                rawAcceleration = createAcceleration(event = event)
                 acceleration.value = rawAcceleration
                 Timber.d("Raw acceleration is equal to: $rawAcceleration")
 
@@ -54,7 +54,7 @@ class SensorImpl @Inject constructor(
                 fallDetector.detectFall(resampledSignal)
             }
             Sensor.TYPE_GYROSCOPE -> {
-                rawVelocity = getVelocity(event = event)
+                rawVelocity = createVelocity(event = event)
                 angularVelocity.value = rawVelocity
                 Timber.d("Current angular velocity is equal to: $rawVelocity")
             }
@@ -81,20 +81,24 @@ class SensorImpl @Inject constructor(
         ).show()
     }
 
-    fun stopMeasurement() {
+    override fun stopMeasurement() {
         manager.unregisterListener(this).also {
             resetAngularVelocity()
         }
     }
 
-    override fun getAcceleration(event: SensorEvent) = Acceleration(
+    override fun getMutableAcceleration() = acceleration
+
+    override fun getMutableVelocity() = angularVelocity
+
+    override fun createAcceleration(event: SensorEvent) = Acceleration(
         event.values[0].div(SensorManager.STANDARD_GRAVITY).toDouble(),
         event.values[1].div(SensorManager.STANDARD_GRAVITY).toDouble(),
         event.values[2].div(SensorManager.STANDARD_GRAVITY).toDouble(),
         event.timestamp / 1000000
     )
 
-    override fun getVelocity(event: SensorEvent) = AngularVelocity(
+    override fun createVelocity(event: SensorEvent) = AngularVelocity(
         event.values[0].toDouble(),
         event.values[1].toDouble(),
         event.values[2].toDouble(),

@@ -2,6 +2,7 @@ package pl.birski.falldetector.data
 
 import android.content.Context
 import android.hardware.SensorEvent
+import androidx.compose.runtime.MutableState
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
 
@@ -9,7 +10,13 @@ interface Sensor {
 
     fun initiateSensor(context: Context)
 
-    fun getAcceleration(event: SensorEvent): Acceleration
+    fun stopMeasurement()
 
-    fun getVelocity(event: SensorEvent): AngularVelocity
+    fun createAcceleration(event: SensorEvent): Acceleration
+
+    fun createVelocity(event: SensorEvent): AngularVelocity
+
+    fun getMutableAcceleration(): MutableState<Acceleration?>
+
+    fun getMutableVelocity(): MutableState<AngularVelocity?>
 }

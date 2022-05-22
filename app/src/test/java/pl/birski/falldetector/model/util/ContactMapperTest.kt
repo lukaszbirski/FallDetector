@@ -1,5 +1,6 @@
 package pl.birski.falldetector.model.util
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import pl.birski.falldetector.database.AppDatabaseFake
 import pl.birski.falldetector.database.model.ContactEntity
@@ -10,7 +11,12 @@ class ContactMapperTest {
     private val contactsEntity = AppDatabaseFake().contacts
 
     // system in test
-    private val mapper = ContactMapper()
+    private lateinit var mapper: ContactMapper
+
+    @BeforeEach
+    fun setup() {
+        mapper = ContactMapper()
+    }
 
     @Test
     fun mapListOfContactEntityToListOfContacts() {

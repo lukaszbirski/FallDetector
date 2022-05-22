@@ -18,11 +18,13 @@ class GetAllContactsUseCaseTest {
 
     // dependencies
     private lateinit var contactDao: ContactDaoFake
-    private val mapper = ContactMapper()
+    private lateinit var mapper: ContactMapper
 
     @BeforeEach
     fun setup() {
         contactDao = ContactDaoFake(appDatabase)
+
+        mapper = ContactMapper()
 
         getAllContactsUseCase = GetAllContactsUseCase(
             mapper = mapper,

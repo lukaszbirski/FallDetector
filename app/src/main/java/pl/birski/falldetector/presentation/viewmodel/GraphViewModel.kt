@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
 import pl.birski.falldetector.data.LocationTracker
 import pl.birski.falldetector.data.Normalizer
-import pl.birski.falldetector.data.SensorImpl
+import pl.birski.falldetector.data.Sensor
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
 import pl.birski.falldetector.other.PrefUtil
@@ -41,7 +41,7 @@ constructor(
 ) : ViewModel() {
 
     @Inject
-    lateinit var sensor: SensorImpl
+    lateinit var sensor: Sensor
 
     private val _lineData = MutableLiveData<LineData?>()
     val lineData: LiveData<LineData?> get() = _lineData
@@ -98,7 +98,7 @@ constructor(
         }
 
     private fun measureAcceleration(lineData: LineData?) {
-        sensor.acceleration.value?.let {
+        sensor.getMutableAcceleration().value?.let {
             Timber.d("Measured acceleration value is: $it")
             if (plotData) {
                 addEntry(
@@ -108,7 +108,7 @@ constructor(
             }
             plotData = false
         }
-        sensor.angularVelocity.value?.let {
+        sensor.getMutableVelocity().value?.let {
             Timber.d("Measured angular velocity is: $it")
             _velocity.postValue(it)
         }
