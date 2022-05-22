@@ -18,7 +18,7 @@ class AddContactUseCaseTest {
 
     // dependencies
     private lateinit var contactDao: ContactDaoFake
-    private val mapper = ContactMapper()
+    private lateinit var mapper: ContactMapper
 
     private lateinit var getAllContactsUseCase: GetAllContactsUseCase
 
@@ -34,6 +34,8 @@ class AddContactUseCaseTest {
     @BeforeEach
     fun setup() {
         contactDao = ContactDaoFake(appDatabase)
+
+        mapper = ContactMapper()
 
         addContactUseCase = AddContactUseCase(
             mapper = mapper,

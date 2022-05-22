@@ -85,7 +85,7 @@ class LocationTrackerImpl @Inject constructor(
 
                 location = locationNetwork
 
-                selectMoreAccurateLocation(
+                location = selectLocation(
                     locationByGps = locationGPS,
                     locationByNetwork = locationNetwork
                 )
@@ -110,21 +110,28 @@ class LocationTrackerImpl @Inject constructor(
         return locationManager.isProviderEnabled(GPS_PROVIDER)
     }
 
-    private fun selectMoreAccurateLocation(locationByGps: Location?, locationByNetwork: Location?) {
+    private fun selectLocation(locationByGps: Location?, locationByNetwork: Location?): Location? {
 
-        if (locationByGps != null && locationByNetwork != null) {
-            if (locationByGps.accuracy > locationByNetwork.accuracy) {
-                location?.let {
-                    it.latitude = locationByGps.latitude
-                    it.longitude = locationByGps.longitude
-                }
-            } else {
-                location?.let {
-                    it.latitude = locationByNetwork.latitude
-                    it.longitude = locationByNetwork.longitude
-                }
-            }
+        return when {
+
+            locationByGps != null && locationByNetwork != null ->
+                selectMoreAccurateLocation(locationByGps, locationByNetwork)
+
+            locationByGps != null && locationByNetwork == null -> locationByGps
+
+            locationByGps == null && locationByNetwork != null -> locationByNetwork
+
+            else -> null
         }
+    }
+
+    private fun selectMoreAccurateLocation(
+        locationByGps: Location,
+        locationByNetwork: Location
+    ) = if (locationByGps.accuracy > locationByNetwork.accuracy) {
+        locationByGps
+    } else {
+        locationByNetwork
     }
 
     override fun showSettingsAlert(activity: Activity) {
@@ -169,7 +176,7 @@ class LocationTrackerImpl @Inject constructor(
             }
         }
 
-        selectMoreAccurateLocation(
+        location = selectLocation(
             locationByGps = locationGPS,
             locationByNetwork = locationNetwork
         )

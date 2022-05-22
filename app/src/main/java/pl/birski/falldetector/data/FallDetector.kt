@@ -30,8 +30,8 @@ class FallDetector @Inject constructor(
     private val SV_TOTAL_FALLING_THRESHOLD = 0.6
     private val VELOCITY_THRESHOLD = 0.6
 
-    private var lpfData = floatArrayOf(0.0f, 0.0f, 0.0f)
-    private var hpfData = HighPassFilterData(
+    private var lowPassFilterData = floatArrayOf(0.0f, 0.0f, 0.0f)
+    private var highPassFilterData = HighPassFilterData(
         floatArrayOf(0.0f, 0.0f, 0.0f),
         floatArrayOf(0.0f, 0.0f, 0.0f)
     )
@@ -68,11 +68,25 @@ class FallDetector @Inject constructor(
             sensorData.acceleration.z.toFloat()
         )
 
-        lpfData = filter.lowPassFilter(accelerationFloatArray, lpfData, ALPHA)
-        hpfData = filter.highPassFilter(accelerationFloatArray, hpfData, ALPHA)
+        lowPassFilterData = filter.lowPassFilter(
+            input = accelerationFloatArray,
+            output = lowPassFilterData,
+            alpha = ALPHA
+        )
+        highPassFilterData = filter.highPassFilter(
+            input = accelerationFloatArray,
+            hpfData = highPassFilterData,
+            alpha = ALPHA
+        )
 
-        val lpfAcceleration = getAcceleration(sensorData.acceleration, lpfData)
-        val hpfAcceleration = getAcceleration(sensorData.acceleration, hpfData.acceleration)
+        val lpfAcceleration = getAcceleration(
+            rawAcceleration = sensorData.acceleration,
+            acceleration = lowPassFilterData
+        )
+        val hpfAcceleration = getAcceleration(
+            rawAcceleration = sensorData.acceleration,
+            acceleration = highPassFilterData.acceleration
+        )
 
         addAccelerationToWindow(
             acceleration = sensorData.acceleration,

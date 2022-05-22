@@ -98,7 +98,7 @@ constructor(
         }
 
     private fun measureAcceleration(lineData: LineData?) {
-        sensor.acceleration.value?.let {
+        sensor.getMutableAcceleration().value?.let {
             Timber.d("Measured acceleration value is: $it")
             if (plotData) {
                 addEntry(
@@ -108,7 +108,7 @@ constructor(
             }
             plotData = false
         }
-        sensor.angularVelocity.value?.let {
+        sensor.getMutableVelocity().value?.let {
             Timber.d("Measured angular velocity is: $it")
             _velocity.postValue(it)
         }
