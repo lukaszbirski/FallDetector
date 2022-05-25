@@ -14,8 +14,9 @@ class LocationTrackerTest {
     @Before
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        locationTracker = LocationTrackerImpl(context)
-        locationTracker.setLocationForTest()
+        locationTracker = LocationTrackerImpl(context).also {
+            it.setLocationForTest()
+        }
     }
 
     @Test
