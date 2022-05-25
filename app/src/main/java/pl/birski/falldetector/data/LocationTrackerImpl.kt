@@ -23,7 +23,7 @@ import pl.birski.falldetector.R
 
 class LocationTrackerImpl @Inject constructor(
     private val context: Context
-) : LocationTracker, Service(), LocationListener {
+) : LocationTracker, ILocationTrackerTest, Service(), LocationListener {
 
     private var longitude: Double = 0.0
     private var latitude: Double = 0.0
@@ -208,5 +208,13 @@ class LocationTrackerImpl @Inject constructor(
 
     init {
         getLocation()
+    }
+
+    // for test purpose only
+    override fun setLocationForTest() {
+        location = Location("").also {
+            it.latitude = 52.22824846991743
+            it.longitude = 20.9854009598633
+        }
     }
 }
