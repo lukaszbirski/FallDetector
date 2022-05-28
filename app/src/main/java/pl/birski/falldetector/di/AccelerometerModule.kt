@@ -47,5 +47,5 @@ object AccelerometerModule {
         @ApplicationContext app: Context,
         filter: Filter,
         prefUtil: PrefUtil
-    ) = FallDetectorImpl(app, filter, prefUtil)
+    ): FallDetector = FallDetectorImpl(app, filter, prefUtil)
 }
