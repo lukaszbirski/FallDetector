@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import pl.birski.falldetector.data.FallDetector
+import pl.birski.falldetector.data.FallDetectorImpl
 import pl.birski.falldetector.data.Filter
 import pl.birski.falldetector.data.FilterImpl
 import pl.birski.falldetector.data.Normalizer
@@ -46,5 +47,5 @@ object AccelerometerModule {
         @ApplicationContext app: Context,
         filter: Filter,
         prefUtil: PrefUtil
-    ) = FallDetector(app, filter, prefUtil)
+    ) = FallDetectorImpl(app, filter, prefUtil)
 }

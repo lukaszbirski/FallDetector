@@ -7,6 +7,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
@@ -19,9 +20,11 @@ class LocationTrackerTest {
     // system in test
     private lateinit var locationTracker: LocationTrackerImpl
 
+    @Mock
+    private var context: Context = ApplicationProvider.getApplicationContext<Context>()
+
     @Before
     fun setup() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
         locationTracker = LocationTrackerImpl(context).also {
             it.setLocationForTest()
         }
