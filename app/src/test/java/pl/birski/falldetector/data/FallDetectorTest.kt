@@ -33,7 +33,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfIsSumVectorGreaterThanThresholdReturnTrueWhenSumIsGreaterThanThreshold() {
+    fun checkIfReturnsTrueWhenSumVectorIsGreaterThanThreshold() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "isSumVectorGreaterThanThreshold",
@@ -51,7 +51,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfIsSumVectorGreaterThanThresholdReturnTrueWhenSumIsLowerThanThreshold() {
+    fun checkIfReturnsFalseWhenSumVectorIsLowerThanThreshold() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "isSumVectorGreaterThanThreshold",
@@ -69,7 +69,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfIsSumVectorGreaterThanThresholdReturnTrueWhenSumIsEqualThreshold() {
+    fun checkIfReturnsFalseWhenSumVectorIsEqualThreshold() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "isSumVectorGreaterThanThreshold",
@@ -84,5 +84,123 @@ class FallDetectorTest {
         parameters[1] = 1.4 // threshold
 
         assertEquals(false, method.invoke(fallDetector, *parameters))
+    }
+
+    @Test
+    fun checkIfCalculateSumVectorReturnsCorrectValue() {
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "calculateSumVector",
+            Double::class.java,
+            Double::class.java,
+            Double::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(3)
+
+        // parameters
+        parameters[0] = 8.0 // x
+        parameters[1] = 1.5 // y
+        parameters[2] = 1.0 // z
+
+        val result = method.invoke(fallDetector, *parameters) as Double
+
+        assertEquals(8.201, result, 0.001)
+    }
+
+    @Test
+    fun checkIfExpireTimeOutReturnsGivenValueMinusOne() {
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "expireTimeOut",
+            Int::class.java,
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(1)
+
+        // parameters
+        parameters[0] = 10
+
+        val result = method.invoke(fallDetector, *parameters) as Int
+
+        assertEquals(9, result)
+    }
+
+    @Test
+    fun checkIfExpireTimeOutReturnsMinusOneWhenMinusOneGiven() {
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "expireTimeOut",
+            Int::class.java,
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(1)
+
+        // parameters
+        parameters[0] = -1
+
+        val result = method.invoke(fallDetector, *parameters) as Int
+
+        assertEquals(-1, result)
+    }
+
+    @Test
+    fun checkIfCalculateVerticalAccelerationReturnsCorrectValue() {
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "calculateVerticalAcceleration",
+            Double::class.java,
+            Double::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(2)
+
+        // parameters
+        parameters[0] = 1.1 // svTOT
+        parameters[1] = 0.1 // svD
+
+        val result = method.invoke(fallDetector, *parameters) as Double
+
+        assertEquals(0.1, result, 0.001)
+    }
+
+    @Test
+    fun checkIfReturnTrueWhenVerticalAccelerationIsGreaterThanThreshold() {
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "isVerticalAccelerationGreaterThanThreshold",
+            Double::class.java,
+            Double::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(2)
+
+        // parameters
+        parameters[0] = 2.4 // svTotal
+        parameters[1] = 1.3 // svDynamic
+
+        val result = method.invoke(fallDetector, *parameters) as Boolean
+
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun checkIfReturnsFalseWhenVerticalAccelerationIsLowerThanThreshold() {
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "isVerticalAccelerationGreaterThanThreshold",
+            Double::class.java,
+            Double::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(2)
+
+        // parameters
+        parameters[0] = 1.0 // svTotal
+        parameters[1] = 0.0 // svDynamic
+
+        val result = method.invoke(fallDetector, *parameters) as Boolean
+
+        assertEquals(false, result)
     }
 }
