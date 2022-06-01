@@ -185,7 +185,7 @@ class FallDetectorImpl @Inject constructor(
 
     private fun detectStartOfFall(acceleration: Acceleration) {
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
-        if (svTotal < SV_TOTAL_FALLING_THRESHOLD) {
+        if (svTotal <= SV_TOTAL_FALLING_THRESHOLD) {
             Timber.d("Start of the fall was detected!")
             fallingTimeOut = Constants.FALLING_TIME_SPAN
         }
