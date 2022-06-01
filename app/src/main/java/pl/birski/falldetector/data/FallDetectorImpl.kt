@@ -45,8 +45,6 @@ class FallDetectorImpl @Inject constructor(
     private var measureVelocity = false
     private var isVelocityGreaterThanThreshold = false
 
-    private var previousAcceleration: Acceleration = Acceleration(0.0, 0.0, 0.0, 0L)
-
     override fun detectFall(sensorData: SensorData) {
         measureFall(sensorData)
     }
@@ -186,20 +184,11 @@ class FallDetectorImpl @Inject constructor(
     }
 
     private fun detectStartOfFall(acceleration: Acceleration) {
-
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
-        val svTotalPrevious = calculateSumVector(
-            previousAcceleration.x,
-            previousAcceleration.y,
-            previousAcceleration.z
-        )
-
-        if (SV_TOTAL_FALLING_THRESHOLD <= svTotalPrevious && svTotal < SV_TOTAL_FALLING_THRESHOLD) {
+        if (svTotal < SV_TOTAL_FALLING_THRESHOLD) {
             Timber.d("Start of the fall was detected!")
             fallingTimeOut = Constants.FALLING_TIME_SPAN
         }
-
-        previousAcceleration = acceleration
     }
 
     private fun detectImpact(

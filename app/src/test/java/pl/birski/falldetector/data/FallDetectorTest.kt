@@ -3,13 +3,16 @@ package pl.birski.falldetector.data
 import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
+import java.lang.reflect.Field
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
+import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.other.PrefUtil
 
 @RunWith(RobolectricTestRunner::class)
@@ -202,5 +205,53 @@ class FallDetectorTest {
         val result = method.invoke(fallDetector, *parameters) as Boolean
 
         assertEquals(false, result)
+    }
+
+    @Test
+    fun checkIfNotDetectsFallWhenAccelerationIsGreaterThanThreshold() {
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "detectStartOfFall",
+            Acceleration::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(1)
+
+        val acceleration = Acceleration(0.0, 0.0, 1.0, 1L)
+
+        // parameter
+        parameters[0] = acceleration // acceleration
+
+        method.invoke(fallDetector, *parameters)
+
+        val privateStringField: Field =
+            FallDetectorImpl::class.java.getDeclaredField("fallingTimeOut")
+        privateStringField.isAccessible = true
+
+        val result = privateStringField.get(fallDetector) as Int
+
+        assertEquals(-1, result)
+    }
+
+    @Test
+    fun checkIfDetectsFallAccelerationIsLowerThanThreshold() {
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "detectStartOfFall",
+            Acceleration::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(1)
+
+        // parameter
+        parameters[0] = Acceleration(0.20, 0.20, 0.40, 1L) // acceleration
+
+        method.invoke(fallDetector, *parameters)
+
+        val privateStringField: Field =
+            FallDetectorImpl::class.java.getDeclaredField("fallingTimeOut")
+        privateStringField.isAccessible = true
+
+        val result = privateStringField.get(fallDetector) as Int
+
+        assertNotEquals(-1, result)
     }
 }
