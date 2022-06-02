@@ -19,11 +19,11 @@ class PrefUtil @Inject constructor(
     )?.toLong() ?: 2L
 
     fun getDetectionAlgorithm(): Algorithms {
-        val selectedValue: String = sp.getString(
+        val selectedValue = sp.getString(
             context.getString(R.string.shared_preferences_detection_algorithms_list_key),
             "1"
-        ) ?: "1"
-        return Algorithms.getByValue(selectedValue) ?: Algorithms.IMPACT_POSTURE
+        )
+        return selectedValue?.let { Algorithms.getByValue(it) } ?: Algorithms.FIRST
     }
 
     fun isSendingMessageAllowed() = sp.getBoolean(

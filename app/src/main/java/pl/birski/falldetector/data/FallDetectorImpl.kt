@@ -102,17 +102,17 @@ class FallDetectorImpl @Inject constructor(
 
             when (prefUtil.getDetectionAlgorithm()) {
 
-                Algorithms.IMPACT_POSTURE -> useImpactPostureAlgorithm(
+                Algorithms.FIRST -> useFirstAlgorithm(
                     hpfAcceleration = hpfAcceleration,
                     acceleration = sensorData.acceleration
                 )
 
-                Algorithms.START_IMPACT_POSTURE -> useStartOfFallImpactPostureAlgorithm(
+                Algorithms.SECOND -> useSecondAlgorithm(
                     hpfAcceleration = hpfAcceleration,
                     acceleration = sensorData.acceleration
                 )
 
-                Algorithms.START_VELOCITY_IMPACT_POSTURE -> useFallVelocityImpactPostureAlgorithm(
+                Algorithms.THIRD -> useThirdAlgorithm(
                     hpfAcceleration = hpfAcceleration,
                     acceleration = sensorData.acceleration
                 )
@@ -137,7 +137,7 @@ class FallDetectorImpl @Inject constructor(
         }
     }
 
-    private fun useImpactPostureAlgorithm(
+    private fun useFirstAlgorithm(
         hpfAcceleration: Acceleration,
         acceleration: Acceleration
     ) {
@@ -149,7 +149,7 @@ class FallDetectorImpl @Inject constructor(
         detectPosture()
     }
 
-    private fun useStartOfFallImpactPostureAlgorithm(
+    private fun useSecondAlgorithm(
         hpfAcceleration: Acceleration,
         acceleration: Acceleration
     ) {
@@ -165,7 +165,7 @@ class FallDetectorImpl @Inject constructor(
         detectPosture()
     }
 
-    private fun useFallVelocityImpactPostureAlgorithm(
+    private fun useThirdAlgorithm(
         hpfAcceleration: Acceleration,
         acceleration: Acceleration
     ) {
@@ -200,11 +200,11 @@ class FallDetectorImpl @Inject constructor(
 
         // impact should be detected when using ImpactPosture algorithm
         // or when start of the fall was detected
-        if (detectImpactForImpactPostureAlgorithm() ||
-            detectImpactForStartImpactPostureAlgorithm() ||
-            detectImpactForStartImpactVelocityPostureAlgorithm()
+        if (isFirstAlgorithm() ||
+            isDetectingImpactForSecondAlgorithm() ||
+            isDetectingImpactForThirdAlgorithm()
         ) {
-            if (isMinMaxSumVectorGreaterThanThreshold() ||
+            if (isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm() ||
                 isVerticalAccelerationGreaterThanThreshold(svTotal, svDynamic) ||
                 isSumVectorGreaterThanThreshold(svTotal, SV_TOT_THRESHOLD) ||
                 isSumVectorGreaterThanThreshold(svDynamic, SV_D_THRESHOLD)
@@ -216,15 +216,17 @@ class FallDetectorImpl @Inject constructor(
         }
     }
 
-    private fun detectImpactForImpactPostureAlgorithm() =
-        prefUtil.getDetectionAlgorithm() == Algorithms.IMPACT_POSTURE
+    private fun isFirstAlgorithm() =
+        prefUtil.getDetectionAlgorithm() == Algorithms.FIRST
 
-    private fun detectImpactForStartImpactPostureAlgorithm() =
-        prefUtil.getDetectionAlgorithm() == Algorithms.START_IMPACT_POSTURE && fallingTimeOut > -1
+    private fun isDetectingImpactForSecondAlgorithm() =
+        prefUtil.getDetectionAlgorithm() == Algorithms.SECOND && isFalling()
 
-    private fun detectImpactForStartImpactVelocityPostureAlgorithm() =
-        prefUtil.getDetectionAlgorithm() == Algorithms.START_VELOCITY_IMPACT_POSTURE &&
-            fallingTimeOut > -1 && isVelocityGreaterThanThreshold
+    private fun isDetectingImpactForThirdAlgorithm() =
+        prefUtil.getDetectionAlgorithm() == Algorithms.THIRD &&
+            isFalling() && isVelocityGreaterThanThreshold
+
+    private fun isFalling() = fallingTimeOut > -1
 
     private fun detectVelocity(acceleration: Acceleration) {
         // velocity is calculated by integrating the area of SVTOT
@@ -266,6 +268,9 @@ class FallDetectorImpl @Inject constructor(
         val zMinMax = getMaxValue(DataSet.Z_AXIS) - getMinValue(DataSet.Z_AXIS)
         return calculateSumVector(xMinMax, yMinMax, zMinMax) > SV_MAX_MIN_THRESHOLD
     }
+
+    private fun isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm() =
+        isMinMaxSumVectorGreaterThanThreshold() && isFirstAlgorithm()
 
     private fun isVerticalAccelerationGreaterThanThreshold(
         svTotal: Double,

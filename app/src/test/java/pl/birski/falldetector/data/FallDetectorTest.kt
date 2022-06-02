@@ -223,11 +223,10 @@ class FallDetectorTest {
 
         method.invoke(fallDetector, *parameters)
 
-        val privateStringField: Field =
-            FallDetectorImpl::class.java.getDeclaredField("fallingTimeOut")
-        privateStringField.isAccessible = true
+        val field: Field = FallDetectorImpl::class.java.getDeclaredField("fallingTimeOut")
+        field.isAccessible = true
 
-        val result = privateStringField.get(fallDetector) as Int
+        val result = field.get(fallDetector) as Int
 
         assertEquals(-1, result)
     }
@@ -246,11 +245,10 @@ class FallDetectorTest {
 
         method.invoke(fallDetector, *parameters)
 
-        val privateStringField: Field =
-            FallDetectorImpl::class.java.getDeclaredField("fallingTimeOut")
-        privateStringField.isAccessible = true
+        val field: Field = FallDetectorImpl::class.java.getDeclaredField("fallingTimeOut")
+        field.isAccessible = true
 
-        val result = privateStringField.get(fallDetector) as Int
+        val result = field.get(fallDetector) as Int
 
         assertNotEquals(-1, result)
     }
