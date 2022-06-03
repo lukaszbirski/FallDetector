@@ -12,16 +12,20 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
+import pl.birski.falldetector.data.fake.FallDetectorDataFake
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.other.PrefUtil
+import pl.birski.falldetector.other.PrefUtilImpl
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.P])
 @DoNotInstrument
 class FallDetectorTest {
 
+    private val fakeData = FallDetectorDataFake()
+
     // system in test
-    private lateinit var fallDetector: FallDetector
+    private lateinit var fallDetector: FallDetectorImpl
 
     private lateinit var filter: Filter
     private lateinit var prefUtil: PrefUtil
@@ -31,12 +35,12 @@ class FallDetectorTest {
     @Before
     fun setup() {
         filter = FilterImpl()
-        prefUtil = PrefUtil(context)
+        prefUtil = PrefUtilImpl(context)
         fallDetector = FallDetectorImpl(context, filter, prefUtil)
     }
 
     @Test
-    fun checkIfReturnsTrueWhenSumVectorIsGreaterThanThreshold() {
+    fun `check if returns true when SV is lower than threshold`() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "isSumVectorGreaterThanThreshold",
@@ -54,7 +58,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfReturnsFalseWhenSumVectorIsLowerThanThreshold() {
+    fun `check if returns false when SV is lower than threshold`() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "isSumVectorGreaterThanThreshold",
@@ -72,7 +76,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfReturnsFalseWhenSumVectorIsEqualThreshold() {
+    fun `check if returns false when SV is equal threshold`() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "isSumVectorGreaterThanThreshold",
@@ -90,7 +94,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfCalculateSumVectorReturnsCorrectValue() {
+    fun `check if calculateSumVector returns correct value`() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "calculateSumVector",
@@ -112,7 +116,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfExpireTimeOutReturnsGivenValueMinusOne() {
+    fun `check if expireTimeOut returns given value minus one`() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "expireTimeOut",
@@ -130,7 +134,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfExpireTimeOutReturnsMinusOneWhenMinusOneGiven() {
+    fun `check if expireTimeOut returns -1 when -1 is given`() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "expireTimeOut",
@@ -148,7 +152,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfCalculateVerticalAccelerationReturnsCorrectValue() {
+    fun `check if calculateVerticalAcceleration returns correct value`() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "calculateVerticalAcceleration",
@@ -168,7 +172,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfReturnTrueWhenVerticalAccelerationIsGreaterThanThreshold() {
+    fun `check if returns false when vertical acceleration is greater than threshold`() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "isVerticalAccelerationGreaterThanThreshold",
@@ -188,7 +192,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfReturnsFalseWhenVerticalAccelerationIsLowerThanThreshold() {
+    fun `check if returns false when vertical acceleration is lower than threshold`() {
 
         val method = fallDetector.javaClass.getDeclaredMethod(
             "isVerticalAccelerationGreaterThanThreshold",
@@ -208,7 +212,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfNotDetectsFallWhenAccelerationIsGreaterThanThreshold() {
+    fun `check if detects start of fall when acceleration is greater than threshold`() {
         val method = fallDetector.javaClass.getDeclaredMethod(
             "detectStartOfFall",
             Acceleration::class.java
@@ -232,7 +236,7 @@ class FallDetectorTest {
     }
 
     @Test
-    fun checkIfDetectsFallAccelerationIsLowerThanThreshold() {
+    fun `check if detects start of fall when acceleration is lower than threshold`() {
         val method = fallDetector.javaClass.getDeclaredMethod(
             "detectStartOfFall",
             Acceleration::class.java
@@ -251,5 +255,145 @@ class FallDetectorTest {
         val result = field.get(fallDetector) as Int
 
         assertNotEquals(-1, result)
+    }
+
+    @Test
+    fun `check if impact will be detected when only SV Dynamic is greater than threshold`() {
+
+        // for test need to set this sliding windows
+        fallDetector.setMinMaxSW(fakeData.minMaxListWithoutDiffs)
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "detectImpact",
+            Acceleration::class.java,
+            Acceleration::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(2)
+
+        // parameter
+        parameters[0] = Acceleration(0.2, 0.2, 2.5, 1L) // hpfAcceleration - for SV Dynamic
+        parameters[1] = Acceleration(0.0, 0.0, 0.0, 1L) // acceleration
+
+        method.invoke(fallDetector, *parameters)
+
+        val field: Field = FallDetectorImpl::class.java.getDeclaredField("impactTimeOut")
+        field.isAccessible = true
+
+        val result = field.get(fallDetector) as Int
+
+        assertNotEquals(-1, result)
+    }
+
+    @Test
+    fun `check if impact will be detected when only SV Total is greater than threshold`() {
+
+        // for test need to set this sliding windows
+        fallDetector.setMinMaxSW(fakeData.minMaxListWithoutDiffs)
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "detectImpact",
+            Acceleration::class.java,
+            Acceleration::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(2)
+
+        // parameter
+        parameters[0] = Acceleration(0.0, 0.0, 0.0, 1L) // hpfAcceleration
+        parameters[1] = Acceleration(0.2, 0.2, 2.0, 1L) // acceleration - for SV Total
+
+        method.invoke(fallDetector, *parameters)
+
+        val field: Field = FallDetectorImpl::class.java.getDeclaredField("impactTimeOut")
+        field.isAccessible = true
+
+        val result = field.get(fallDetector) as Int
+
+        assertNotEquals(-1, result)
+    }
+
+    @Test
+    fun `check if impact will be detected when only vertical acc is greater than threshold`() {
+
+        // for test need to set this sliding windows
+        fallDetector.setMinMaxSW(fakeData.minMaxListWithoutDiffs)
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "detectImpact",
+            Acceleration::class.java,
+            Acceleration::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(2)
+
+        // parameter
+        parameters[0] = Acceleration(0.0, 0.0, 1.0, 1L) // hpfAcceleration - for SV Dynamic
+        parameters[1] = Acceleration(0.2, 0.2, 2.3, 1L) // acceleration - for SV Total
+
+        method.invoke(fallDetector, *parameters)
+
+        val field: Field = FallDetectorImpl::class.java.getDeclaredField("impactTimeOut")
+        field.isAccessible = true
+
+        val result = field.get(fallDetector) as Int
+
+        assertNotEquals(-1, result)
+    }
+
+    @Test
+    fun `check if impact will be detected when only min max SV is greater than threshold`() {
+
+        // for test need to set this sliding windows
+        fallDetector.setMinMaxSW(fakeData.minMaxListWithDiffs)
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "detectImpact",
+            Acceleration::class.java,
+            Acceleration::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(2)
+
+        // parameter
+        parameters[0] = Acceleration(0.0, 0.0, 0.0, 1L) // hpfAcceleration
+        parameters[1] = Acceleration(0.0, 0.0, 0.0, 1L) // acceleration
+
+        method.invoke(fallDetector, *parameters)
+
+        val field: Field = FallDetectorImpl::class.java.getDeclaredField("impactTimeOut")
+        field.isAccessible = true
+
+        val result = field.get(fallDetector) as Int
+
+        assertNotEquals(-1, result)
+    }
+
+    @Test
+    fun `check if impact will not be detected when non value is greater than threshold`() {
+
+        // for test need to set this sliding windows
+        fallDetector.setMinMaxSW(fakeData.minMaxListWithoutDiffs)
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "detectImpact",
+            Acceleration::class.java,
+            Acceleration::class.java
+        )
+        method.isAccessible = true
+        val parameters = arrayOfNulls<Any>(2)
+
+        // parameter
+        parameters[0] = Acceleration(0.0, 0.0, 0.0, 1L) // hpfAcceleration
+        parameters[1] = Acceleration(0.0, 0.0, 0.0, 1L) // acceleration
+
+        method.invoke(fallDetector, *parameters)
+
+        val field: Field = FallDetectorImpl::class.java.getDeclaredField("impactTimeOut")
+        field.isAccessible = true
+
+        val result = field.get(fallDetector) as Int
+
+        assertEquals(-1, result)
     }
 }

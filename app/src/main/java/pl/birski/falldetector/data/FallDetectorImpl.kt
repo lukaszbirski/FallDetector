@@ -17,7 +17,7 @@ class FallDetectorImpl @Inject constructor(
     private val context: Context,
     private val filter: Filter,
     private val prefUtil: PrefUtil
-) : FallDetector {
+) : FallDetector, IFallDetectorTest {
     // signal frequency is 50Hz and cut-off frequency is 0.25 Hz
     private val ALPHA = filter.calculateAlpha(0.25, 50.0)
 
@@ -309,5 +309,10 @@ class FallDetectorImpl @Inject constructor(
 
     private fun sendBroadcast() = Intent(Constants.CUSTOM_FALL_DETECTED_RECEIVER).also {
         context.sendBroadcast(it)
+    }
+
+    // for testing only
+    override fun setMinMaxSW(minMaxSW: MutableList<Acceleration>) {
+        this.minMaxSW = minMaxSW
     }
 }
