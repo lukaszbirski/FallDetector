@@ -49,7 +49,7 @@ class AddContactUseCaseTest {
     }
 
     @Test
-    fun addContactToDatabase(): Unit = runBlocking {
+    fun `add contact to database`(): Unit = runBlocking {
 
         val contacts = getAllContactsUseCase.execute().toList()
 

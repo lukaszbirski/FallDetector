@@ -396,4 +396,36 @@ class FallDetectorTest {
 
         assertEquals(-1, result)
     }
+
+    @Test
+    fun `check if return true when isMinMaxSumVector is greater than threshold`() {
+
+        // for test need to set this sliding windows
+        fallDetector.setMinMaxSW(fakeData.minMaxListWithDiffs)
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "isMinMaxSumVectorGreaterThanThreshold"
+        )
+        method.isAccessible = true
+
+        method.invoke(fallDetector)
+
+        assertEquals(true, method.invoke(fallDetector))
+    }
+
+    @Test
+    fun `check if return false when isMinMaxSumVector is lower than threshold`() {
+
+        // for test need to set this sliding windows
+        fallDetector.setMinMaxSW(fakeData.minMaxListWithoutDiffs)
+
+        val method = fallDetector.javaClass.getDeclaredMethod(
+            "isMinMaxSumVectorGreaterThanThreshold"
+        )
+        method.isAccessible = true
+
+        method.invoke(fallDetector)
+
+        assertEquals(false, method.invoke(fallDetector))
+    }
 }

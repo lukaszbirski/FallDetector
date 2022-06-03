@@ -31,25 +31,25 @@ class LocationTrackerTest {
     }
 
     @Test
-    fun checkIfCanGetLongitude() {
+    fun `check if can get longitude`() {
         val longitude = locationTracker.getLongitude()
         assertEquals(20.9854009598633, longitude, 0.001)
     }
 
     @Test
-    fun checkIfCanGetLatitude() {
+    fun `check if can get latitude`() {
         val latitude = locationTracker.getLatitude()
         assertEquals(52.22824846991743, latitude, 0.001)
     }
 
     @Test
-    fun checkIfCanGetAddress() {
+    fun `check if can get address`() {
         val address = locationTracker.getAddress()
         assertEquals(null, address)
     }
 
     @Test
-    fun checkIfCanGetLocationWhenAddressIfNull() {
+    fun `check if can get location when address is null`() {
 
         val address = locationTracker.getAddress()
         val location = locationTracker.getAddressOrLocation()
@@ -62,7 +62,7 @@ class LocationTrackerTest {
     }
 
     @Test
-    fun checkIfLocationTrackerIsEnabled() {
+    fun `check if location tracker is enabled`() {
         val enabled = locationTracker.locationEnabled()
         assertEquals(true, enabled)
     }

@@ -33,7 +33,7 @@ class GetAllContactsUseCaseTest {
     }
 
     @Test
-    fun getAllContactsFromDatabase(): Unit = runBlocking {
+    fun `get all contacts from database`(): Unit = runBlocking {
 
         val contacts = getAllContactsUseCase.execute().toList()
 

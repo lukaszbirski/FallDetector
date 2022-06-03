@@ -29,7 +29,7 @@ class FilterTest {
     }
 
     @Test
-    fun testLowPassFilter() {
+    fun `test LowPassFilter`() {
         // during each iteration filtered signal should increase in half from previous value to signal
         // value (accelerationFloatArray)
         lowPassFilterData = filter.lowPassFilter(accelerationFloatArray, lowPassFilterData, alpha)
@@ -69,7 +69,7 @@ class FilterTest {
     }
 
     @Test
-    fun testHighPassFilter() {
+    fun `test HighPassFilter`() {
         // during each iteration gravitational component should increase in half from previous
         // value to signal value (accelerationFloatArray)
         // whereas, since signal is const acceleration component should decrease to 0
@@ -159,7 +159,7 @@ class FilterTest {
     }
 
     @Test
-    fun testIfCalculatedAlphaIfCorrect() {
+    fun `test if calculate alpha correctly`() {
 
         assertEquals(
             0.996f,

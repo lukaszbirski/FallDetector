@@ -19,7 +19,7 @@ class ContactMapperTest {
     }
 
     @Test
-    fun mapListOfContactEntityToListOfContacts() {
+    fun `map list of contactEntity to list of contacts`() {
 
         val contacts = mapper.mapToDomainModelList(contactsEntity)
 
@@ -31,7 +31,7 @@ class ContactMapperTest {
     }
 
     @Test
-    fun mapContactEntityToContact() {
+    fun `map contactEntity to contact`() {
 
         val contacts = mapper.mapToDomainModel(contactsEntity[0])
 
@@ -40,7 +40,7 @@ class ContactMapperTest {
     }
 
     @Test
-    fun mapContactToContactEntity() {
+    fun `map contact to contact entity`() {
 
         val contacts = mapper.mapToDomainModel(contactsEntity[0])
 
