@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import pl.birski.falldetector.data.Sensor
+import pl.birski.falldetector.components.interfaces.Sensor
 import javax.inject.Inject
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.ServiceActions

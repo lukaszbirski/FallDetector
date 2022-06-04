@@ -1,4 +1,4 @@
-package pl.birski.falldetector.data
+package pl.birski.falldetector.components.implementations
 
 import android.content.Context
 import android.hardware.Sensor
@@ -10,6 +10,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import javax.inject.Inject
 import pl.birski.falldetector.R
+import pl.birski.falldetector.components.Stabilizer
+import pl.birski.falldetector.components.interfaces.FallDetector
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
 import pl.birski.falldetector.other.Constants
@@ -20,7 +22,7 @@ class SensorImpl @Inject constructor(
     private val fallDetector: FallDetector,
     private val stabilizer: Stabilizer,
     private val prefUtil: PrefUtil
-) : pl.birski.falldetector.data.Sensor, SensorEventListener {
+) : pl.birski.falldetector.components.interfaces.Sensor, SensorEventListener {
 
     private lateinit var manager: SensorManager
 

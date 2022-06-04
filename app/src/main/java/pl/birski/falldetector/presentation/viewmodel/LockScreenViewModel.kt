@@ -11,8 +11,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
-import pl.birski.falldetector.data.MessageSender
-import pl.birski.falldetector.data.Sensor
+import pl.birski.falldetector.components.interfaces.MessageSender
+import pl.birski.falldetector.components.interfaces.Sensor
 import pl.birski.falldetector.other.PrefUtil
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.ServiceActions

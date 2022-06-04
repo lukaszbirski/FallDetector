@@ -1,9 +1,11 @@
-package pl.birski.falldetector.data
+package pl.birski.falldetector.components.implementations
 
 import android.content.Context
 import android.content.Intent
 import javax.inject.Inject
 import kotlin.math.sqrt
+import pl.birski.falldetector.components.interfaces.FallDetector
+import pl.birski.falldetector.components.interfaces.Filter
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.HighPassFilterData
 import pl.birski.falldetector.model.SensorData
@@ -254,6 +256,7 @@ class FallDetectorImpl @Inject constructor(
 
     private fun isFalling() = fallingTimeOut > -1
 
+    // TODO("need to improve fun and create test for this fun")
     private fun detectVelocity(acceleration: Acceleration) {
         // velocity is calculated by integrating the area of SVTOT
         // from the beginning of the fall, until the impact, where the

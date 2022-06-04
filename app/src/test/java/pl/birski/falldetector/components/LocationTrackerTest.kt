@@ -1,4 +1,4 @@
-package pl.birski.falldetector.data
+package pl.birski.falldetector.components
 
 import android.content.Context
 import android.os.Build
@@ -11,6 +11,7 @@ import org.mockito.Mock
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
+import pl.birski.falldetector.components.implementations.LocationTrackerImpl
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.P])

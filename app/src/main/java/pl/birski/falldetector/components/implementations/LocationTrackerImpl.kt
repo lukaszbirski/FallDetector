@@ -1,4 +1,4 @@
-package pl.birski.falldetector.data
+package pl.birski.falldetector.components.implementations
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -20,6 +20,8 @@ import android.widget.Toast
 import java.util.Locale
 import javax.inject.Inject
 import pl.birski.falldetector.R
+import pl.birski.falldetector.components.interfaces.ILocationTrackerTest
+import pl.birski.falldetector.components.interfaces.LocationTracker
 
 class LocationTrackerImpl @Inject constructor(
     private val context: Context

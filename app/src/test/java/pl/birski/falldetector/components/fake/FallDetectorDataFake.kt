@@ -1,4 +1,4 @@
-package pl.birski.falldetector.data.fake
+package pl.birski.falldetector.components.fake
 
 import pl.birski.falldetector.model.Acceleration
 

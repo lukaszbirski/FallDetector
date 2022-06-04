@@ -33,8 +33,6 @@ class ContactsFragment : Fragment() {
     private lateinit var numberEditText: EditText
     private lateinit var btnPositive: Button
 
-    private lateinit var itemTouchHelper: ItemTouchHelper
-
     private val textWatcher: TextWatcher = object : TextWatcher {
         override fun onTextChanged(
             chars: CharSequence,

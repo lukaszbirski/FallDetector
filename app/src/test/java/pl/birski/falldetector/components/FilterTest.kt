@@ -1,8 +1,9 @@
-package pl.birski.falldetector.data
+package pl.birski.falldetector.components
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import pl.birski.falldetector.components.implementations.FilterImpl
 import pl.birski.falldetector.model.HighPassFilterData
 
 class FilterTest {

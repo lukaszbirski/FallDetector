@@ -19,9 +19,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
-import pl.birski.falldetector.data.LocationTracker
-import pl.birski.falldetector.data.Normalizer
-import pl.birski.falldetector.data.Sensor
+import pl.birski.falldetector.components.Normalizer
+import pl.birski.falldetector.components.interfaces.LocationTracker
+import pl.birski.falldetector.components.interfaces.Sensor
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
 import pl.birski.falldetector.other.PrefUtil
