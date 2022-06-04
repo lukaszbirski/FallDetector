@@ -260,20 +260,19 @@ class FallDetectorTest {
     @Test
     fun `check if impact will be detected when only SV Dynamic is greater than threshold`() {
 
-        // for test need to set this sliding windows
-        fallDetector.setMinMaxSW(fakeData.minMaxListWithoutDiffs)
-
         val method = fallDetector.javaClass.getDeclaredMethod(
             "detectImpact",
             Acceleration::class.java,
-            Acceleration::class.java
+            Acceleration::class.java,
+            List::class.java
         )
         method.isAccessible = true
-        val parameters = arrayOfNulls<Any>(2)
+        val parameters = arrayOfNulls<Any>(3)
 
         // parameter
         parameters[0] = Acceleration(0.2, 0.2, 2.5, 1L) // hpfAcceleration - for SV Dynamic
         parameters[1] = Acceleration(0.0, 0.0, 0.0, 1L) // acceleration
+        parameters[2] = fakeData.minMaxListWithoutDiffs
 
         method.invoke(fallDetector, *parameters)
 
@@ -288,20 +287,19 @@ class FallDetectorTest {
     @Test
     fun `check if impact will be detected when only SV Total is greater than threshold`() {
 
-        // for test need to set this sliding windows
-        fallDetector.setMinMaxSW(fakeData.minMaxListWithoutDiffs)
-
         val method = fallDetector.javaClass.getDeclaredMethod(
             "detectImpact",
             Acceleration::class.java,
-            Acceleration::class.java
+            Acceleration::class.java,
+            List::class.java
         )
         method.isAccessible = true
-        val parameters = arrayOfNulls<Any>(2)
+        val parameters = arrayOfNulls<Any>(3)
 
         // parameter
         parameters[0] = Acceleration(0.0, 0.0, 0.0, 1L) // hpfAcceleration
         parameters[1] = Acceleration(0.2, 0.2, 2.0, 1L) // acceleration - for SV Total
+        parameters[2] = fakeData.minMaxListWithoutDiffs
 
         method.invoke(fallDetector, *parameters)
 
@@ -316,20 +314,19 @@ class FallDetectorTest {
     @Test
     fun `check if impact will be detected when only vertical acc is greater than threshold`() {
 
-        // for test need to set this sliding windows
-        fallDetector.setMinMaxSW(fakeData.minMaxListWithoutDiffs)
-
         val method = fallDetector.javaClass.getDeclaredMethod(
             "detectImpact",
             Acceleration::class.java,
-            Acceleration::class.java
+            Acceleration::class.java,
+            List::class.java
         )
         method.isAccessible = true
-        val parameters = arrayOfNulls<Any>(2)
+        val parameters = arrayOfNulls<Any>(3)
 
         // parameter
         parameters[0] = Acceleration(0.0, 0.0, 1.0, 1L) // hpfAcceleration - for SV Dynamic
         parameters[1] = Acceleration(0.2, 0.2, 2.3, 1L) // acceleration - for SV Total
+        parameters[2] = fakeData.minMaxListWithoutDiffs
 
         method.invoke(fallDetector, *parameters)
 
@@ -344,20 +341,19 @@ class FallDetectorTest {
     @Test
     fun `check if impact will be detected when only min max SV is greater than threshold`() {
 
-        // for test need to set this sliding windows
-        fallDetector.setMinMaxSW(fakeData.minMaxListWithDiffs)
-
         val method = fallDetector.javaClass.getDeclaredMethod(
             "detectImpact",
             Acceleration::class.java,
-            Acceleration::class.java
+            Acceleration::class.java,
+            List::class.java
         )
         method.isAccessible = true
-        val parameters = arrayOfNulls<Any>(2)
+        val parameters = arrayOfNulls<Any>(3)
 
         // parameter
         parameters[0] = Acceleration(0.0, 0.0, 0.0, 1L) // hpfAcceleration
         parameters[1] = Acceleration(0.0, 0.0, 0.0, 1L) // acceleration
+        parameters[2] = fakeData.minMaxListWithDiffs
 
         method.invoke(fallDetector, *parameters)
 
@@ -372,20 +368,19 @@ class FallDetectorTest {
     @Test
     fun `check if impact will not be detected when non value is greater than threshold`() {
 
-        // for test need to set this sliding windows
-        fallDetector.setMinMaxSW(fakeData.minMaxListWithoutDiffs)
-
         val method = fallDetector.javaClass.getDeclaredMethod(
             "detectImpact",
             Acceleration::class.java,
-            Acceleration::class.java
+            Acceleration::class.java,
+            List::class.java
         )
         method.isAccessible = true
-        val parameters = arrayOfNulls<Any>(2)
+        val parameters = arrayOfNulls<Any>(3)
 
         // parameter
         parameters[0] = Acceleration(0.0, 0.0, 0.0, 1L) // hpfAcceleration
         parameters[1] = Acceleration(0.0, 0.0, 0.0, 1L) // acceleration
+        parameters[2] = fakeData.minMaxListWithoutDiffs
 
         method.invoke(fallDetector, *parameters)
 
@@ -400,33 +395,39 @@ class FallDetectorTest {
     @Test
     fun `check if return true when isMinMaxSumVector is greater than threshold`() {
 
-        // for test need to set this sliding windows
-        fallDetector.setMinMaxSW(fakeData.minMaxListWithDiffs)
-
         val method = fallDetector.javaClass.getDeclaredMethod(
-            "isMinMaxSumVectorGreaterThanThreshold"
+            "isMinMaxSVGreaterThanThreshold",
+            List::class.java
         )
         method.isAccessible = true
 
-        method.invoke(fallDetector)
+        val parameters = arrayOfNulls<Any>(1)
 
-        assertEquals(true, method.invoke(fallDetector))
+        // parameter
+        parameters[0] = fakeData.minMaxListWithDiffs
+
+        val result = method.invoke(fallDetector, *parameters) as Boolean
+
+        assertEquals(true, result)
     }
 
     @Test
     fun `check if return false when isMinMaxSumVector is lower than threshold`() {
 
-        // for test need to set this sliding windows
-        fallDetector.setMinMaxSW(fakeData.minMaxListWithoutDiffs)
-
         val method = fallDetector.javaClass.getDeclaredMethod(
-            "isMinMaxSumVectorGreaterThanThreshold"
+            "isMinMaxSVGreaterThanThreshold",
+            List::class.java
         )
         method.isAccessible = true
 
-        method.invoke(fallDetector)
+        val parameters = arrayOfNulls<Any>(1)
 
-        assertEquals(false, method.invoke(fallDetector))
+        // parameter
+        parameters[0] = fakeData.minMaxListWithoutDiffs
+
+        val result = method.invoke(fallDetector, *parameters) as Boolean
+
+        assertEquals(false, result)
     }
 
     @Test

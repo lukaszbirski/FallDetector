@@ -17,7 +17,7 @@ class FallDetectorImpl @Inject constructor(
     private val context: Context,
     private val filter: Filter,
     private val prefUtil: PrefUtil
-) : FallDetector, IFallDetectorTest {
+) : FallDetector {
     // signal frequency is 50Hz and cut-off frequency is 0.25 Hz
     private val ALPHA = filter.calculateAlpha(0.25, 50.0)
 
@@ -149,8 +149,15 @@ class FallDetectorImpl @Inject constructor(
         // if impact was observed wait 2 sec
         // detect posture
         impactTimeOut = expireTimeOut(impactTimeOut)
-        detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
-        detectPosture(impactTimeOut = impactTimeOut, postureDetectionSW = postureDetectionSW)
+        detectImpact(
+            hpfAcceleration = hpfAcceleration,
+            acceleration = acceleration,
+            minMaxSW = minMaxSW
+        )
+        detectPosture(
+            impactTimeOut = impactTimeOut,
+            postureDetectionSW = postureDetectionSW
+        )
     }
 
     private fun useSecondAlgorithm(
@@ -165,8 +172,15 @@ class FallDetectorImpl @Inject constructor(
         impactTimeOut = expireTimeOut(impactTimeOut)
         fallingTimeOut = expireTimeOut(fallingTimeOut)
         detectStartOfFall(acceleration = acceleration)
-        detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
-        detectPosture(impactTimeOut = impactTimeOut, postureDetectionSW = postureDetectionSW)
+        detectImpact(
+            hpfAcceleration = hpfAcceleration,
+            acceleration = acceleration,
+            minMaxSW = minMaxSW
+        )
+        detectPosture(
+            impactTimeOut = impactTimeOut,
+            postureDetectionSW = postureDetectionSW
+        )
     }
 
     private fun useThirdAlgorithm(
@@ -183,8 +197,15 @@ class FallDetectorImpl @Inject constructor(
         fallingTimeOut = expireTimeOut(fallingTimeOut)
         detectStartOfFall(acceleration = acceleration)
         detectVelocity(acceleration = acceleration)
-        detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
-        detectPosture(impactTimeOut = impactTimeOut, postureDetectionSW = postureDetectionSW)
+        detectImpact(
+            hpfAcceleration = hpfAcceleration,
+            acceleration = acceleration,
+            minMaxSW = minMaxSW
+        )
+        detectPosture(
+            impactTimeOut = impactTimeOut,
+            postureDetectionSW = postureDetectionSW
+        )
     }
 
     private fun detectStartOfFall(acceleration: Acceleration) {
@@ -197,7 +218,8 @@ class FallDetectorImpl @Inject constructor(
 
     private fun detectImpact(
         hpfAcceleration: Acceleration,
-        acceleration: Acceleration
+        acceleration: Acceleration,
+        minMaxSW: MutableList<Acceleration>
     ) {
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
         val svDynamic = calculateSumVector(hpfAcceleration.x, hpfAcceleration.y, hpfAcceleration.z)
@@ -208,7 +230,7 @@ class FallDetectorImpl @Inject constructor(
             isDetectingImpactForSecondAlgorithm() ||
             isDetectingImpactForThirdAlgorithm()
         ) {
-            if (isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm() ||
+            if (isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm(minMaxSW) ||
                 isVerticalAccelerationGreaterThanThreshold(svTotal, svDynamic) ||
                 isSumVectorGreaterThanThreshold(svTotal, SV_TOT_THRESHOLD) ||
                 isSumVectorGreaterThanThreshold(svDynamic, SV_D_THRESHOLD)
@@ -266,15 +288,16 @@ class FallDetectorImpl @Inject constructor(
     private fun isSumVectorGreaterThanThreshold(sumVector: Double, threshold: Double) =
         sumVector > threshold
 
-    private fun isMinMaxSumVectorGreaterThanThreshold(): Boolean {
-        val xMinMax = getMaxValue(DataSet.X_AXIS) - getMinValue(DataSet.X_AXIS)
-        val yMinMax = getMaxValue(DataSet.Y_AXIS) - getMinValue(DataSet.Y_AXIS)
-        val zMinMax = getMaxValue(DataSet.Z_AXIS) - getMinValue(DataSet.Z_AXIS)
+    private fun isMinMaxSVGreaterThanThreshold(minMaxSW: MutableList<Acceleration>): Boolean {
+        val xMinMax = getMaxValue(DataSet.X_AXIS, minMaxSW) - getMinValue(DataSet.X_AXIS, minMaxSW)
+        val yMinMax = getMaxValue(DataSet.Y_AXIS, minMaxSW) - getMinValue(DataSet.Y_AXIS, minMaxSW)
+        val zMinMax = getMaxValue(DataSet.Z_AXIS, minMaxSW) - getMinValue(DataSet.Z_AXIS, minMaxSW)
         return calculateSumVector(xMinMax, yMinMax, zMinMax) > SV_MAX_MIN_THRESHOLD
     }
 
-    private fun isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm() =
-        isMinMaxSumVectorGreaterThanThreshold() && isFirstAlgorithm()
+    private fun isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm(
+        minMaxSW: MutableList<Acceleration>
+    ) = isMinMaxSVGreaterThanThreshold(minMaxSW) && isFirstAlgorithm()
 
     private fun isVerticalAccelerationGreaterThanThreshold(
         svTotal: Double,
@@ -287,7 +310,7 @@ class FallDetectorImpl @Inject constructor(
     private fun calculateVerticalAcceleration(svTOT: Double, svD: Double) =
         (svTOT * svTOT - svD * svD - G_CONST * G_CONST) / (2.0 * G_CONST)
 
-    private fun getMaxValue(dataSet: DataSet): Double {
+    private fun getMaxValue(dataSet: DataSet, minMaxSW: MutableList<Acceleration>): Double {
         return when (dataSet) {
             DataSet.X_AXIS -> minMaxSW.map { it.x }.maxOf { it }
             DataSet.Y_AXIS -> minMaxSW.map { it.y }.maxOf { it }
@@ -295,7 +318,7 @@ class FallDetectorImpl @Inject constructor(
         }
     }
 
-    private fun getMinValue(dataSet: DataSet): Double {
+    private fun getMinValue(dataSet: DataSet, minMaxSW: MutableList<Acceleration>): Double {
         return when (dataSet) {
             DataSet.X_AXIS -> minMaxSW.map { it.x }.minOf { it }
             DataSet.Y_AXIS -> minMaxSW.map { it.y }.minOf { it }
@@ -313,10 +336,5 @@ class FallDetectorImpl @Inject constructor(
 
     private fun sendBroadcast() = Intent(Constants.CUSTOM_FALL_DETECTED_RECEIVER).also {
         context.sendBroadcast(it)
-    }
-
-    // for testing only
-    override fun setMinMaxSW(minMaxSW: MutableList<Acceleration>) {
-        this.minMaxSW = minMaxSW
     }
 }
