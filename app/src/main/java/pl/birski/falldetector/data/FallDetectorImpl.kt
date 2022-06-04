@@ -44,6 +44,7 @@ class FallDetectorImpl @Inject constructor(
     private var fallingTimeOut: Int = -1
     private var measureVelocity = false
     private var isVelocityGreaterThanThreshold = false
+    private var isLyingPostureDetected = false
 
     override fun detectFall(sensorData: SensorData) {
         measureFall(sensorData)
@@ -125,6 +126,8 @@ class FallDetectorImpl @Inject constructor(
         // it is marked as impactTimeOut == 0
         if (impactTimeOut == 0) {
 
+            isLyingPostureDetected = false
+
             val sum = postureDetectionSW.sumOf { it.z }
             val count = postureDetectionSW.size.toDouble()
 
@@ -132,6 +135,7 @@ class FallDetectorImpl @Inject constructor(
             // in a 0.4 s time interval is 0.5G or lower
             if ((sum / count) > LYING_POSTURE_VERTICAL_THRESHOLD) {
                 Timber.d("Detected lying position!")
+                isLyingPostureDetected = true
                 sendBroadcast()
             }
         }
@@ -314,5 +318,15 @@ class FallDetectorImpl @Inject constructor(
     // for testing only
     override fun setMinMaxSW(minMaxSW: MutableList<Acceleration>) {
         this.minMaxSW = minMaxSW
+    }
+
+    // for testing only
+    override fun setImpactTimeOutForTests() {
+        impactTimeOut = 0
+    }
+
+    // for testing only
+    override fun setPostureDetectionSW(postureDetectionSW: MutableList<Acceleration>) {
+        this.postureDetectionSW = postureDetectionSW
     }
 }
