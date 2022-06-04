@@ -20,7 +20,7 @@ class MessageSenderImpl @Inject constructor(
     private val locationTracker: LocationTracker
 ) : MessageSender {
 
-    private var messageBody: String = context.getString(R.string.message_sender_text_body)
+    private var messageBody = ""
 
     private var mMessageSentParts = 0
     private var mMessageSentTotalParts = 0
@@ -31,12 +31,7 @@ class MessageSenderImpl @Inject constructor(
     override fun startSendMessages(messages: Array<String>) {
 
         this.messages = messages
-        this.messageBody = context.getString(
-            R.string.message_sender_text_body,
-            locationTracker.getAddress(),
-            locationTracker.getLongitude().toString(),
-            locationTracker.getLatitude().toString()
-        )
+        this.messageBody = getMessage()
 
         registerBroadCastReceivers()
         mMessageSentCount = 0
@@ -142,4 +137,11 @@ class MessageSenderImpl @Inject constructor(
             IntentFilter(Constants.CUSTOM_FALL_DETECTED_INTENT_SMS_DELIVERED)
         )
     }
+
+    private fun getMessage() = context.getString(
+        R.string.message_sender_text_body,
+        locationTracker.getAddress(),
+        locationTracker.getLongitude().toString(),
+        locationTracker.getLatitude().toString()
+    )
 }

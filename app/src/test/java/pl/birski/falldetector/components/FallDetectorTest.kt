@@ -15,6 +15,7 @@ import org.robolectric.annotation.internal.DoNotInstrument
 import pl.birski.falldetector.components.fake.FallDetectorDataFake
 import pl.birski.falldetector.components.implementations.FallDetectorImpl
 import pl.birski.falldetector.components.implementations.FilterImpl
+import pl.birski.falldetector.components.interfaces.FallDetector
 import pl.birski.falldetector.components.interfaces.Filter
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.other.PrefUtil
@@ -28,7 +29,7 @@ class FallDetectorTest {
     private val fakeData = FallDetectorDataFake()
 
     // system in test
-    private lateinit var fallDetector: FallDetectorImpl
+    private lateinit var fallDetector: FallDetector
 
     private lateinit var filter: Filter
     private lateinit var prefUtil: PrefUtil
