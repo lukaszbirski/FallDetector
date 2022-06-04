@@ -1,8 +1,8 @@
 package pl.birski.falldetector.components.interfaces
 
-import pl.birski.falldetector.model.SensorData
+import pl.birski.falldetector.model.Acceleration
 
 interface FallDetector {
 
-    fun detectFall(sensorData: SensorData)
+    fun detectFall(acceleration: Acceleration)
 }

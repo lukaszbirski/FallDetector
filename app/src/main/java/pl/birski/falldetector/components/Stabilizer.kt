@@ -1,8 +1,6 @@
 package pl.birski.falldetector.components
 
 import pl.birski.falldetector.model.Acceleration
-import pl.birski.falldetector.model.AngularVelocity
-import pl.birski.falldetector.model.SensorData
 import pl.birski.falldetector.other.Constants
 
 class Stabilizer {
@@ -12,24 +10,19 @@ class Stabilizer {
     private var currentAcceleration = Acceleration(0.0, 0.0, 0.0, timeStamp)
     private var resampledAcceleration = Acceleration(0.0, 0.0, 0.0, timeStamp)
 
-    private var currentVelocity = AngularVelocity(0.0, 0.0, 0.0, 0)
-    private var resampledVelocity = AngularVelocity(0.0, 0.0, 0.0, timeStamp)
-
     fun stabilizeSignal(
-        previousAcc: Acceleration,
-        previousVelocity: AngularVelocity
-    ): SensorData {
+        previousAcc: Acceleration
+    ): Acceleration {
         synchronized(Any()) {
-            resample(previousAcc = previousAcc, previousVelocity = previousVelocity)
+            resample(previousAcc = previousAcc)
         }
         currentAcceleration = previousAcc
-        currentVelocity = previousVelocity
 
-        return SensorData(acceleration = resampledAcceleration, velocity = resampledVelocity)
+        return resampledAcceleration
     }
 
     // Android sampling is irregular, hence signal is (linearly) resampled at 50 Hz
-    private fun resample(previousAcc: Acceleration, previousVelocity: AngularVelocity) {
+    private fun resample(previousAcc: Acceleration) {
         if (0L == currentAcceleration.timeStamp) {
             timeStamp = previousAcc.timeStamp + Constants.INTERVAL_MILISEC
             return
@@ -56,39 +49,12 @@ class Stabilizer {
                 valuePrevious = previousAcc.z,
                 currentTime = timeStamp
             )
-            val velX = linearRecalculation(
-                timeAfter = currentVelocity.timeStamp,
-                valueAfter = currentVelocity.x,
-                timePrevious = previousVelocity.timeStamp,
-                valuePrevious = previousVelocity.x,
-                currentTime = timeStamp
-            )
-            val velY = linearRecalculation(
-                timeAfter = currentVelocity.timeStamp,
-                valueAfter = currentVelocity.y,
-                timePrevious = previousVelocity.timeStamp,
-                valuePrevious = previousVelocity.y,
-                currentTime = timeStamp
-            )
-            val velZ = linearRecalculation(
-                timeAfter = currentVelocity.timeStamp,
-                valueAfter = currentVelocity.z,
-                timePrevious = previousVelocity.timeStamp,
-                valuePrevious = previousVelocity.z,
-                currentTime = timeStamp
-            )
 
             resampledAcceleration = resampledAcceleration.copy(
                 timeStamp = timeStamp,
                 x = accX,
                 y = accY,
                 z = accZ
-            )
-            resampledVelocity = resampledVelocity.copy(
-                timeStamp = timeStamp,
-                x = velX,
-                y = velY,
-                z = velZ
             )
 
             timeStamp += Constants.INTERVAL_MILISEC

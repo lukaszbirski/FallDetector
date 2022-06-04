@@ -23,11 +23,7 @@
     <string name="graph_fragment_x_axis_acc_text">X-axis acceleration</string>
     <string name="graph_fragment_y_axis_acc_text">Y-axis acceleration</string>
     <string name="graph_fragment_z_axis_acc_text">Z-axis acceleration</string>
-    <string name="graph_fragment_angular_velocity_text">Angular velocity values:</string>
     <string name="graph_fragment_acceleration_text">Acceleration values:</string>
-    <string name="graph_fragment_angular_velocity_x_value_string">X : %s rad/s</string>
-    <string name="graph_fragment_angular_velocity_y_value_string">Y : %s rad/s</string>
-    <string name="graph_fragment_angular_velocity_z_value_string">Z : %s rad/s</string>
     <!--    Graph Fragment ends here-->
 
     <!--    Counter Fragment starts here-->
@@ -38,7 +34,6 @@
     <!--    Counter Fragment starts here-->
 
     <!--    Sensor starts here-->
-    <string name="gyroscope_not_supported_toast_text">GYROSCOPE IS NOT SUPPORTED OR DISABLED!</string>
     <string name="accelerometer_not_supported_toast_text">ACCELEROMETER IS NOT SUPPORTED!</string>
     <!--    Sensor ends here-->
 
@@ -55,9 +50,7 @@
     <string name="preferences_algorithms_array_impact_posture_fall_text">START OF FALL + IMPACT + POSTURE</string>
     <string name="preferences_algorithms_array_impact_velocity_posture_fall_text">START OF FALL + VELOCITY + IMPACT + POSTURE</string>
     <string name="preferences_category_sending_notification_title_text">Sending notifications</string>
-    <string name="preferences_category_gyroscope_title_text">Gyroscope</string>
     <string name="preferences_send_messages_title_text">Send messages</string>
-    <string name="preferences_enable_gyroscope_title_text">Enable gyroscope</string>
     <!--    Preferences ends here-->
 
     <!--    Drawer starts here-->
@@ -107,10 +100,6 @@
     <string name="location_tracker_dialog_no_text">No</string>
     <!--    LocationTracker ends here-->
 
-    <!--    Settings Fragment starts here-->
-    <string name="settings_fragment_gyroscope_disabled_text">After turning off the gyroscope, it is recommended to restart the application</string>
-    <!--    Settings Fragment ends here-->
-
     <!--    Time Out Dialog starts here-->
     <string name="time_our_dialog_counter_time_out_text">Counter time out</string>
     <string name="time_our_dialog_message_sent_text">Message has been sent to all contact persons!</string>
@@ -120,7 +109,6 @@
     <string name="shared_preferences_timer_length_list_key" translatable="false">pl.birski.falldetector.timer_length_list_key</string>
     <string name="shared_preferences_detection_algorithms_list_key" translatable="false">pl.birski.falldetector.detection_algorithms_list_key</string>
     <string name="shared_preferences_send_message_key" translatable="false">pl.birski.falldetector.send_message_key</string>
-    <string name="shared_preferences_control_gyroscope_key" translatable="false">pl.birski.falldetector.control_gyroscope_key</string>
     <!--    SharedPreferences ends here-->
 
     <!--    Templates start here-->

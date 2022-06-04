@@ -22,8 +22,6 @@ import pl.birski.falldetector.R
 import pl.birski.falldetector.components.interfaces.LocationTracker
 import pl.birski.falldetector.components.interfaces.Sensor
 import pl.birski.falldetector.model.Acceleration
-import pl.birski.falldetector.model.AngularVelocity
-import pl.birski.falldetector.other.PrefUtil
 import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.DataSet
 import pl.birski.falldetector.service.enum.ServiceActions
@@ -34,8 +32,7 @@ class GraphViewModel
 @Inject
 constructor(
     private val application: Application,
-    private val locationTracker: LocationTracker,
-    private val prefUtil: PrefUtil
+    private val locationTracker: LocationTracker
 ) : ViewModel() {
 
     @Inject
@@ -43,9 +40,6 @@ constructor(
 
     private val _lineData = MutableLiveData<LineData?>()
     val lineData: LiveData<LineData?> get() = _lineData
-
-    private val _velocity = MutableLiveData<AngularVelocity?>()
-    val velocity: LiveData<AngularVelocity?> get() = _velocity
 
     private var plotData = true
     private var job: Job? = null
@@ -103,10 +97,6 @@ constructor(
                 )
             }
             plotData = false
-        }
-        sensor.getMutableVelocity().value?.let {
-            Timber.d("Measured angular velocity is: $it")
-            _velocity.postValue(it)
         }
     }
 
@@ -190,30 +180,8 @@ constructor(
         thread?.start()
     }
 
-    fun formatVelocityValue(dataSet: DataSet, value: Double): String = when (dataSet) {
-        DataSet.X_AXIS -> {
-            application.getString(
-                R.string.graph_fragment_angular_velocity_x_value_string, round(3, value)
-            )
-        }
-        DataSet.Y_AXIS -> {
-            application.getString(
-                R.string.graph_fragment_angular_velocity_y_value_string, round(3, value)
-            )
-        }
-        DataSet.Z_AXIS -> {
-            application.getString(
-                R.string.graph_fragment_angular_velocity_z_value_string, round(3, value)
-            )
-        }
-    }
-
     fun enableLocationService(activity: Activity) {
         if (!locationTracker.locationEnabled())
             locationTracker.showSettingsAlert(activity)
     }
-
-    fun isGyroscopeEnabled() = prefUtil.isGyroscopeEnabled()
-
-    private fun round(decimals: Int = 2, number: Number) = "%.${decimals}f".format(number).trim()
 }

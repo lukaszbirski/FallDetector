@@ -24,9 +24,8 @@ object AccelerometerModule {
     @Provides
     fun provideSensor(
         fallDetector: FallDetector,
-        stabilizer: Stabilizer,
-        prefUtil: PrefUtil
-    ): Sensor = SensorImpl(fallDetector, stabilizer, prefUtil)
+        stabilizer: Stabilizer
+    ): Sensor = SensorImpl(fallDetector, stabilizer)
 
     @Singleton
     @Provides
