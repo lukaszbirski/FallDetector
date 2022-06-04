@@ -19,9 +19,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.birski.falldetector.R
-import pl.birski.falldetector.data.LocationTracker
-import pl.birski.falldetector.data.Normalizer
-import pl.birski.falldetector.data.Sensor
+import pl.birski.falldetector.components.interfaces.LocationTracker
+import pl.birski.falldetector.components.interfaces.Sensor
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity
 import pl.birski.falldetector.other.PrefUtil
@@ -35,7 +34,6 @@ class GraphViewModel
 @Inject
 constructor(
     private val application: Application,
-    private val normalizer: Normalizer,
     private val locationTracker: LocationTracker,
     private val prefUtil: PrefUtil
 ) : ViewModel() {
@@ -55,8 +53,6 @@ constructor(
 
     private val GRAPH_UPDATE_SLEEP_TIME = 50L
     private val THREAD_SLEEP_TIME = 10L
-
-    private var isNormalized = false
 
     private suspend fun updateGraph(lineData: LineData?) {
         stopGraphUpdates()
@@ -102,7 +98,7 @@ constructor(
             Timber.d("Measured acceleration value is: $it")
             if (plotData) {
                 addEntry(
-                    acceleration = if (isNormalized) normalizer.normalize(it) else it,
+                    acceleration = it,
                     lineData = lineData
                 )
             }

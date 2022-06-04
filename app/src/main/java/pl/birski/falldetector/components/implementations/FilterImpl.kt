@@ -1,5 +1,6 @@
-package pl.birski.falldetector.data
+package pl.birski.falldetector.components.implementations
 
+import pl.birski.falldetector.components.interfaces.Filter
 import pl.birski.falldetector.model.HighPassFilterData
 
 class FilterImpl : Filter {

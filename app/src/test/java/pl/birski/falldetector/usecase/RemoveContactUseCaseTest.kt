@@ -40,7 +40,7 @@ class RemoveContactUseCaseTest {
     }
 
     @Test
-    fun removeContactFromDatabase(): Unit = runBlocking {
+    fun `remove contact from database`(): Unit = runBlocking {
 
         removeContactUseCase.execute(contact = contactToRemove)
 

@@ -1,4 +1,4 @@
-package pl.birski.falldetector.data
+package pl.birski.falldetector.components
 
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.AngularVelocity

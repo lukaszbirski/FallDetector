@@ -1,4 +1,4 @@
-package pl.birski.falldetector.data
+package pl.birski.falldetector.components.interfaces
 
 import android.app.Activity
 

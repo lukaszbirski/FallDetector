@@ -1,4 +1,4 @@
-package pl.birski.falldetector.data
+package pl.birski.falldetector.components.implementations
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import javax.inject.Inject
 import pl.birski.falldetector.R
+import pl.birski.falldetector.components.interfaces.LocationTracker
+import pl.birski.falldetector.components.interfaces.MessageSender
 import pl.birski.falldetector.other.Constants
 
 class MessageSenderImpl @Inject constructor(

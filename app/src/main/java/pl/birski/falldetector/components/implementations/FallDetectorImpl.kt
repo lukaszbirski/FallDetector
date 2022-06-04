@@ -1,9 +1,11 @@
-package pl.birski.falldetector.data
+package pl.birski.falldetector.components.implementations
 
 import android.content.Context
 import android.content.Intent
 import javax.inject.Inject
 import kotlin.math.sqrt
+import pl.birski.falldetector.components.interfaces.FallDetector
+import pl.birski.falldetector.components.interfaces.Filter
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.HighPassFilterData
 import pl.birski.falldetector.model.SensorData
@@ -13,11 +15,11 @@ import pl.birski.falldetector.service.enum.Algorithms
 import pl.birski.falldetector.service.enum.DataSet
 import timber.log.Timber
 
-class FallDetector @Inject constructor(
+class FallDetectorImpl @Inject constructor(
     private val context: Context,
     private val filter: Filter,
     private val prefUtil: PrefUtil
-) {
+) : FallDetector {
     // signal frequency is 50Hz and cut-off frequency is 0.25 Hz
     private val ALPHA = filter.calculateAlpha(0.25, 50.0)
 
@@ -44,10 +46,9 @@ class FallDetector @Inject constructor(
     private var fallingTimeOut: Int = -1
     private var measureVelocity = false
     private var isVelocityGreaterThanThreshold = false
+    private var isLyingPostureDetected = false
 
-    private var previousAcceleration: Acceleration = Acceleration(0.0, 0.0, 0.0, 0L)
-
-    fun detectFall(sensorData: SensorData) {
+    override fun detectFall(sensorData: SensorData) {
         measureFall(sensorData)
     }
 
@@ -104,17 +105,17 @@ class FallDetector @Inject constructor(
 
             when (prefUtil.getDetectionAlgorithm()) {
 
-                Algorithms.IMPACT_POSTURE -> useImpactPostureAlgorithm(
+                Algorithms.FIRST -> useFirstAlgorithm(
                     hpfAcceleration = hpfAcceleration,
                     acceleration = sensorData.acceleration
                 )
 
-                Algorithms.START_IMPACT_POSTURE -> useStartOfFallImpactPostureAlgorithm(
+                Algorithms.SECOND -> useSecondAlgorithm(
                     hpfAcceleration = hpfAcceleration,
                     acceleration = sensorData.acceleration
                 )
 
-                Algorithms.START_VELOCITY_IMPACT_POSTURE -> useFallVelocityImpactPostureAlgorithm(
+                Algorithms.THIRD -> useThirdAlgorithm(
                     hpfAcceleration = hpfAcceleration,
                     acceleration = sensorData.acceleration
                 )
@@ -122,10 +123,12 @@ class FallDetector @Inject constructor(
         }
     }
 
-    private fun detectPosture() {
+    private fun detectPosture(impactTimeOut: Int, postureDetectionSW: MutableList<Acceleration>) {
         // posture must be detected 2 sec after the impact
         // it is marked as impactTimeOut == 0
         if (impactTimeOut == 0) {
+
+            isLyingPostureDetected = false
 
             val sum = postureDetectionSW.sumOf { it.z }
             val count = postureDetectionSW.size.toDouble()
@@ -134,12 +137,13 @@ class FallDetector @Inject constructor(
             // in a 0.4 s time interval is 0.5G or lower
             if ((sum / count) > LYING_POSTURE_VERTICAL_THRESHOLD) {
                 Timber.d("Detected lying position!")
+                isLyingPostureDetected = true
                 sendBroadcast()
             }
         }
     }
 
-    private fun useImpactPostureAlgorithm(
+    private fun useFirstAlgorithm(
         hpfAcceleration: Acceleration,
         acceleration: Acceleration
     ) {
@@ -147,11 +151,18 @@ class FallDetector @Inject constructor(
         // if impact was observed wait 2 sec
         // detect posture
         impactTimeOut = expireTimeOut(impactTimeOut)
-        detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
-        detectPosture()
+        detectImpact(
+            hpfAcceleration = hpfAcceleration,
+            acceleration = acceleration,
+            minMaxSW = minMaxSW
+        )
+        detectPosture(
+            impactTimeOut = impactTimeOut,
+            postureDetectionSW = postureDetectionSW
+        )
     }
 
-    private fun useStartOfFallImpactPostureAlgorithm(
+    private fun useSecondAlgorithm(
         hpfAcceleration: Acceleration,
         acceleration: Acceleration
     ) {
@@ -163,11 +174,18 @@ class FallDetector @Inject constructor(
         impactTimeOut = expireTimeOut(impactTimeOut)
         fallingTimeOut = expireTimeOut(fallingTimeOut)
         detectStartOfFall(acceleration = acceleration)
-        detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
-        detectPosture()
+        detectImpact(
+            hpfAcceleration = hpfAcceleration,
+            acceleration = acceleration,
+            minMaxSW = minMaxSW
+        )
+        detectPosture(
+            impactTimeOut = impactTimeOut,
+            postureDetectionSW = postureDetectionSW
+        )
     }
 
-    private fun useFallVelocityImpactPostureAlgorithm(
+    private fun useThirdAlgorithm(
         hpfAcceleration: Acceleration,
         acceleration: Acceleration
     ) {
@@ -181,41 +199,40 @@ class FallDetector @Inject constructor(
         fallingTimeOut = expireTimeOut(fallingTimeOut)
         detectStartOfFall(acceleration = acceleration)
         detectVelocity(acceleration = acceleration)
-        detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
-        detectPosture()
+        detectImpact(
+            hpfAcceleration = hpfAcceleration,
+            acceleration = acceleration,
+            minMaxSW = minMaxSW
+        )
+        detectPosture(
+            impactTimeOut = impactTimeOut,
+            postureDetectionSW = postureDetectionSW
+        )
     }
 
     private fun detectStartOfFall(acceleration: Acceleration) {
-
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
-        val svTotalPrevious = calculateSumVector(
-            previousAcceleration.x,
-            previousAcceleration.y,
-            previousAcceleration.z
-        )
-
-        if (SV_TOTAL_FALLING_THRESHOLD <= svTotalPrevious && svTotal < SV_TOTAL_FALLING_THRESHOLD) {
+        if (svTotal <= SV_TOTAL_FALLING_THRESHOLD) {
             Timber.d("Start of the fall was detected!")
             fallingTimeOut = Constants.FALLING_TIME_SPAN
         }
-
-        previousAcceleration = acceleration
     }
 
     private fun detectImpact(
         hpfAcceleration: Acceleration,
-        acceleration: Acceleration
+        acceleration: Acceleration,
+        minMaxSW: MutableList<Acceleration>
     ) {
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
         val svDynamic = calculateSumVector(hpfAcceleration.x, hpfAcceleration.y, hpfAcceleration.z)
 
         // impact should be detected when using ImpactPosture algorithm
         // or when start of the fall was detected
-        if (detectImpactForImpactPostureAlgorithm() ||
-            detectImpactForStartImpactPostureAlgorithm() ||
-            detectImpactForStartImpactVelocityPostureAlgorithm()
+        if (isFirstAlgorithm() ||
+            isDetectingImpactForSecondAlgorithm() ||
+            isDetectingImpactForThirdAlgorithm()
         ) {
-            if (isMinMaxSumVectorGreaterThanThreshold() ||
+            if (isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm(minMaxSW) ||
                 isVerticalAccelerationGreaterThanThreshold(svTotal, svDynamic) ||
                 isSumVectorGreaterThanThreshold(svTotal, SV_TOT_THRESHOLD) ||
                 isSumVectorGreaterThanThreshold(svDynamic, SV_D_THRESHOLD)
@@ -227,16 +244,19 @@ class FallDetector @Inject constructor(
         }
     }
 
-    private fun detectImpactForImpactPostureAlgorithm() =
-        prefUtil.getDetectionAlgorithm() == Algorithms.IMPACT_POSTURE
+    private fun isFirstAlgorithm() =
+        prefUtil.getDetectionAlgorithm() == Algorithms.FIRST
 
-    private fun detectImpactForStartImpactPostureAlgorithm() =
-        prefUtil.getDetectionAlgorithm() == Algorithms.START_IMPACT_POSTURE && fallingTimeOut > -1
+    private fun isDetectingImpactForSecondAlgorithm() =
+        prefUtil.getDetectionAlgorithm() == Algorithms.SECOND && isFalling()
 
-    private fun detectImpactForStartImpactVelocityPostureAlgorithm() =
-        prefUtil.getDetectionAlgorithm() == Algorithms.START_VELOCITY_IMPACT_POSTURE &&
-            fallingTimeOut > -1 && isVelocityGreaterThanThreshold
+    private fun isDetectingImpactForThirdAlgorithm() =
+        prefUtil.getDetectionAlgorithm() == Algorithms.THIRD &&
+            isFalling() && isVelocityGreaterThanThreshold
 
+    private fun isFalling() = fallingTimeOut > -1
+
+    // TODO("need to improve fun and create test for this fun")
     private fun detectVelocity(acceleration: Acceleration) {
         // velocity is calculated by integrating the area of SVTOT
         // from the beginning of the fall, until the impact, where the
@@ -271,12 +291,16 @@ class FallDetector @Inject constructor(
     private fun isSumVectorGreaterThanThreshold(sumVector: Double, threshold: Double) =
         sumVector > threshold
 
-    private fun isMinMaxSumVectorGreaterThanThreshold(): Boolean {
-        val xMinMax = getMaxValue(DataSet.X_AXIS) - getMinValue(DataSet.X_AXIS)
-        val yMinMax = getMaxValue(DataSet.Y_AXIS) - getMinValue(DataSet.Y_AXIS)
-        val zMinMax = getMaxValue(DataSet.Z_AXIS) - getMinValue(DataSet.Z_AXIS)
+    private fun isMinMaxSVGreaterThanThreshold(minMaxSW: MutableList<Acceleration>): Boolean {
+        val xMinMax = getMaxValue(DataSet.X_AXIS, minMaxSW) - getMinValue(DataSet.X_AXIS, minMaxSW)
+        val yMinMax = getMaxValue(DataSet.Y_AXIS, minMaxSW) - getMinValue(DataSet.Y_AXIS, minMaxSW)
+        val zMinMax = getMaxValue(DataSet.Z_AXIS, minMaxSW) - getMinValue(DataSet.Z_AXIS, minMaxSW)
         return calculateSumVector(xMinMax, yMinMax, zMinMax) > SV_MAX_MIN_THRESHOLD
     }
+
+    private fun isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm(
+        minMaxSW: MutableList<Acceleration>
+    ) = isMinMaxSVGreaterThanThreshold(minMaxSW) && isFirstAlgorithm()
 
     private fun isVerticalAccelerationGreaterThanThreshold(
         svTotal: Double,
@@ -289,7 +313,7 @@ class FallDetector @Inject constructor(
     private fun calculateVerticalAcceleration(svTOT: Double, svD: Double) =
         (svTOT * svTOT - svD * svD - G_CONST * G_CONST) / (2.0 * G_CONST)
 
-    private fun getMaxValue(dataSet: DataSet): Double {
+    private fun getMaxValue(dataSet: DataSet, minMaxSW: MutableList<Acceleration>): Double {
         return when (dataSet) {
             DataSet.X_AXIS -> minMaxSW.map { it.x }.maxOf { it }
             DataSet.Y_AXIS -> minMaxSW.map { it.y }.maxOf { it }
@@ -297,7 +321,7 @@ class FallDetector @Inject constructor(
         }
     }
 
-    private fun getMinValue(dataSet: DataSet): Double {
+    private fun getMinValue(dataSet: DataSet, minMaxSW: MutableList<Acceleration>): Double {
         return when (dataSet) {
             DataSet.X_AXIS -> minMaxSW.map { it.x }.minOf { it }
             DataSet.Y_AXIS -> minMaxSW.map { it.y }.minOf { it }
