@@ -432,16 +432,20 @@ class FallDetectorTest {
     @Test
     fun `check if detects posture when average vertical acceleration is greater than threshold`() {
 
-        // for test need to set this sliding windows
-        fallDetector.setImpactTimeOutForTests()
-        fallDetector.setPostureDetectionSW(fakeData.postureDetectionSWFakeHigh)
-
         val method = fallDetector.javaClass.getDeclaredMethod(
-            "detectPosture"
+            "detectPosture",
+            Int::class.java,
+            List::class.java
         )
         method.isAccessible = true
 
-        method.invoke(fallDetector)
+        val parameters = arrayOfNulls<Any>(2)
+
+        // parameter
+        parameters[0] = 0
+        parameters[1] = fakeData.postureDetectionSWFakeHigh
+
+        method.invoke(fallDetector, *parameters)
 
         val field: Field = FallDetectorImpl::class.java.getDeclaredField("isLyingPostureDetected")
         field.isAccessible = true
@@ -454,16 +458,20 @@ class FallDetectorTest {
     @Test
     fun `check if detects posture when average vertical acceleration is lower than threshold`() {
 
-        // for test need to set this sliding windows
-        fallDetector.setImpactTimeOutForTests()
-        fallDetector.setPostureDetectionSW(fakeData.postureDetectionSWFakeLow)
-
         val method = fallDetector.javaClass.getDeclaredMethod(
-            "detectPosture"
+            "detectPosture",
+            Int::class.java,
+            List::class.java
         )
         method.isAccessible = true
 
-        method.invoke(fallDetector)
+        val parameters = arrayOfNulls<Any>(2)
+
+        // parameter
+        parameters[0] = 0
+        parameters[1] = fakeData.postureDetectionSWFakeLow
+
+        method.invoke(fallDetector, *parameters)
 
         val field: Field = FallDetectorImpl::class.java.getDeclaredField("isLyingPostureDetected")
         field.isAccessible = true

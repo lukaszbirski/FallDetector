@@ -121,7 +121,7 @@ class FallDetectorImpl @Inject constructor(
         }
     }
 
-    private fun detectPosture() {
+    private fun detectPosture(impactTimeOut: Int, postureDetectionSW: MutableList<Acceleration>) {
         // posture must be detected 2 sec after the impact
         // it is marked as impactTimeOut == 0
         if (impactTimeOut == 0) {
@@ -150,7 +150,7 @@ class FallDetectorImpl @Inject constructor(
         // detect posture
         impactTimeOut = expireTimeOut(impactTimeOut)
         detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
-        detectPosture()
+        detectPosture(impactTimeOut = impactTimeOut, postureDetectionSW = postureDetectionSW)
     }
 
     private fun useSecondAlgorithm(
@@ -166,7 +166,7 @@ class FallDetectorImpl @Inject constructor(
         fallingTimeOut = expireTimeOut(fallingTimeOut)
         detectStartOfFall(acceleration = acceleration)
         detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
-        detectPosture()
+        detectPosture(impactTimeOut = impactTimeOut, postureDetectionSW = postureDetectionSW)
     }
 
     private fun useThirdAlgorithm(
@@ -184,7 +184,7 @@ class FallDetectorImpl @Inject constructor(
         detectStartOfFall(acceleration = acceleration)
         detectVelocity(acceleration = acceleration)
         detectImpact(hpfAcceleration = hpfAcceleration, acceleration = acceleration)
-        detectPosture()
+        detectPosture(impactTimeOut = impactTimeOut, postureDetectionSW = postureDetectionSW)
     }
 
     private fun detectStartOfFall(acceleration: Acceleration) {
@@ -318,15 +318,5 @@ class FallDetectorImpl @Inject constructor(
     // for testing only
     override fun setMinMaxSW(minMaxSW: MutableList<Acceleration>) {
         this.minMaxSW = minMaxSW
-    }
-
-    // for testing only
-    override fun setImpactTimeOutForTests() {
-        impactTimeOut = 0
-    }
-
-    // for testing only
-    override fun setPostureDetectionSW(postureDetectionSW: MutableList<Acceleration>) {
-        this.postureDetectionSW = postureDetectionSW
     }
 }
