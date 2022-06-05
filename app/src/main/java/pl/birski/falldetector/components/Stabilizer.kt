@@ -6,24 +6,25 @@ import pl.birski.falldetector.other.Constants
 class Stabilizer {
 
     private var timeStamp: Long = 0
-
-    private var currentAcceleration = Acceleration(0.0, 0.0, 0.0, timeStamp)
-    private var resampledAcceleration = Acceleration(0.0, 0.0, 0.0, timeStamp)
+    private var currentAcceleration = Acceleration()
 
     fun stabilizeSignal(
         previousAcc: Acceleration
     ): Acceleration {
-        resample(previousAcc = previousAcc)
+        val resampledAcceleration = resample(previousAcc = previousAcc)
         currentAcceleration = previousAcc
 
         return resampledAcceleration
     }
 
-    // Android sampling is irregular, hence signal is (linearly) resampled at 50 Hz
-    private fun resample(previousAcc: Acceleration) {
+    // Android sampling is irregular, hence signal is (linearly) resampled
+    private fun resample(previousAcc: Acceleration): Acceleration {
+
+        var acceleration = Acceleration()
+
         if (0L == currentAcceleration.timeStamp) {
             timeStamp = previousAcc.timeStamp + Constants.INTERVAL_MILISEC
-            return
+            return previousAcc
         }
         while (timeStamp < previousAcc.timeStamp) {
             val accX = linearRecalculation(
@@ -48,15 +49,12 @@ class Stabilizer {
                 currentTime = timeStamp
             )
 
-            resampledAcceleration = resampledAcceleration.copy(
-                timeStamp = timeStamp,
-                x = accX,
-                y = accY,
-                z = accZ
-            )
+            acceleration = Acceleration(accX, accY, accZ, timeStamp)
 
             timeStamp += Constants.INTERVAL_MILISEC
         }
+
+        return acceleration
     }
 
     private fun linearRecalculation(
@@ -66,6 +64,8 @@ class Stabilizer {
         valuePrevious: Double,
         currentTime: Long
     ): Double {
-        return valueAfter + (valuePrevious - valueAfter) * (currentTime - timeAfter).toDouble() / (timePrevious - timeAfter).toDouble()
+        val currentAfterTime = (currentTime - timeAfter).toDouble()
+        val previousAfterTime = (timePrevious - timeAfter).toDouble()
+        return valueAfter + (valuePrevious - valueAfter) * currentAfterTime / previousAfterTime
     }
 }

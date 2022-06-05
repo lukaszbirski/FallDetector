@@ -27,7 +27,7 @@ class SensorImpl @Inject constructor(
     private lateinit var manager: SensorManager
 
     private val acceleration: MutableState<Acceleration?> = mutableStateOf(null)
-    private var rawAcceleration = Acceleration(0.0, 0.0, 0.0, 0)
+    private var rawAcceleration = Acceleration()
 
     private val stabilize = object : Runnable {
         override fun run() {
