@@ -13,9 +13,7 @@ class Stabilizer {
     fun stabilizeSignal(
         previousAcc: Acceleration
     ): Acceleration {
-        synchronized(Any()) {
-            resample(previousAcc = previousAcc)
-        }
+        resample(previousAcc = previousAcc)
         currentAcceleration = previousAcc
 
         return resampledAcceleration

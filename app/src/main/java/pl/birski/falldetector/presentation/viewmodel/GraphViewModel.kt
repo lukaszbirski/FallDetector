@@ -113,13 +113,10 @@ constructor(
         }
 
     private fun selectDescription(axis: DataSet) = when (axis) {
-        DataSet.X_AXIS ->
-            application.getString(R.string.graph_fragment_x_axis_acc_text)
-        DataSet.Y_AXIS ->
-            application.getString(R.string.graph_fragment_y_axis_acc_text)
-        DataSet.Z_AXIS ->
-            application.getString(R.string.graph_fragment_z_axis_acc_text)
-    }
+        DataSet.X_AXIS -> R.string.graph_fragment_x_axis_acc_text
+        DataSet.Y_AXIS -> R.string.graph_fragment_y_axis_acc_text
+        DataSet.Z_AXIS -> R.string.graph_fragment_z_axis_acc_text
+    }.let { application.getString(it) }
 
     private fun selectLineColor(axis: DataSet) = when (axis) {
         DataSet.X_AXIS -> Color.BLUE
@@ -147,14 +144,14 @@ constructor(
 
         data?.let {
 
-            val xMeasurement =
-                data.getDataSetByIndex(0) ?: createSet(DataSet.X_AXIS).also { data.addDataSet(it) }
+            val xMeasurement = data.getDataSetByIndex(0) ?: createSet(DataSet.X_AXIS)
+                .also { data.addDataSet(it) }
 
-            val yMeasurement =
-                data.getDataSetByIndex(1) ?: createSet(DataSet.Y_AXIS).also { data.addDataSet(it) }
+            val yMeasurement = data.getDataSetByIndex(1) ?: createSet(DataSet.Y_AXIS)
+                .also { data.addDataSet(it) }
 
-            val zMeasurement =
-                data.getDataSetByIndex(2) ?: createSet(DataSet.Z_AXIS).also { data.addDataSet(it) }
+            val zMeasurement = data.getDataSetByIndex(2) ?: createSet(DataSet.Z_AXIS)
+                .also { data.addDataSet(it) }
 
             data.addEntry(createEntry(acceleration, xMeasurement, DataSet.X_AXIS), 0)
             data.addEntry(createEntry(acceleration, yMeasurement, DataSet.Y_AXIS), 1)
