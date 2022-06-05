@@ -12,8 +12,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import javax.inject.Inject
 import pl.birski.falldetector.R
-import pl.birski.falldetector.components.Stabilizer
 import pl.birski.falldetector.components.interfaces.FallDetector
+import pl.birski.falldetector.components.interfaces.Stabilizer
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.other.Constants
 import timber.log.Timber

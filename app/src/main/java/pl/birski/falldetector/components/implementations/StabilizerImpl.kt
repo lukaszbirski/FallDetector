@@ -1,14 +1,15 @@
-package pl.birski.falldetector.components
+package pl.birski.falldetector.components.implementations
 
+import pl.birski.falldetector.components.interfaces.Stabilizer
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.other.Constants
 
-class Stabilizer {
+class StabilizerImpl : Stabilizer {
 
     private var timeStamp: Long = 0
     private var currentAcceleration = Acceleration()
 
-    fun stabilizeSignal(
+    override fun stabilizeSignal(
         previousAcc: Acceleration
     ): Acceleration {
         val resampledAcceleration = resample(previousAcc = previousAcc)
