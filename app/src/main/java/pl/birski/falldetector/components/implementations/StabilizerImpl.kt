@@ -7,46 +7,49 @@ import pl.birski.falldetector.other.Constants
 class StabilizerImpl : Stabilizer {
 
     private var timeStamp: Long = 0
-    private var currentAcceleration = Acceleration()
+    private var previousAcceleration = Acceleration()
 
     override fun stabilizeSignal(
-        previousAcc: Acceleration
+        currentAcceleration: Acceleration
     ): Acceleration {
-        val resampledAcceleration = resample(previousAcc = previousAcc)
-        currentAcceleration = previousAcc
+        val resampledAcceleration = resample(currentAcceleration, previousAcceleration)
+        previousAcceleration = currentAcceleration
 
         return resampledAcceleration
     }
 
     // Android sampling is irregular, hence signal is (linearly) resampled
-    private fun resample(previousAcc: Acceleration): Acceleration {
+    private fun resample(
+        currentAcceleration: Acceleration,
+        previousAcceleration: Acceleration
+    ): Acceleration {
 
         var acceleration = Acceleration()
 
-        if (0L == currentAcceleration.timeStamp) {
-            timeStamp = previousAcc.timeStamp + Constants.INTERVAL_MILISEC
-            return previousAcc
+        if (0L == previousAcceleration.timeStamp) {
+            timeStamp = currentAcceleration.timeStamp + Constants.INTERVAL_MILISEC
+            return currentAcceleration
         }
-        while (timeStamp < previousAcc.timeStamp) {
+        while (timeStamp < currentAcceleration.timeStamp) {
             val accX = linearRecalculation(
-                timeAfter = currentAcceleration.timeStamp,
-                valueAfter = currentAcceleration.x,
-                timePrevious = previousAcc.timeStamp,
-                valuePrevious = previousAcc.x,
+                timeAfter = previousAcceleration.timeStamp,
+                valueAfter = previousAcceleration.x,
+                timePrevious = currentAcceleration.timeStamp,
+                valuePrevious = currentAcceleration.x,
                 currentTime = timeStamp
             )
             val accY = linearRecalculation(
-                timeAfter = currentAcceleration.timeStamp,
-                valueAfter = currentAcceleration.y,
-                timePrevious = previousAcc.timeStamp,
-                valuePrevious = previousAcc.y,
+                timeAfter = previousAcceleration.timeStamp,
+                valueAfter = previousAcceleration.y,
+                timePrevious = currentAcceleration.timeStamp,
+                valuePrevious = currentAcceleration.y,
                 currentTime = timeStamp
             )
             val accZ = linearRecalculation(
-                timeAfter = currentAcceleration.timeStamp,
-                valueAfter = currentAcceleration.z,
-                timePrevious = previousAcc.timeStamp,
-                valuePrevious = previousAcc.z,
+                timeAfter = previousAcceleration.timeStamp,
+                valueAfter = previousAcceleration.z,
+                timePrevious = currentAcceleration.timeStamp,
+                valuePrevious = currentAcceleration.z,
                 currentTime = timeStamp
             )
 
