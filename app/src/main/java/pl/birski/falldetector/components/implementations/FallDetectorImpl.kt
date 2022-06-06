@@ -8,7 +8,6 @@ import pl.birski.falldetector.components.interfaces.FallDetector
 import pl.birski.falldetector.components.interfaces.Filter
 import pl.birski.falldetector.model.Acceleration
 import pl.birski.falldetector.model.HighPassFilterData
-import pl.birski.falldetector.model.SensorData
 import pl.birski.falldetector.other.Constants
 import pl.birski.falldetector.other.PrefUtil
 import pl.birski.falldetector.service.enum.Algorithms
@@ -21,6 +20,8 @@ class FallDetectorImpl @Inject constructor(
     private val prefUtil: PrefUtil
 ) : FallDetector {
     // signal frequency is 50Hz and cut-off frequency is 0.25 Hz
+
+    // TODO("need to move everything related to frequency to one place and consider changing value")
     private val ALPHA = filter.calculateAlpha(0.25, 50.0)
 
     private val G_CONST = 1.0
@@ -48,8 +49,8 @@ class FallDetectorImpl @Inject constructor(
     private var isVelocityGreaterThanThreshold = false
     private var isLyingPostureDetected = false
 
-    override fun detectFall(sensorData: SensorData) {
-        measureFall(sensorData)
+    override fun detectFall(acceleration: Acceleration) {
+        measureFall(acceleration)
     }
 
     private fun addAccelerationToWindow(
@@ -61,12 +62,12 @@ class FallDetectorImpl @Inject constructor(
         window.add(acceleration)
     }
 
-    private fun measureFall(sensorData: SensorData) {
+    private fun measureFall(acceleration: Acceleration) {
 
         val accelerationFloatArray = floatArrayOf(
-            sensorData.acceleration.x.toFloat(),
-            sensorData.acceleration.y.toFloat(),
-            sensorData.acceleration.z.toFloat()
+            acceleration.x.toFloat(),
+            acceleration.y.toFloat(),
+            acceleration.z.toFloat()
         )
 
         lowPassFilterData = filter.lowPassFilter(
@@ -81,16 +82,16 @@ class FallDetectorImpl @Inject constructor(
         )
 
         val lpfAcceleration = getAcceleration(
-            rawAcceleration = sensorData.acceleration,
+            rawAcceleration = acceleration,
             acceleration = lowPassFilterData
         )
         val hpfAcceleration = getAcceleration(
-            rawAcceleration = sensorData.acceleration,
+            rawAcceleration = acceleration,
             acceleration = highPassFilterData.acceleration
         )
 
         addAccelerationToWindow(
-            acceleration = sensorData.acceleration,
+            acceleration = acceleration,
             windowSize = Constants.MIN_MAX_SW_SIZE.toInt(),
             window = minMaxSW
         )
@@ -107,17 +108,17 @@ class FallDetectorImpl @Inject constructor(
 
                 Algorithms.FIRST -> useFirstAlgorithm(
                     hpfAcceleration = hpfAcceleration,
-                    acceleration = sensorData.acceleration
+                    acceleration = acceleration
                 )
 
                 Algorithms.SECOND -> useSecondAlgorithm(
                     hpfAcceleration = hpfAcceleration,
-                    acceleration = sensorData.acceleration
+                    acceleration = acceleration
                 )
 
                 Algorithms.THIRD -> useThirdAlgorithm(
                     hpfAcceleration = hpfAcceleration,
-                    acceleration = sensorData.acceleration
+                    acceleration = acceleration
                 )
             }
         }

@@ -9,6 +9,4 @@ interface PrefUtil {
     fun getDetectionAlgorithm(): Algorithms
 
     fun isSendingMessageAllowed(): Boolean
-
-    fun isGyroscopeEnabled(): Boolean
 }

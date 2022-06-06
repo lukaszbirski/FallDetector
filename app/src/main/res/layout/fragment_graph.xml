@@ -41,68 +41,13 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView" />
 
                 <LinearLayout
-                    android:id="@+id/velocityLinearLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/chart">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/graph_fragment_angular_velocity_text"
-                        android:textAlignment="center"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        tools:text="@string/graph_fragment_angular_velocity_text" />
-
-                    <LinearLayout
-                        android:id="@+id/linearLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
-                        android:layout_marginTop="10dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/chart">
-
-                        <TextView
-                            android:id="@+id/velocityXTextView"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            tools:text="toolsText" />
-
-                        <TextView
-                            android:id="@+id/velocityYTextView"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            tools:text="toolsText" />
-
-                        <TextView
-                            android:id="@+id/velocityZTextView"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            tools:text="toolsText" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="70dp"
                     android:layout_marginTop="50dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/velocityLinearLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/chart">
 
                     <Button
                         android:id="@+id/start"
