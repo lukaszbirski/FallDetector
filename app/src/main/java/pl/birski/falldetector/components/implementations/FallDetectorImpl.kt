@@ -19,10 +19,11 @@ class FallDetectorImpl @Inject constructor(
     private val filter: Filter,
     private val prefUtil: PrefUtil
 ) : FallDetector {
-    // signal frequency is 50Hz and cut-off frequency is 0.25 Hz
 
-    // TODO("need to move everything related to frequency to one place and consider changing value")
-    private val ALPHA = filter.calculateAlpha(0.25, 50.0)
+    private val ALPHA = filter.calculateAlpha(
+        Constants.FREQUENCY_CUT_OFF,
+        Constants.FREQUENCY_MEASUREMENT
+    )
 
     private val G_CONST = 1.0
     private val SV_TOT_THRESHOLD = 2.0
