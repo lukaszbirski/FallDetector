@@ -10,7 +10,7 @@ object Constants {
     const val FREQUENCY_CUT_OFF = 0.25
     const val FREQUENCY_MEASUREMENT = 50.0
 
-    const val INTERVAL_MILISEC = 1_000 / FREQUENCY_MEASUREMENT
+    const val INTERVAL_MILISEC = (1_000 / FREQUENCY_MEASUREMENT).toInt()
 
     private const val MIN_MAX_SLIDING_WINDOW_TIME_SEC = 0.1F // SW size for SVminmax is 0.1 s
     private const val POSTURE_DETECTION_SW_TIME_SEC = 0.4F // SW size for posture detection is 0.4 s

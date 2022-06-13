@@ -2,6 +2,7 @@ package pl.birski.falldetector.components.implementations
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import javax.inject.Inject
 import kotlin.math.sqrt
 import pl.birski.falldetector.components.interfaces.FallDetector
@@ -52,6 +53,7 @@ class FallDetectorImpl @Inject constructor(
 
     override fun detectFall(acceleration: Acceleration) {
         measureFall(acceleration)
+        numericalIntegration(0.0, 6.0, 3)
     }
 
     private fun addAccelerationToWindow(
@@ -261,8 +263,8 @@ class FallDetectorImpl @Inject constructor(
     // TODO("need to improve fun and create test for this fun")
     private fun detectVelocity(acceleration: Acceleration) {
         // velocity is calculated by integrating the area of SVTOT
-        // from the beginning of the fall, until the impact, where the
-        // signal value is lower than 1g
+        // from the beginning of the fall where SVTOT < 0,6g;
+        // until the impact, where SVTOT < 1g
 
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
 
@@ -286,6 +288,30 @@ class FallDetectorImpl @Inject constructor(
                 isVelocityGreaterThanThreshold = true
             }
         }
+    }
+
+    private fun f(x: Double): Double {
+        return x * x + 3
+    }
+
+    private fun numericalIntegration(
+        xp: Double,
+        xk: Double,
+        n: Int
+    ): Double {
+        var dx = (xk - xp) / n.toDouble()
+
+        var total = 0.0
+        for (i in 1 until n) {
+            Log.d("testuje", "numericalIntegration: dx $dx")
+            Log.d("testuje", "numericalIntegration: ${xp + i * dx}")
+            total += f(xp + i * dx)
+        }
+        total += (f(xp) + f(xk)) / 2
+        total *= dx
+        Log.d("testuje", "numericalIntegration: $total")
+        Log.d("testuje", "---------------------------------------------")
+        return total
     }
 
     private fun expireTimeOut(timeOut: Int) = if (timeOut > -1) timeOut - 1 else -1
