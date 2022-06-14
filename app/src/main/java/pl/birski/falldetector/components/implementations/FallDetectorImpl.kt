@@ -53,7 +53,10 @@ class FallDetectorImpl @Inject constructor(
 
     override fun detectFall(acceleration: Acceleration) {
         measureFall(acceleration)
-        numericalIntegration(0.0, 6.0, 3)
+
+        val test = arrayListOf(0, 20, 40, 60, 80, 100)
+
+        numericalIntegration(test)
     }
 
     private fun addAccelerationToWindow(
@@ -290,25 +293,16 @@ class FallDetectorImpl @Inject constructor(
         }
     }
 
-    private fun f(x: Double): Double {
-        return x * x + 3
-    }
-
-    private fun numericalIntegration(
-        xp: Double,
-        xk: Double,
-        n: Int
-    ): Double {
-        var dx = (xk - xp) / n.toDouble()
-
+    private fun numericalIntegration(list: List<Int>): Double {
+        val dx = Constants.INTERVAL_MILISEC
         var total = 0.0
-        for (i in 1 until n) {
-            Log.d("testuje", "numericalIntegration: dx $dx")
-            Log.d("testuje", "numericalIntegration: ${xp + i * dx}")
-            total += f(xp + i * dx)
+
+        for (i in 1 until list.size - 1) {
+            total += list[i]
         }
-        total += (f(xp) + f(xk)) / 2
+        total += (list.first() + list.last()) / 2
         total *= dx
+
         Log.d("testuje", "numericalIntegration: $total")
         Log.d("testuje", "---------------------------------------------")
         return total
