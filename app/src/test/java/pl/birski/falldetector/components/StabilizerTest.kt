@@ -4,13 +4,12 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import pl.birski.falldetector.components.implementations.StabilizerImpl
-import pl.birski.falldetector.components.interfaces.Stabilizer
 import pl.birski.falldetector.model.Acceleration
 
 class StabilizerTest {
 
     // system in test
-    private lateinit var stabilizer: Stabilizer
+    private lateinit var stabilizer: StabilizerImpl
 
     @Before
     fun setup() {
@@ -19,50 +18,31 @@ class StabilizerTest {
 
     @Test
     fun `check if linearRecalculation returns correct value`() {
-
-        val method = stabilizer.javaClass.getDeclaredMethod(
-            "linearRecalculation",
-            Long::class.java,
-            Double::class.java,
-            Long::class.java,
-            Double::class.java,
-            Long::class.java
-        )
-
-        method.isAccessible = true
-
-        val parameters = arrayOfNulls<Any>(5)
-
         // parameters
-        parameters[0] = 4 // timeAfter
-        parameters[1] = 0 // valueAfter
-        parameters[2] = 0 // timePrevious
-        parameters[3] = 100 //  valuePrevious
-        parameters[4] = 3 // currentTime
+        val timeAfter = 4L // timeAfter
+        val valueAfter = 0.0 // valueAfter
+        val timePrevious = 0L // timePrevious
+        val valuePrevious = 100.0 //  valuePrevious
+        val currentTime = 3L // currentTime
 
-        val result = method.invoke(stabilizer, *parameters) as Double
+        val result = stabilizer.linearRecalculation(
+            timeAfter = timeAfter,
+            valueAfter = valueAfter,
+            timePrevious = timePrevious,
+            valuePrevious = valuePrevious,
+            currentTime = currentTime
+        )
 
         assertEquals(25.00, result, 0.05)
     }
 
     @Test
     fun `check if resample returns correct value`() {
-
-        val method = stabilizer.javaClass.getDeclaredMethod(
-            "resample",
-            Acceleration::class.java,
-            Acceleration::class.java
-        )
-
-        method.isAccessible = true
-
-        val parameters = arrayOfNulls<Any>(2)
-
         // parameters
-        parameters[0] = Acceleration(0.0, 0.0, 0.0, 50) // currentAcceleration
-        parameters[1] = Acceleration(2.0, 2.0, 2.0, 30) // previousAcceleration
+        val currentAcceleration = Acceleration(0.0, 0.0, 0.0, 50) // currentAcceleration
+        val previousAcceleration = Acceleration(2.0, 2.0, 2.0, 30) // previousAcceleration
 
-        val result = method.invoke(stabilizer, *parameters) as Acceleration
+        val result = stabilizer.resample(currentAcceleration, previousAcceleration)
 
         assertEquals(Acceleration(1.0, 1.0, 1.0, 40), result)
     }

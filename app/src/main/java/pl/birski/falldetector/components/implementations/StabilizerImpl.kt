@@ -19,7 +19,7 @@ class StabilizerImpl : Stabilizer {
     }
 
     // Android sampling is irregular, hence signal is (linearly) resampled
-    private fun resample(
+    internal fun resample(
         currentAcceleration: Acceleration,
         previousAcceleration: Acceleration
     ): Acceleration {
@@ -61,7 +61,7 @@ class StabilizerImpl : Stabilizer {
         return acceleration
     }
 
-    private fun linearRecalculation(
+    internal fun linearRecalculation(
         timeAfter: Long,
         valueAfter: Double,
         timePrevious: Long,
