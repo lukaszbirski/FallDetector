@@ -42,7 +42,9 @@ class StabilizerTest {
         val currentAcceleration = Acceleration(0.0, 0.0, 0.0, 50) // currentAcceleration
         val previousAcceleration = Acceleration(2.0, 2.0, 2.0, 30) // previousAcceleration
 
-        val result = stabilizer.resample(currentAcceleration, previousAcceleration)
+        stabilizer.resample(currentAcceleration, previousAcceleration)
+
+        val result = stabilizer.resampledAcceleration
 
         assertEquals(Acceleration(1.0, 1.0, 1.0, 40), result)
     }

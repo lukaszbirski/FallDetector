@@ -4,5 +4,5 @@ import pl.birski.falldetector.model.Acceleration
 
 interface Stabilizer {
 
-    fun stabilizeSignal(previousAcc: Acceleration): Acceleration
+    fun stabilizeSignal(currentAcceleration: Acceleration): Acceleration
 }
