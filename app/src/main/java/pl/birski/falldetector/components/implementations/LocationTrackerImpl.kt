@@ -20,19 +20,19 @@ import android.widget.Toast
 import java.util.Locale
 import javax.inject.Inject
 import pl.birski.falldetector.R
-import pl.birski.falldetector.components.interfaces.ILocationTrackerTest
 import pl.birski.falldetector.components.interfaces.LocationTracker
 
 class LocationTrackerImpl @Inject constructor(
     private val context: Context
-) : LocationTracker, ILocationTrackerTest, Service(), LocationListener {
+) : LocationTracker, Service(), LocationListener {
+
+    internal var location: Location? = null
 
     private var longitude: Double = 0.0
     private var latitude: Double = 0.0
     private lateinit var locationManager: LocationManager
     private var locationNetwork: Location? = null
     private var locationGPS: Location? = null
-    private var location: Location? = null
     private var checkGPS = false
     private var checkNetwork = false
 
@@ -210,13 +210,5 @@ class LocationTrackerImpl @Inject constructor(
 
     init {
         getLocation()
-    }
-
-    // for test purpose only
-    override fun setLocationForTest() {
-        location = Location("").also {
-            it.latitude = 52.22824846991743
-            it.longitude = 20.9854009598633
-        }
     }
 }
