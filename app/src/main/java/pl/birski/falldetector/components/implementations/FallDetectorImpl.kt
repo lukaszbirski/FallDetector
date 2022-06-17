@@ -2,6 +2,7 @@ package pl.birski.falldetector.components.implementations
 
 import android.content.Context
 import android.content.Intent
+import android.hardware.SensorManager
 import javax.inject.Inject
 import kotlin.math.sqrt
 import pl.birski.falldetector.components.interfaces.FallDetector
@@ -46,7 +47,7 @@ class FallDetectorImpl @Inject constructor(
 
     internal var impactTimeOut: Int = -1
     internal var fallingTimeOut: Int = -1
-    private var measureVelocity = false
+    private var previousWasFalling = false
     private var isVelocityGreaterThanThreshold = false
     internal var isLyingPostureDetected = false
 
@@ -138,7 +139,7 @@ class FallDetectorImpl @Inject constructor(
             // impact occurred if vertical signal, based on the average acceleration
             // in a 0.4 s time interval is 0.5G or lower
             if ((sum / count) > LYING_POSTURE_VERTICAL_THRESHOLD) {
-                Timber.d("Detected lying position!")
+                Timber.d("4. FallDetector: Detected lying position!")
                 isLyingPostureDetected = true
                 sendBroadcast()
             }
@@ -215,7 +216,7 @@ class FallDetectorImpl @Inject constructor(
     internal fun detectStartOfFall(acceleration: Acceleration) {
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
         if (svTotal <= SV_TOTAL_FALLING_THRESHOLD) {
-            Timber.d("Start of the fall was detected!")
+            Timber.d("1. FallDetector: Start of the fall was detected!")
             fallingTimeOut = Constants.FALLING_TIME_SPAN
         }
     }
@@ -234,12 +235,13 @@ class FallDetectorImpl @Inject constructor(
             isDetectingImpactForSecondAlgorithm() ||
             isDetectingImpactForThirdAlgorithm()
         ) {
+            Timber.d("Starts to detect impact")
             if (isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm(minMaxSW) ||
                 isVerticalAccelerationGreaterThanThreshold(svTotal, svDynamic) ||
                 isSumVectorGreaterThanThreshold(svTotal, SV_TOT_THRESHOLD) ||
                 isSumVectorGreaterThanThreshold(svDynamic, SV_D_THRESHOLD)
             ) {
-                Timber.d("Impact was detected!")
+                Timber.d("3. FallDetector: Impact was detected!")
                 // impact was detected, set impact time out
                 impactTimeOut = Constants.IMPACT_TIME_SPAN
             }
@@ -261,50 +263,58 @@ class FallDetectorImpl @Inject constructor(
     // TODO("need to improve fun and create test for this fun")
     private fun detectVelocity(acceleration: Acceleration) {
         // velocity is calculated by integrating the area of SVTOT
-        // from the beginning of the fall where SVTOT < 0,6g;
-        // until the impact, where SVTOT < 1g
+        // from the beginning of the fall until the impact, where SVTOT < 1g
 
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
 
-        if (fallingTimeOut > -1 && svTotal < 1.0) {
+        val isFalling = isFalling() && svTotal < 1
+
+        if (isFalling) {
             addAccelerationToWindow(
                 acceleration = acceleration,
                 windowSize = Int.MAX_VALUE,
                 window = fallSW
             )
-            measureVelocity = true
-            isVelocityGreaterThanThreshold = false
-        } else if (measureVelocity) {
+        }
 
-            val sumSVTOT = fallSW.sumOf { calculateSumVector(it.x, it.y, it.z) }
-            val time = (fallSW.last().timeStamp - fallSW.first().timeStamp).div(1000.0F)
+        if (!isFalling && previousWasFalling) {
 
+            val result = numericalIntegrationTrapezoidalRule(fallSW)
             fallSW = mutableListOf()
-            measureVelocity = false
 
-            if ((sumSVTOT * time) > VELOCITY_THRESHOLD) {
+            if (result > VELOCITY_THRESHOLD) {
+                Timber.d("2. FallDetector: Velocity is greater than the threshold")
                 isVelocityGreaterThanThreshold = true
+            } else {
+                isVelocityGreaterThanThreshold = false
             }
         }
+
+        previousWasFalling = isFalling
     }
 
     internal fun numericalIntegrationTrapezoidalRule(accelerations: List<Acceleration>): Double {
+        // all accelerations need to be converted to m/s
         val svFirst = calculateSumVector(
-            accelerations.first().x,
-            accelerations.first().y,
-            accelerations.first().z
+            convertToMetersPerSeconds(accelerations.first().x),
+            convertToMetersPerSeconds(accelerations.first().y),
+            convertToMetersPerSeconds(accelerations.first().z)
         )
         val svLast = calculateSumVector(
-            accelerations.last().x,
-            accelerations.last().y,
-            accelerations.last().z
+            convertToMetersPerSeconds(accelerations.last().x),
+            convertToMetersPerSeconds(accelerations.last().y),
+            convertToMetersPerSeconds(accelerations.last().z)
         )
 
-        val dx = Constants.INTERVAL_MILISEC.toDouble()
+        val dx = Constants.INTERVAL_MILISEC.toDouble() * 0.001 // need to be converted to sec
         var total = 0.0
 
         for (i in 1 until accelerations.size - 1) {
-            total += calculateSumVector(accelerations[i].x, accelerations[i].y, accelerations[i].z)
+            total += calculateSumVector(
+                convertToMetersPerSeconds(accelerations[i].x),
+                convertToMetersPerSeconds(accelerations[i].y),
+                convertToMetersPerSeconds(accelerations[i].z)
+            )
         }
 
         total += (svFirst + svLast) / 2
@@ -367,4 +377,6 @@ class FallDetectorImpl @Inject constructor(
     private fun sendBroadcast() = Intent(Constants.CUSTOM_FALL_DETECTED_RECEIVER).also {
         context.sendBroadcast(it)
     }
+
+    private fun convertToMetersPerSeconds(value: Double) = value * SensorManager.STANDARD_GRAVITY
 }
