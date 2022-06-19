@@ -32,7 +32,7 @@ class FallDetectorTest {
     private lateinit var filter: Filter
     private lateinit var prefUtil: PrefUtil
 
-    private val context: Context = ApplicationProvider.getApplicationContext<Context>()
+    private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Before
     fun setup() {
@@ -279,6 +279,70 @@ class FallDetectorTest {
         )
 
         val result = fallDetector.numericalIntegrationTrapezoidalRule(accelerations)
-        assertEquals(11250.0, result)
+        assertEquals(110.325, result, 0.001)
+    }
+
+    @Test
+    fun `check if detects that velocity is greater than threshold`() {
+        // falling time out is greater than -1
+        fallDetector.fallingTimeOut = 10
+
+        // svTotal will be  >= 1
+        val acceleration = Acceleration(1.0, 1.0, 1.0, 1L)
+        // integrated velocity will be greater than threshold
+        val list = fakeData.postureDetectionSWFakeHigh
+
+        fallDetector.detectVelocity(acceleration, list)
+
+        val result = fallDetector.isVelocityGreaterThanThreshold
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `check if not detects that velocity is greater than threshold when fallingTimeOut is -1`() {
+        // falling time out is -1, should return false
+        fallDetector.fallingTimeOut = -1
+
+        // svTotal will be  >= 1
+        val acceleration = Acceleration(1.0, 1.0, 1.0, 1L)
+        // integrated velocity will be greater than threshold
+        val list = fakeData.postureDetectionSWFakeHigh
+
+        fallDetector.detectVelocity(acceleration, list)
+
+        val result = fallDetector.isVelocityGreaterThanThreshold
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun `check if not detects that velocity is greater than threshold when svTotal is below 1`() {
+        // falling time out is greater than -1
+        fallDetector.fallingTimeOut = 10
+
+        // svTotal will be < 1
+        val acceleration = Acceleration(0.2, 0.2, 0.2, 1L)
+        // integrated velocity will be greater than threshold
+        val list = fakeData.postureDetectionSWFakeHigh
+
+        fallDetector.detectVelocity(acceleration, list)
+
+        val result = fallDetector.isVelocityGreaterThanThreshold
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun `check if not detects velocity greater than threshold when velocity is below threshold`() {
+        // falling time out is greater than -1
+        fallDetector.fallingTimeOut = 10
+
+        // svTotal will be  >= 1
+        val acceleration = Acceleration(1.0, 1.0, 1.0, 1L)
+        // integrated velocity will be below threshold
+        val list = fakeData.postureDetectionSWFakeLow
+
+        fallDetector.detectVelocity(acceleration, list)
+
+        val result = fallDetector.isVelocityGreaterThanThreshold
+        assertEquals(false, result)
     }
 }

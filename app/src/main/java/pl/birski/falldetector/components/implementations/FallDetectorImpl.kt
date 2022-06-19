@@ -47,7 +47,7 @@ class FallDetectorImpl @Inject constructor(
 
     internal var impactTimeOut: Int = -1
     internal var fallingTimeOut: Int = -1
-    private var isVelocityGreaterThanThreshold = false
+    internal var isVelocityGreaterThanThreshold = false
     internal var isLyingPostureDetected = false
 
     override fun detectFall(acceleration: Acceleration) {
@@ -200,7 +200,7 @@ class FallDetectorImpl @Inject constructor(
         impactTimeOut = expireTimeOut(impactTimeOut)
         fallingTimeOut = expireTimeOut(fallingTimeOut)
         detectStartOfFall(acceleration = acceleration)
-        detectVelocity(acceleration = acceleration)
+        detectVelocity(acceleration = acceleration, velocitySW = fallSW)
         detectImpact(
             hpfAcceleration = hpfAcceleration,
             acceleration = acceleration,
@@ -261,7 +261,7 @@ class FallDetectorImpl @Inject constructor(
 
     private fun isFalling() = fallingTimeOut > -1
 
-    private fun detectVelocity(acceleration: Acceleration) {
+    internal fun detectVelocity(acceleration: Acceleration, velocitySW: MutableList<Acceleration>) {
         // velocity is calculated by integrating the area of SVTOT
         // from the beginning of the fall until the impact, where SVTOT < 1g
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
@@ -272,10 +272,10 @@ class FallDetectorImpl @Inject constructor(
             addAccelerationToWindow(
                 acceleration = acceleration,
                 windowSize = Int.MAX_VALUE,
-                window = fallSW
+                window = velocitySW
             )
 
-            val result = numericalIntegrationTrapezoidalRule(fallSW)
+            val result = numericalIntegrationTrapezoidalRule(velocitySW)
 
             if (result > VELOCITY_THRESHOLD) {
                 Timber.d("2. FallDetector: Velocity is greater than the threshold")
