@@ -15,7 +15,6 @@ import pl.birski.falldetector.R
 import pl.birski.falldetector.components.fake.LocationTrackerFake
 import pl.birski.falldetector.components.implementations.MessageSenderImpl
 import pl.birski.falldetector.components.interfaces.LocationTracker
-import pl.birski.falldetector.components.interfaces.MessageSender
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.P])

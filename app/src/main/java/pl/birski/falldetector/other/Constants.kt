@@ -19,9 +19,9 @@ object Constants {
     const val POSTURE_DETECTION_SW_SIZE = POSTURE_DETECTION_SW_TIME_SEC * 1000 / INTERVAL_MILISEC
 
     // after impact need to wait 2 s
-    const val IMPACT_TIME_SPAN = (2000 / INTERVAL_MILISEC).toInt()
+    const val IMPACT_TIME_SPAN = 2000 / INTERVAL_MILISEC
     // impact is measured within 1 s frame
-    const val FALLING_TIME_SPAN = (1000 / INTERVAL_MILISEC).toInt()
+    const val FALLING_TIME_SPAN = 1000 / INTERVAL_MILISEC
 
     const val CUSTOM_FALL_DETECTED_RECEIVER = "pl.birski.falldetector.CUSTOM_INTENT"
 

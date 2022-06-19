@@ -47,7 +47,6 @@ class FallDetectorImpl @Inject constructor(
 
     internal var impactTimeOut: Int = -1
     internal var fallingTimeOut: Int = -1
-    private var previousWasFalling = false
     private var isVelocityGreaterThanThreshold = false
     internal var isLyingPostureDetected = false
 
@@ -244,6 +243,8 @@ class FallDetectorImpl @Inject constructor(
                 Timber.d("3. FallDetector: Impact was detected!")
                 // impact was detected, set impact time out
                 impactTimeOut = Constants.IMPACT_TIME_SPAN
+            } else {
+                clearDetections()
             }
         }
     }
@@ -260,14 +261,12 @@ class FallDetectorImpl @Inject constructor(
 
     private fun isFalling() = fallingTimeOut > -1
 
-    // TODO("need to improve fun and create test for this fun")
     private fun detectVelocity(acceleration: Acceleration) {
         // velocity is calculated by integrating the area of SVTOT
         // from the beginning of the fall until the impact, where SVTOT < 1g
-
         val svTotal = calculateSumVector(acceleration.x, acceleration.y, acceleration.z)
 
-        val isFalling = isFalling() && svTotal < 1
+        val isFalling = isFalling() && svTotal >= 1
 
         if (isFalling) {
             addAccelerationToWindow(
@@ -275,22 +274,14 @@ class FallDetectorImpl @Inject constructor(
                 windowSize = Int.MAX_VALUE,
                 window = fallSW
             )
-        }
-
-        if (!isFalling && previousWasFalling) {
 
             val result = numericalIntegrationTrapezoidalRule(fallSW)
-            fallSW = mutableListOf()
 
             if (result > VELOCITY_THRESHOLD) {
                 Timber.d("2. FallDetector: Velocity is greater than the threshold")
                 isVelocityGreaterThanThreshold = true
-            } else {
-                isVelocityGreaterThanThreshold = false
             }
         }
-
-        previousWasFalling = isFalling
     }
 
     internal fun numericalIntegrationTrapezoidalRule(accelerations: List<Acceleration>): Double {
@@ -373,6 +364,12 @@ class FallDetectorImpl @Inject constructor(
             acceleration[2].div(1).toDouble(),
             rawAcceleration.timeStamp
         )
+
+    private fun clearDetections() {
+        isVelocityGreaterThanThreshold = false
+        isLyingPostureDetected = false
+        fallSW = mutableListOf()
+    }
 
     private fun sendBroadcast() = Intent(Constants.CUSTOM_FALL_DETECTED_RECEIVER).also {
         context.sendBroadcast(it)
