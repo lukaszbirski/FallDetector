@@ -8,27 +8,25 @@ class StabilizerImpl : Stabilizer {
 
     private var timeStamp: Long = 0
     private var previousAcceleration = Acceleration()
+    internal var resampledAcceleration = Acceleration()
 
     override fun stabilizeSignal(
         currentAcceleration: Acceleration
     ): Acceleration {
-        val resampledAcceleration = resample(currentAcceleration, previousAcceleration)
+        resample(currentAcceleration, previousAcceleration)
         previousAcceleration = currentAcceleration
 
         return resampledAcceleration
     }
 
     // Android sampling is irregular, hence signal is (linearly) resampled
-    private fun resample(
+    internal fun resample(
         currentAcceleration: Acceleration,
         previousAcceleration: Acceleration
-    ): Acceleration {
-
-        var acceleration = Acceleration()
-
+    ) {
         if (0L == previousAcceleration.timeStamp) {
             timeStamp = currentAcceleration.timeStamp + Constants.INTERVAL_MILISEC
-            return currentAcceleration
+            return
         }
         while (timeStamp < currentAcceleration.timeStamp) {
             val accX = linearRecalculation(
@@ -53,15 +51,13 @@ class StabilizerImpl : Stabilizer {
                 currentTime = timeStamp
             )
 
-            acceleration = Acceleration(accX, accY, accZ, timeStamp)
+            resampledAcceleration = Acceleration(accX, accY, accZ, timeStamp)
 
             timeStamp += Constants.INTERVAL_MILISEC
         }
-
-        return acceleration
     }
 
-    private fun linearRecalculation(
+    internal fun linearRecalculation(
         timeAfter: Long,
         valueAfter: Double,
         timePrevious: Long,

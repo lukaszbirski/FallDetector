@@ -15,7 +15,6 @@ import pl.birski.falldetector.R
 import pl.birski.falldetector.components.fake.LocationTrackerFake
 import pl.birski.falldetector.components.implementations.MessageSenderImpl
 import pl.birski.falldetector.components.interfaces.LocationTracker
-import pl.birski.falldetector.components.interfaces.MessageSender
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.P])
@@ -23,7 +22,7 @@ import pl.birski.falldetector.components.interfaces.MessageSender
 class MessageSenderTest {
 
     // system in test
-    private lateinit var messageSender: MessageSender
+    private lateinit var messageSender: MessageSenderImpl
 
     private lateinit var locationTracker: LocationTracker
 
@@ -46,12 +45,8 @@ class MessageSenderTest {
             locationTracker.getLatitude()
         )
 
-        val method = messageSender.javaClass.getDeclaredMethod(
-            "getMessage"
-        )
+        val result = messageSender.getMessage()
 
-        method.isAccessible = true
-
-        assertEquals(message, method.invoke(messageSender))
+        assertEquals(message, result)
     }
 }

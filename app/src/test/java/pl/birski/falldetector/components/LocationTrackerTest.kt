@@ -1,6 +1,7 @@
 package pl.birski.falldetector.components
 
 import android.content.Context
+import android.location.Location
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Before
@@ -24,10 +25,15 @@ class LocationTrackerTest {
     @Mock
     private var context: Context = ApplicationProvider.getApplicationContext<Context>()
 
+    val fakeLocation = Location("").also { location ->
+        location.latitude = 52.22824846991743
+        location.longitude = 20.9854009598633
+    }
+
     @Before
     fun setup() {
         locationTracker = LocationTrackerImpl(context).also {
-            it.setLocationForTest()
+            it.location = fakeLocation
         }
     }
 

@@ -138,7 +138,7 @@ class MessageSenderImpl @Inject constructor(
         )
     }
 
-    private fun getMessage() = context.getString(
+    internal fun getMessage() = context.getString(
         R.string.message_sender_text_body,
         locationTracker.getAddress(),
         locationTracker.getLongitude().toString(),
