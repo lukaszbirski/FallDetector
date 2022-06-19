@@ -8,13 +8,10 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.BuildConfig
 import pl.birski.falldetector.R
@@ -30,10 +27,7 @@ import timber.log.Timber
 import timber.log.Timber.DebugTree
 
 @AndroidEntryPoint
-class MainActivity :
-    AppCompatActivity(),
-    PassDataInterface,
-    NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), PassDataInterface {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -91,28 +85,7 @@ class MainActivity :
                 }
             }
 
-        setSupportActionBar(binding.toolbar)
-
-        val toggle = ActionBarDrawerToggle(
-            this, binding.drawerLayout, binding.toolbar,
-            R.string.navigation_drawer_open_text,
-            R.string.navigation_drawer_closed_text
-        )
-
-        binding.navView.setNavigationItemSelectedListener(this)
-
-        binding.drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
         setContentView(binding.root)
-    }
-
-    override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
     }
 
     override fun onDestroy() {
@@ -122,12 +95,6 @@ class MainActivity :
 
     override fun onDataReceived(isDetected: Boolean) {
         isFallDetected = isDetected
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        manageNavigation(item)
-        binding.drawerLayout.closeDrawer(GravityCompat.START)
-        return true
     }
 
     private fun unregisterBroadcastReceiver() {

@@ -37,6 +37,7 @@ class LockScreenActivity : AppCompatActivity() {
         binding.counterFragmentButton.setOnClickListener {
             timer.cancel()
             onTimerFinished()
+            viewModel.stopService()
             Intent(this, MainActivity::class.java).also {
                 startActivity(it)
             }
@@ -117,8 +118,7 @@ class LockScreenActivity : AppCompatActivity() {
             it.setButton(
                 AlertDialog.BUTTON_NEGATIVE,
                 getString(R.string.time_out_dialog_exit_text)
-            ) {
-                    dialog, _ ->
+            ) { dialog, _ ->
                 dialog.dismiss()
                 Intent(this, MainActivity::class.java).also { intent ->
                     startActivity(intent)
