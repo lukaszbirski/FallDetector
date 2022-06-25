@@ -32,11 +32,9 @@ class GraphViewModel
 @Inject
 constructor(
     private val application: Application,
-    private val locationTracker: LocationTracker
+    private val locationTracker: LocationTracker,
+    private val sensor: Sensor
 ) : ViewModel() {
-
-    @Inject
-    lateinit var sensor: Sensor
 
     private val _lineData = MutableLiveData<LineData?>()
     val lineData: LiveData<LineData?> get() = _lineData

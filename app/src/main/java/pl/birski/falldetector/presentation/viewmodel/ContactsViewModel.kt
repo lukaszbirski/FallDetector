@@ -57,6 +57,7 @@ constructor(
     fun removeContact(contact: Contact) {
         viewModelScope.launch(Dispatchers.IO) {
             useCaseFactory.removeContactUseCase.execute(contact)
+            getAllContacts()
         }
     }
 

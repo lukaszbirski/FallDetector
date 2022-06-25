@@ -26,11 +26,9 @@ constructor(
     private val application: Application,
     private val prefUtil: PrefUtil,
     private val messageSender: MessageSender,
-    private val useCaseFactory: UseCaseFactory
+    private val useCaseFactory: UseCaseFactory,
+    private val sensor: Sensor
 ) : ViewModel() {
-
-    @Inject
-    lateinit var sensor: Sensor
 
     private val _displayDialog = MutableLiveData<Boolean>()
     val displayDialog: LiveData<Boolean> get() = _displayDialog

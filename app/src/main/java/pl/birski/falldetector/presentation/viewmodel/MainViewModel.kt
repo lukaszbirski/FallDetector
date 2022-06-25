@@ -13,11 +13,9 @@ import pl.birski.falldetector.service.enum.ServiceActions
 class MainViewModel
 @Inject
 constructor(
-    private val application: Application
+    private val application: Application,
+    private val sensor: Sensor
 ) : ViewModel() {
-
-    @Inject
-    lateinit var sensor: Sensor
 
     fun startService() = sendCommandToService(ServiceActions.START_OR_RESUME)
         .also {
