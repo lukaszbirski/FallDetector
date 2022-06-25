@@ -83,6 +83,13 @@
     <string name="contact_dialog_plus_text">+</string>
     <!--    Add Contact Dialog ends here-->
 
+    <!--    Remove Contact Dialog starts here-->
+    <string name="remove_contact_dialog_title_text">Contact removal</string>
+    <string name="remove_contact_dialog_message_text">Do you want to delete the contact to \"%1$s %2$s\"</string>
+    <string name="remove_contact_dialog_cancel_text">Cancel</string>
+    <string name="remove_contact_dialog_remove_text">Remove</string>
+    <!--    Remove Contact Dialog ends here-->
+
     <!--    Time Out Dialog starts here-->
     <string name="time_out_dialog_exit_text">Exit</string>
     <!--    Time Out Dialog ends here-->

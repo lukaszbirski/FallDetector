@@ -11,17 +11,17 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import pl.birski.falldetector.R
 import pl.birski.falldetector.databinding.FragmentContactsBinding
+import pl.birski.falldetector.model.Contact
 import pl.birski.falldetector.presentation.fragment.adapter.ContactAdapter
+import pl.birski.falldetector.presentation.fragment.adapter.ContactAdapterListener
 import pl.birski.falldetector.presentation.viewmodel.ContactsViewModel
 
 @AndroidEntryPoint
-class ContactsFragment : Fragment() {
+class ContactsFragment : Fragment(), ContactAdapterListener {
 
     private lateinit var binding: FragmentContactsBinding
 
@@ -81,7 +81,7 @@ class ContactsFragment : Fragment() {
 
             contacts.observe(viewLifecycleOwner) { contacts ->
 
-                val adapter = ContactAdapter(contacts, requireContext())
+                val adapter = ContactAdapter(contacts, requireContext(), this@ContactsFragment)
 
                 binding.contactsRecycler.also {
                     it.layoutManager = LinearLayoutManager(requireContext())
@@ -91,23 +91,6 @@ class ContactsFragment : Fragment() {
                     it.adapter?.notifyDataSetChanged()
                     it.scrollToPosition(0)
                 }
-
-                ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-                    override fun onMove(
-                        recyclerView: RecyclerView,
-                        viewHolder: RecyclerView.ViewHolder,
-                        target: RecyclerView.ViewHolder
-                    ): Boolean {
-                        return false
-                    }
-
-                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                        val position = viewHolder.adapterPosition
-                        val contact = adapter.getContact(position)
-                        adapter.deleteItem(position)
-                        viewModel.removeContact(contact)
-                    }
-                }).attachToRecyclerView(binding.contactsRecycler)
             }
         }
 
@@ -159,5 +142,30 @@ class ContactsFragment : Fragment() {
 
     private fun enableButton() {
         btnPositive.isEnabled = viewModel.enableButton()
+    }
+
+    override fun removeContact(contact: Contact) {
+        removeContactDialog(contact)
+    }
+
+    private fun removeContactDialog(contact: Contact) {
+        requireContext().let {
+            AlertDialog.Builder(it).apply {
+                setTitle(R.string.remove_contact_dialog_title_text)
+                setMessage(
+                    String.format(
+                        getString(R.string.remove_contact_dialog_message_text),
+                        contact.name,
+                        contact.surname
+                    )
+                )
+                setPositiveButton(R.string.remove_contact_dialog_remove_text) { _, _ ->
+                    viewModel.removeContact(contact)
+                }
+                setNegativeButton(R.string.remove_contact_dialog_cancel_text) { _, _ -> }
+                create()
+                show()
+            }
+        }
     }
 }
