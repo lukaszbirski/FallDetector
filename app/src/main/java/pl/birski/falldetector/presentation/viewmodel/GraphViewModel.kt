@@ -28,9 +28,7 @@ import pl.birski.falldetector.service.enum.ServiceActions
 import timber.log.Timber
 
 @HiltViewModel
-class GraphViewModel
-@Inject
-constructor(
+class GraphViewModel @Inject constructor(
     private val application: Application,
     private val locationTracker: LocationTracker,
     private val sensor: Sensor
@@ -132,16 +130,15 @@ constructor(
     )
 
     private fun selectValue(acceleration: Acceleration, dataSet: DataSet) = when (dataSet) {
-        DataSet.X_AXIS -> acceleration.x ?: 0.0
-        DataSet.Y_AXIS -> acceleration.y ?: 0.0
-        DataSet.Z_AXIS -> acceleration.z ?: 0.0
+        DataSet.X_AXIS -> acceleration.x
+        DataSet.Y_AXIS -> acceleration.y
+        DataSet.Z_AXIS -> acceleration.z
     }
 
     private fun addEntry(acceleration: Acceleration, lineData: LineData?) {
         val data = lineData
 
         data?.let {
-
             val xMeasurement = data.getDataSetByIndex(0) ?: createSet(DataSet.X_AXIS)
                 .also { data.addDataSet(it) }
 
@@ -176,7 +173,8 @@ constructor(
     }
 
     fun enableLocationService(activity: Activity) {
-        if (!locationTracker.locationEnabled())
+        if (!locationTracker.locationEnabled()) {
             locationTracker.showSettingsAlert(activity)
+        }
     }
 }

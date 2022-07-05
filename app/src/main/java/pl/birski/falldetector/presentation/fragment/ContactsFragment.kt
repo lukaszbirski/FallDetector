@@ -78,7 +78,6 @@ class ContactsFragment : Fragment(), ContactAdapterListener {
         binding = FragmentContactsBinding.inflate(inflater, container, false)
 
         viewModel.apply {
-
             contacts.observe(viewLifecycleOwner) { contacts ->
 
                 val adapter = ContactAdapter(contacts, requireContext(), this@ContactsFragment)
@@ -102,7 +101,6 @@ class ContactsFragment : Fragment(), ContactAdapterListener {
     }
 
     private fun setAddContactDialog() {
-
         val alertDialog = AlertDialog.Builder(requireContext()).create()
 
         val view =

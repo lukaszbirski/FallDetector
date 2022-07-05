@@ -31,7 +31,6 @@ class SensorImpl @Inject constructor(
 
     private val stabilize = object : Runnable {
         override fun run() {
-
             val resampledSignal = stabilizer.stabilizeSignal(rawAcceleration)
             Timber.d("Resampled signal is equal to: $resampledSignal")
 

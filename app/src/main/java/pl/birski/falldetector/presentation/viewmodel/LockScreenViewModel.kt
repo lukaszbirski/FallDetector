@@ -20,9 +20,7 @@ import pl.birski.falldetector.usecase.UseCaseFactory
 import timber.log.Timber
 
 @HiltViewModel
-class LockScreenViewModel
-@Inject
-constructor(
+class LockScreenViewModel @Inject constructor(
     private val application: Application,
     private val prefUtil: PrefUtil,
     private val messageSender: MessageSender,

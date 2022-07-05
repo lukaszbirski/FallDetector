@@ -52,7 +52,6 @@ class LocationTrackerImpl @Inject constructor(
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-
                 checkGPS.takeIf { it }.let {
                     if (checkGPS) {
                         locationManager.requestLocationUpdates(
@@ -113,9 +112,7 @@ class LocationTrackerImpl @Inject constructor(
     }
 
     private fun selectLocation(locationByGps: Location?, locationByNetwork: Location?): Location? {
-
         return when {
-
             locationByGps != null && locationByNetwork != null ->
                 selectMoreAccurateLocation(locationByGps, locationByNetwork)
 
@@ -137,7 +134,6 @@ class LocationTrackerImpl @Inject constructor(
     }
 
     override fun showSettingsAlert(activity: Activity) {
-
         AlertDialog.Builder(activity).create().let {
             it.setTitle(activity.getString(R.string.location_tracker_dialog_title_text))
             it.setMessage(activity.getString(R.string.location_tracker_dialog_message_text))
@@ -164,9 +160,7 @@ class LocationTrackerImpl @Inject constructor(
     }
 
     override fun onLocationChanged(loc: Location) {
-
         when (loc.provider) {
-
             NETWORK_PROVIDER -> locationNetwork?.let {
                 it.latitude = loc.latitude
                 it.longitude = loc.longitude

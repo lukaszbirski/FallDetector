@@ -15,13 +15,14 @@ object Constants {
     private const val MIN_MAX_SLIDING_WINDOW_TIME_SEC = 0.1F // SW size for SVminmax is 0.1 s
     private const val POSTURE_DETECTION_SW_TIME_SEC = 0.4F // SW size for posture detection is 0.4 s
 
-    const val MIN_MAX_SW_SIZE = MIN_MAX_SLIDING_WINDOW_TIME_SEC * 1000 / INTERVAL_MILISEC
-    const val POSTURE_DETECTION_SW_SIZE = POSTURE_DETECTION_SW_TIME_SEC * 1000 / INTERVAL_MILISEC
+    const val MIN_MAX_SW_SIZE = MIN_MAX_SLIDING_WINDOW_TIME_SEC * 1_000 / INTERVAL_MILISEC
+    const val POSTURE_DETECTION_SW_SIZE = POSTURE_DETECTION_SW_TIME_SEC * 1_000 / INTERVAL_MILISEC
 
     // after impact need to wait 2 s
-    const val IMPACT_TIME_SPAN = 2000 / INTERVAL_MILISEC
+    const val IMPACT_TIME_SPAN = 2_000 / INTERVAL_MILISEC
+
     // impact is measured within 1 s frame
-    const val FALLING_TIME_SPAN = 1000 / INTERVAL_MILISEC
+    const val FALLING_TIME_SPAN = 1_000 / INTERVAL_MILISEC
 
     const val CUSTOM_FALL_DETECTED_RECEIVER = "pl.birski.falldetector.CUSTOM_INTENT"
 

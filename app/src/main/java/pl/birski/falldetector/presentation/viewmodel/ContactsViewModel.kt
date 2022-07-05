@@ -13,9 +13,7 @@ import pl.birski.falldetector.usecase.UseCaseFactory
 import timber.log.Timber
 
 @HiltViewModel
-class ContactsViewModel
-@Inject
-constructor(
+class ContactsViewModel @Inject constructor(
     private val useCaseFactory: UseCaseFactory
 ) : ViewModel() {
 

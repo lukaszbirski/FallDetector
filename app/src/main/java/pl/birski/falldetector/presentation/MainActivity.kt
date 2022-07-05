@@ -38,10 +38,8 @@ class MainActivity : AppCompatActivity(), PassDataInterface {
     private var mMessageReceiver = object : BroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent) {
-
             intent.action.let {
                 if (!isFallDetected) {
-
                     isFallDetected = true
 
                     Intent(context, LockScreenActivity::class.java).also {
