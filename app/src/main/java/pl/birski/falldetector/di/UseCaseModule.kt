@@ -6,10 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import pl.birski.falldetector.database.AppDatabase
-import pl.birski.falldetector.database.model.ContactEntity
-import pl.birski.falldetector.model.Contact
 import pl.birski.falldetector.model.util.ContactMapper
-import pl.birski.falldetector.model.util.DomainMapper
 import pl.birski.falldetector.usecase.AddContactUseCase
 import pl.birski.falldetector.usecase.GetAllContactsUseCase
 import pl.birski.falldetector.usecase.RemoveContactUseCase

@@ -24,20 +24,19 @@ class MessageSenderTest {
     // system in test
     private lateinit var messageSender: MessageSenderImpl
 
-    private lateinit var locationTracker: LocationTracker
+    @Mock
+    private var locationTracker: LocationTracker = LocationTrackerFake()
 
     @Mock
-    private var context: Context = ApplicationProvider.getApplicationContext<Context>()
+    private var context: Context = ApplicationProvider.getApplicationContext()
 
     @Before
     fun setup() {
-        locationTracker = LocationTrackerFake()
         messageSender = MessageSenderImpl(context, locationTracker)
     }
 
     @Test
     fun `check if sent message is correct`() {
-
         val message = context.getString(
             R.string.message_sender_text_body,
             locationTracker.getAddress(),

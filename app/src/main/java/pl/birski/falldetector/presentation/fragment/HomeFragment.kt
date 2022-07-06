@@ -44,8 +44,9 @@ class HomeFragment : Fragment() {
             .map { shouldShowRequestPermissionRationale(it) }
             .none { !it }
 
-        if (!PermissionUtil.hasMessagesPermission(requireContext()) && shouldDisplay)
+        if (!PermissionUtil.hasMessagesPermission(requireContext()) && shouldDisplay) {
             setDialog()
+        }
     }
 
     private fun setDialog() {

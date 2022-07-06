@@ -29,7 +29,6 @@ class MessageSenderImpl @Inject constructor(
     private lateinit var messages: Array<String>
 
     override fun startSendMessages(messages: Array<String>) {
-
         this.messages = messages
         this.messageBody = getMessage()
 
@@ -43,7 +42,8 @@ class MessageSenderImpl @Inject constructor(
             sendSMS(messages[mMessageSentCount], messageBody)
         } else {
             Toast.makeText(
-                context, context.getString(R.string.message_sender_all_message_sent_text),
+                context,
+                context.getString(R.string.message_sender_all_message_sent_text),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -54,7 +54,6 @@ class MessageSenderImpl @Inject constructor(
     }
 
     private fun sendSMS(phoneNumber: String, message: String) {
-
         val sms: SmsManager = context.getSystemService(SmsManager::class.java)
         val parts = sms.divideMessage(message)
         mMessageSentTotalParts = parts.size

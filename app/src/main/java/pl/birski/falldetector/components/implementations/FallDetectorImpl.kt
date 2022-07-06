@@ -64,7 +64,6 @@ class FallDetectorImpl @Inject constructor(
     }
 
     private fun measureFall(acceleration: Acceleration) {
-
         val accelerationFloatArray = floatArrayOf(
             acceleration.x.toFloat(),
             acceleration.y.toFloat(),
@@ -104,23 +103,10 @@ class FallDetectorImpl @Inject constructor(
         )
 
         if (postureDetectionSW.size >= Constants.POSTURE_DETECTION_SW_SIZE) {
-
             when (prefUtil.getDetectionAlgorithm()) {
-
-                Algorithms.FIRST -> useFirstAlgorithm(
-                    hpfAcceleration = hpfAcceleration,
-                    acceleration = acceleration
-                )
-
-                Algorithms.SECOND -> useSecondAlgorithm(
-                    hpfAcceleration = hpfAcceleration,
-                    acceleration = acceleration
-                )
-
-                Algorithms.THIRD -> useThirdAlgorithm(
-                    hpfAcceleration = hpfAcceleration,
-                    acceleration = acceleration
-                )
+                Algorithms.FIRST -> useFirstAlgorithm(hpfAcceleration, acceleration)
+                Algorithms.SECOND -> useSecondAlgorithm(hpfAcceleration, acceleration)
+                Algorithms.THIRD -> useThirdAlgorithm(hpfAcceleration, acceleration)
             }
         }
     }
@@ -129,15 +115,15 @@ class FallDetectorImpl @Inject constructor(
         // posture must be detected 2 sec after the impact
         // it is marked as impactTimeOut == 0
         if (impactTimeOut == 0) {
-
             isLyingPostureDetected = false
 
-            val sum = postureDetectionSW.sumOf { it.z }
+            val sum = postureDetectionSW.sumOf { it.y }
             val count = postureDetectionSW.size.toDouble()
 
-            // impact occurred if vertical signal, based on the average acceleration
+            // impact occurred if vertical signal (y axis in Android coordinate system),
+            // based on the average acceleration
             // in a 0.4 s time interval is 0.5G or lower
-            if ((sum / count) > LYING_POSTURE_VERTICAL_THRESHOLD) {
+            if ((sum / count) <= LYING_POSTURE_VERTICAL_THRESHOLD) {
                 Timber.d("4. FallDetector: Detected lying position!")
                 isLyingPostureDetected = true
                 sendBroadcast()
@@ -158,10 +144,7 @@ class FallDetectorImpl @Inject constructor(
             acceleration = acceleration,
             minMaxSW = minMaxSW
         )
-        detectPosture(
-            impactTimeOut = impactTimeOut,
-            postureDetectionSW = postureDetectionSW
-        )
+        detectPosture(impactTimeOut, postureDetectionSW)
     }
 
     private fun useSecondAlgorithm(
@@ -175,16 +158,13 @@ class FallDetectorImpl @Inject constructor(
         // detect posture
         impactTimeOut = expireTimeOut(impactTimeOut)
         fallingTimeOut = expireTimeOut(fallingTimeOut)
-        detectStartOfFall(acceleration = acceleration)
+        detectStartOfFall(acceleration)
         detectImpact(
             hpfAcceleration = hpfAcceleration,
             acceleration = acceleration,
             minMaxSW = minMaxSW
         )
-        detectPosture(
-            impactTimeOut = impactTimeOut,
-            postureDetectionSW = postureDetectionSW
-        )
+        detectPosture(impactTimeOut, postureDetectionSW)
     }
 
     private fun useThirdAlgorithm(
@@ -199,17 +179,14 @@ class FallDetectorImpl @Inject constructor(
         // detect posture
         impactTimeOut = expireTimeOut(impactTimeOut)
         fallingTimeOut = expireTimeOut(fallingTimeOut)
-        detectStartOfFall(acceleration = acceleration)
-        detectVelocity(acceleration = acceleration, velocitySW = fallSW)
+        detectStartOfFall(acceleration)
+        detectVelocity(acceleration, fallSW)
         detectImpact(
             hpfAcceleration = hpfAcceleration,
             acceleration = acceleration,
             minMaxSW = minMaxSW
         )
-        detectPosture(
-            impactTimeOut = impactTimeOut,
-            postureDetectionSW = postureDetectionSW
-        )
+        detectPosture(impactTimeOut, postureDetectionSW)
     }
 
     internal fun detectStartOfFall(acceleration: Acceleration) {
@@ -230,12 +207,13 @@ class FallDetectorImpl @Inject constructor(
 
         // impact should be detected when using ImpactPosture algorithm
         // or when start of the fall was detected
+        // or when start of the fall was detected and isVelocityGreaterThanThreshold == true
         if (isFirstAlgorithm() ||
             isDetectingImpactForSecondAlgorithm() ||
             isDetectingImpactForThirdAlgorithm()
         ) {
             Timber.d("Starts to detect impact")
-            if (isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm(minMaxSW) ||
+            if (isMinMaxSVGreaterThanThresholdForImpactPostureAlgorithm(minMaxSW) ||
                 isVerticalAccelerationGreaterThanThreshold(svTotal, svDynamic) ||
                 isSumVectorGreaterThanThreshold(svTotal, SV_TOT_THRESHOLD) ||
                 isSumVectorGreaterThanThreshold(svDynamic, SV_D_THRESHOLD)
@@ -326,7 +304,7 @@ class FallDetectorImpl @Inject constructor(
         return calculateSumVector(xMinMax, yMinMax, zMinMax) > SV_MAX_MIN_THRESHOLD
     }
 
-    private fun isMinMaxSumVectorGreaterThanThresholdForImpactPostureAlgorithm(
+    private fun isMinMaxSVGreaterThanThresholdForImpactPostureAlgorithm(
         minMaxSW: MutableList<Acceleration>
     ) = isMinMaxSVGreaterThanThreshold(minMaxSW) && isFirstAlgorithm()
 

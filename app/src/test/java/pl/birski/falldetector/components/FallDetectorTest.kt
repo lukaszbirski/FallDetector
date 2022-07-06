@@ -244,7 +244,7 @@ class FallDetectorTest {
     fun `check if detects posture when average vertical acceleration is greater than threshold`() {
         // parameters
         val impactTimeOut = 0
-        val postureSW = fakeData.postureDetectionSWFakeHigh
+        val postureSW = fakeData.postureDetectionSWFakeLow
 
         fallDetector.detectPosture(impactTimeOut, postureSW)
 
@@ -257,7 +257,7 @@ class FallDetectorTest {
     fun `check if detects posture when average vertical acceleration is lower than threshold`() {
         // parameters
         val impactTimeOut = 0
-        val postureSW = fakeData.postureDetectionSWFakeLow
+        val postureSW = fakeData.postureDetectionSWFakeHigh
 
         fallDetector.detectPosture(impactTimeOut, postureSW)
 
@@ -268,7 +268,6 @@ class FallDetectorTest {
 
     @Test
     fun `check if numericalIntegrationTrapezoidalRule returns correct value`() {
-
         val accelerations = arrayListOf(
             Acceleration(0.0, 0.0, 0.0, 0),
             Acceleration(0.0, 0.0, 45.0, 20),
@@ -290,7 +289,7 @@ class FallDetectorTest {
         // svTotal will be  >= 1
         val acceleration = Acceleration(1.0, 1.0, 1.0, 1L)
         // integrated velocity will be greater than threshold
-        val list = fakeData.postureDetectionSWFakeHigh
+        val list = fakeData.postureDetectionSWFakeLow
 
         fallDetector.detectVelocity(acceleration, list)
 
@@ -306,7 +305,7 @@ class FallDetectorTest {
         // svTotal will be  >= 1
         val acceleration = Acceleration(1.0, 1.0, 1.0, 1L)
         // integrated velocity will be greater than threshold
-        val list = fakeData.postureDetectionSWFakeHigh
+        val list = fakeData.postureDetectionSWFakeLow
 
         fallDetector.detectVelocity(acceleration, list)
 
@@ -322,7 +321,7 @@ class FallDetectorTest {
         // svTotal will be < 1
         val acceleration = Acceleration(0.2, 0.2, 0.2, 1L)
         // integrated velocity will be greater than threshold
-        val list = fakeData.postureDetectionSWFakeHigh
+        val list = fakeData.postureDetectionSWFakeLow
 
         fallDetector.detectVelocity(acceleration, list)
 
@@ -338,7 +337,7 @@ class FallDetectorTest {
         // svTotal will be  >= 1
         val acceleration = Acceleration(1.0, 1.0, 1.0, 1L)
         // integrated velocity will be below threshold
-        val list = fakeData.postureDetectionSWFakeLow
+        val list = fakeData.velocityDetectionSWFake
 
         fallDetector.detectVelocity(acceleration, list)
 

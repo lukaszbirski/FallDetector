@@ -10,9 +10,7 @@ import pl.birski.falldetector.service.TrackingService
 import pl.birski.falldetector.service.enum.ServiceActions
 
 @HiltViewModel
-class MainViewModel
-@Inject
-constructor(
+class MainViewModel @Inject constructor(
     private val application: Application,
     private val sensor: Sensor
 ) : ViewModel() {

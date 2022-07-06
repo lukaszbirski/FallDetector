@@ -18,8 +18,7 @@ import pl.birski.falldetector.presentation.viewmodel.GraphViewModel
 @AndroidEntryPoint
 class GraphFragment : Fragment() {
 
-    private var _binding: FragmentGraphBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentGraphBinding
 
     private val viewModel: GraphViewModel by viewModels()
 
@@ -34,7 +33,7 @@ class GraphFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentGraphBinding.inflate(inflater, container, false)
+        binding = FragmentGraphBinding.inflate(inflater, container, false)
 
         passDataInterface = requireActivity() as PassDataInterface
 
@@ -63,11 +62,6 @@ class GraphFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     private fun setChart(chart: LineChart) {

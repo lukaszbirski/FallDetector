@@ -23,11 +23,11 @@ class LocationTrackerTest {
     private lateinit var locationTracker: LocationTrackerImpl
 
     @Mock
-    private var context: Context = ApplicationProvider.getApplicationContext<Context>()
+    private var context: Context = ApplicationProvider.getApplicationContext()
 
-    val fakeLocation = Location("").also { location ->
-        location.latitude = 52.22824846991743
-        location.longitude = 20.9854009598633
+    private val fakeLocation = Location("").also {
+        it.latitude = 52.22824846991743
+        it.longitude = 20.9854009598633
     }
 
     @Before
@@ -57,7 +57,6 @@ class LocationTrackerTest {
 
     @Test
     fun `check if can get location when address is null`() {
-
         val address = locationTracker.getAddress()
         val location = locationTracker.getAddressOrLocation()
 

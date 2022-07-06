@@ -44,7 +44,6 @@ class LockScreenActivity : AppCompatActivity() {
         }
 
         viewModel.apply {
-
             stopService()
 
             displayDialog.observe(this@LockScreenActivity) {
@@ -75,7 +74,6 @@ class LockScreenActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
-
         timer = object : CountDownTimer(viewModel.getSecondsRemaining() * 1000, 1000) {
 
             override fun onFinish() = onTimerFinished().also { viewModel.manageCountDownFinished() }
